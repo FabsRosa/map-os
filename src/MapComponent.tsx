@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './apiClient';
 
 const mapContainerStyle = {
@@ -12,18 +12,6 @@ const initialMapCenter = {
   lng: -56.08009,
 };
 
-const mapOptions = {
-  styles: [
-    {
-      featureType: 'poi',
-      stylers: [{ visibility: 'off' }]
-    }
-  ],
-  mapTypeControl: false,
-};
-
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
 interface Order {
   idOS: string;
   lat: number;
@@ -33,6 +21,15 @@ interface Order {
   def: string;
   desc: string;
 }
+
+const getMarkerColor = (status: string) => {
+  switch (status) {
+    case 'RETORNO':
+      return 'yellow';
+    default:
+      return 'red';
+  }
+};
 
 const MapComponent: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -64,23 +61,25 @@ const MapComponent: React.FC = () => {
     fetchOrders();
   }, []);
 
-  const getMarkerColor = (status: string) => {
-    // Example logic to color markers based on status
-    switch (status) {
-      case 'RETORNO':
-        return 'yellow';
-      default:
-        return 'red';
-    }
-  };
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  })
 
-  return (
-    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+  return isLoaded ? (
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={initialMapCenter}
         zoom={12}
-        options={mapOptions}
+        options={{
+          styles: [
+            {
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]
+            }
+          ],
+          mapTypeControl: false,
+        }}
       >
         {orders.map(order => (
           <Marker
@@ -97,17 +96,17 @@ const MapComponent: React.FC = () => {
           <InfoWindow
             position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
             onCloseClick={() => setSelectedOrder(null)}
+            options={{ pixelOffset: new window.google.maps.Size(0, -40) }}
           >
             <div style={{ backgroundColor: '#fff', color: '#000', padding: '0px 10px', margin: '5px', borderRadius: '5px' }}>
               <h2 style={{ margin: '5px', padding: '0px 5px' }}> OS {selectedOrder.idOS} - {selectedOrder.def}</h2>
               <h3 style={{ margin: '5px', padding: '0px 5px' }}>Local: {selectedOrder.clientID} · {selectedOrder.clientName}</h3>
-              <p style={{ margin: '5px', marginTop: '13px', padding: '0px 5px', fontSize: '1.1em' }}> • {selectedOrder.desc}</p>
+              <p style={{ margin: '13px 5px 20px 5px', padding: '0px 5px', fontSize: '1.1em' }}> • {selectedOrder.desc}</p>
             </div>
           </InfoWindow>
         )}
       </GoogleMap>
-    </LoadScript>
-  );
+  ) : <></>;
 };
 
 export default MapComponent;

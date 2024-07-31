@@ -1,10 +1,13 @@
 import React from 'react';
+import ErrorBoundary from './utils/ErrorBoundary';
 import MapComponent from './MapComponent';
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <MapComponent />
+      <ErrorBoundary>
+        <MapComponent />
+      </ErrorBoundary>
     </div>
   );
 };

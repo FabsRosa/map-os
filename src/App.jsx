@@ -2,7 +2,7 @@ import React from 'react';
 import ErrorBoundary from './utils/ErrorBoundary';
 import MapComponent from './MapComponent';
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <div className="App">
       <ErrorBoundary>

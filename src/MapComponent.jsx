@@ -14,7 +14,7 @@ const initialMapCenter = {
 
 const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'yellow', 'orange'];
 
-const getMarkerIcon = (isHighlighted, color) => `/pin/${color}${isHighlighted ? '-dot' : ''}.png`;
+const getMarkerIcon = (isHighlighted, color, tec) => `/pin/${color}${isHighlighted ? '-dot' : `${tec ? `-${tec.charAt(0).toLowerCase()}` : ''}`}.png`;
 
 const InfoWindowContentOrder = ({ order }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
@@ -152,7 +152,7 @@ const MapComponent = () => {
         <Marker
           key={order.id}
           position={{ lat: order.lat, lng: order.lng }}
-          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.color) }}
+          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.color, order.tec) }}
           onClick={handleMarkerClick(order)}
           onMouseOut={handleOrderMouseOut}
           onMouseOver={handleOrderMouseOver(order)}

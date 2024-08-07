@@ -117,7 +117,11 @@ const MapComponent = () => {
       setMotos(motosData);
     };
 
-    fetchData();
+    fetchData(); // Initial fetch
+
+    const intervalId = setInterval(fetchData, 10000); // Poll every 10 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);
 
   const handleMapClick = useCallback(() => {

@@ -18,48 +18,47 @@ const getMarkerIcon = (isHighlighted, color, tec) => `/pin/${color}${isHighlight
 
 const InfoWindowContentOrder = ({ order }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <h3 style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
-      {order.clientID} · {order.clientName}
-    </h3>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>Técnico: <b>{order.tec}</b></p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>Defeito: {order.def}</p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>OS: {order.id}</p>
-    <p style={{ margin: '0', paddingTop: '4px', fontSize: '1.1em' }}> • {order.desc}</p>
+    <p style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
+    • Cliente: {order.clientID} · <b>{order.clientName}</b>
+    </p>
+    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• Técnico: <b>{order.tec}</b></p>
+    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• Defeito: <b>{order.def}</b></p>
+    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• OS: {order.id}</p>
+    <p style={{ margin: '0', paddingTop: '4px', fontSize: '1.1em' }}>• {order.desc}</p>
   </div>
 );
 
 const InfoWindowContentMoto = ({ moto }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <h3 style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
-      Placa: {moto.id}
-    </h3>
+    <p style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
+      • Placa: <b>{moto.id}</b>
+    </p>
   </div>
 );
 
 const fetchOrdersData = async () => {
   try {
-    const responseOS = await apiClient.get('/maps/maps');
-    const responseTec = await apiClient.get('/maps/dataTecs');
+    const responseOS = await apiClient.get('/maps/OS');
 
-    if (responseOS.ok && responseOS.data && responseTec.ok && responseTec.data) {
-      let colorIndex = 0;
-      const techData = responseTec.data.map(tec => ({
-        ...tec,
-        imageUrl: pinColors[colorIndex++ % pinColors.length],
-      }));
+    if (responseOS.ok && responseOS.data) {
+      let colorIndex = -1;
+      let idTec = 0;
+      const ordersData = responseOS.data.map(order => {
+        if (idTec !== order.idTec) {
+          idTec = order.idTec
+          colorIndex++;
+        }
 
-      const ordersData = responseOS.data.maps.map(order => {
-        const foundTec = techData.find(tec => tec.metrics == order.metric);
         return {
-          id: order.IDOS.toString(),
-          lat: parseFloat(order.latitude),
-          lng: parseFloat(order.longitude),
-          clientID: order.SP,
-          clientName: order.fantasia,
-          def: order.DEFEITO,
+          id: order.idOS.toString(),
+          lat: parseFloat(order.lat),
+          lng: parseFloat(order.lng),
+          clientID: order.idCliente,
+          clientName: order.nomeCliente,
+          def: order.defeito,
           desc: order.descricao,
-          tec: foundTec ? foundTec.name : '',
-          color: foundTec ? foundTec.imageUrl : 'red',
+          tec: order.nomeTec,
+          color: pinColors[colorIndex % pinColors.length],
         };
       });
 
@@ -75,7 +74,7 @@ const fetchOrdersData = async () => {
 
 const fetchMotosData = async () => {
   try {
-    const responseMoto = await apiClient.get('/maps/vehicles');
+    const responseMoto = await apiClient.get('/maps/vehicleLocation');
 
     if (responseMoto.ok && responseMoto.data) {
       const motosData = responseMoto.data.map(moto => {

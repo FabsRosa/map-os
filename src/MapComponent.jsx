@@ -12,16 +12,53 @@ const initialMapCenter = {
   lng: -56.08009,
 };
 
-const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'yellow', 'orange'];
+const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
 
-const getMarkerIcon = (isHighlighted, color, tec) => `/pin/${color}${isHighlighted ? '-dot' : `${tec ? `-${tec.charAt(0).toLowerCase()}` : ''}`}.png`;
+const getMarkerIcon = (isHighlighted, nometec, tec) => {
+  const color = tec ? (tec.color ? tec.color : 'yellow' ) : 'yellow';
+  const isTerceirizado = color == 'yellow';
+  return `/pin/${color}${isHighlighted ? (
+      `-dot`
+    ) : (
+      `${!isTerceirizado ? (
+        nometec ? (
+          `-${nometec.charAt(0).toLowerCase()}` // First letter of the name
+        ) : (
+          ``
+        )
+      ) : (
+        `-t` // Terceirizado
+      )}`
+    )}.png`;
+};
 
-const InfoWindowContentOrder = ({ order }) => (
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecList }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
     <p style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
-    • Cliente: {order.clientID} · <b>{order.clientName}</b>
+      • Cliente: {order.clientID} · <b>{order.clientName}</b>
     </p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• Técnico: <b>{order.tec}</b></p>
+    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>
+      • Técnico:&nbsp;
+      {isEditing ? (
+        <select value={order.idTec} onChange={(e) => onTecChange(e.target.value)}>
+          {tecList.map(tec => (
+            <option key={tec.id} value={tec.id}>
+              {tec.nome}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <span>
+          <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
+          <img 
+            src="/icon/down-arrow.png" 
+            alt="Edit" 
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+            onClick={onEditClick}
+          />
+        </span>
+      )}
+    </p>
     <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• Defeito: <b>{order.def}</b></p>
     <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• OS: {order.id}</p>
     <p style={{ margin: '0', paddingTop: '4px', fontSize: '1.1em' }}>• {order.desc}</p>
@@ -41,14 +78,7 @@ const fetchOrdersData = async () => {
     const responseOS = await apiClient.get('/maps/OS');
 
     if (responseOS.ok && responseOS.data) {
-      let colorIndex = -1;
-      let idTec = 0;
       const ordersData = responseOS.data.map(order => {
-        if (idTec !== order.idTec) {
-          idTec = order.idTec
-          colorIndex++;
-        }
-
         return {
           id: order.idOS.toString(),
           lat: parseFloat(order.lat),
@@ -57,8 +87,8 @@ const fetchOrdersData = async () => {
           clientName: order.nomeCliente,
           def: order.defeito,
           desc: order.descricao,
-          tec: order.nomeTec,
-          color: pinColors[colorIndex % pinColors.length],
+          idTec: order.idTec,
+          nomeTec: order.nomeTec,
         };
       });
 
@@ -96,20 +126,50 @@ const fetchMotosData = async () => {
   return [];
 };
 
+const fetchTechnicians = async () => {
+  try {
+    const response = await apiClient.get('/maps/tec');
+    if (response.ok && response.data) {
+      let colorIndex = 0;
+      const tecData = response.data.map(tec => {
+        if (colorIndex > 6) {
+          colorIndex = 0;
+        }
+
+        return {
+          id: tec.idTec,
+          nome:tec.nomeTec,
+          color: pinColors[colorIndex++ % pinColors.length],
+        };
+      });
+
+      return tecData;
+    } else {
+      console.error('Error fetching orders:', responseMoto.problem);
+    }
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+  }
+
+  return [];
+};
+
 const MapComponent = () => {
   const [orders, setOrders] = useState([]);
   const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [motos, setMotos] = useState([]);
   const [highlightedMoto, setHighlightedMoto] = useState(null);
-  
+  const [tecList, setTecList] = useState([]);
+  const [editingOrder, setEditingOrder] = useState(null);
+
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchMapData = async () => {
       const ordersData = await fetchOrdersData();
       setOrders(ordersData);
 
@@ -117,17 +177,27 @@ const MapComponent = () => {
       setMotos(motosData);
     };
 
-    fetchData(); // Initial fetch
+    fetchMapData(); // Initial fetch
 
-    const intervalId = setInterval(fetchData, 10000); // Poll every 10 seconds
+    const intervalId = setInterval(fetchMapData, 10000); // Poll every 10 seconds
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, []);
+
+  useEffect(() => {
+    const fetchTecData = async () => {
+    const tecData = await fetchTechnicians();
+    setTecList(tecData);
+  };
+
+  fetchTecData();
   }, []);
 
   const handleMapClick = useCallback(() => {
     setSelectedOrder(null);
     setHighlightedOrder(null);
     setHighlightedMoto(null);
+    setEditingOrder(null);
   }, []);
 
   const handleMarkerClick = useCallback((order) => (e) => {
@@ -140,6 +210,26 @@ const MapComponent = () => {
 
   const handleMotoMouseOver = useCallback((moto) => () => setHighlightedMoto(moto.id), []);
   const handleMotoMouseOut = useCallback(() => setHighlightedMoto(null), []);
+
+  const handleEditTech = (order) => {
+    setEditingOrder(order.id);
+  };
+  
+  const handleTecChange = async (idNewTech) => {
+    const nomeTec = tecList ? tecList.find(tec => tec.id == idNewTech).nome : '';
+
+    const updatedOrders = orders.map(order => 
+      order.id == editingOrder ? { ...order, idTec: idNewTech, nomeTec: nomeTec } : order
+    );
+    setOrders(updatedOrders);
+
+    const updatedSelectedOrder = selectedOrder ? { ...selectedOrder, idTec: idNewTech, nomeTec: nomeTec } : selectedOrder;
+    setSelectedOrder(updatedSelectedOrder);
+  
+    await apiClient.post(`/maps/updateTec`, { idOS: editingOrder, idTec: idNewTech });
+    
+    setEditingOrder(null);
+  };
 
   return isLoaded ? (
     <GoogleMap
@@ -156,7 +246,7 @@ const MapComponent = () => {
         <Marker
           key={order.id}
           position={{ lat: order.lat, lng: order.lng }}
-          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.color, order.tec) }}
+          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.nomeTec, tecList.find(tec => tec.id == order.idTec)) }}
           onClick={handleMarkerClick(order)}
           onMouseOut={handleOrderMouseOut}
           onMouseOver={handleOrderMouseOver(order)}
@@ -204,7 +294,14 @@ const MapComponent = () => {
           position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
           options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
         >
-          <InfoWindowContentOrder order={selectedOrder} />
+          <InfoWindowContentOrder
+            key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
+            order={selectedOrder}
+            isEditing={editingOrder === selectedOrder.id}
+            onEditClick={() => handleEditTech(selectedOrder)}
+            onTecChange={handleTecChange}
+            tecList={tecList}
+          />
         </InfoWindow>
       )}
     </GoogleMap>

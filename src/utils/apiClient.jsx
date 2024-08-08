@@ -15,7 +15,7 @@ const apiClient = create({
 
 apiClient.addResponseTransform(response => {
   if (!response.ok) {
-    console.error('API Response Error:', response.problem);
+    console.error('API Response Error: ' + response.data.error, response.problem);
     throw response;
   }
 });

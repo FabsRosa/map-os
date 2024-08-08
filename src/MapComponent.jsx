@@ -179,7 +179,7 @@ const MapComponent = () => {
 
     fetchMapData(); // Initial fetch
 
-    const intervalId = setInterval(fetchMapData, 10000); // Poll every 10 seconds
+    const intervalId = setInterval(fetchMapData,5000); // Poll every 10 seconds
 
     return () => clearInterval(intervalId); // Cleanup on component unmount
   }, []);

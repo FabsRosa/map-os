@@ -80,8 +80,8 @@ const fetchMotosData = async () => {
       const motosData = responseMoto.data.map(moto => {
         return {
           id: moto.placa,
-          lat:parseFloat(moto.latitude),
-          lng:parseFloat(moto.longitude),
+          lat:parseFloat(moto.lat),
+          lng:parseFloat(moto.lng),
         };
       });
 
@@ -102,6 +102,7 @@ const MapComponent = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [motos, setMotos] = useState([]);
   const [highlightedMoto, setHighlightedMoto] = useState(null);
+  
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,

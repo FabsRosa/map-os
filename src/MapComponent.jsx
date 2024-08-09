@@ -32,42 +32,47 @@ const getMarkerIcon = (isHighlighted, nometec, tec) => {
     )}.png`;
 };
 
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecList }) => (
-  <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <p style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
-      • Cliente: {order.clientID} · <b>{order.clientName}</b>
-    </p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>
-      • Técnico:&nbsp;
-      {isEditing ? (
-        <select value={order.idTec} onChange={(e) => onTecChange(e.target.value)}>
-          {tecList.map(tec => (
-            <option key={tec.id} value={tec.id}>
-              {tec.nome}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <span>
-          <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
-          <img 
-            src="/icon/down-arrow.png" 
-            alt="Edit" 
-            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-            onClick={onEditClick}
-          />
-        </span>
-      )}
-    </p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• Defeito: <b>{order.def}</b></p>
-    <p style={{ margin: '0', paddingTop: '3px', fontSize: '1.2em' }}>• OS: {order.id}</p>
-    <p style={{ margin: '0', paddingTop: '4px', fontSize: '1.1em' }}>• {order.desc}</p>
-  </div>
-);
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecList }) => {
+  const isTecInList = tecList? tecList.some(tec => tec.id == order.idTec) : false;
+
+  return (
+    <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+      <p className='p-big'>
+        • Cliente: {order.clientID} · <b>{order.clientName}</b>
+      </p>
+      <p className='p-medium'>
+        • Técnico:&nbsp;
+        {isEditing ? (
+          <select className='custom-select' value={isTecInList ? order.idTec : ''} onChange={(e) => onTecChange(e.target.value)}>
+            <option value="" disabled>TERCEIRIZADO</option>
+            {tecList.map(tec => (
+              <option key={tec.id} value={tec.id}>
+                {tec.nome}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <span>
+            <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
+            <img 
+              src='/icon/down-arrow.png' 
+              alt='Edit' 
+              style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+              onClick={onEditClick}
+            />
+          </span>
+        )}
+      </p>
+      <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
+      <p className='p-medium'>• OS: {order.id}</p>
+      <p className='p-small'>• {order.desc}</p>
+    </div>
+  );
+};
 
 const InfoWindowContentMoto = ({ moto }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <p style={{ margin: '0', padding: '0', fontSize: '1.3em' }}>
+    <p className='p-big moto'>
       • Placa: <b>{moto.id}</b>
     </p>
   </div>

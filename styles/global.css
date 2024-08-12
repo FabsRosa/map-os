@@ -76,23 +76,4 @@
     cursor: pointer;
   }
 
-  .filter-modal {
-    position: fixed;
-    top: 80px;
-    left: 10px;
-    z-index: 1000;
-    background-color: white;
-    border: 3px solid transparent;
-    padding: 10px;
-    border-radius: 5px;
-  }
-
-  .p-filter {
-    margin: 2px;
-  }
-
-  .filter-pair {
-    margin-bottom: 16px; /* Adjust the bottom margin as needed */
-  }
-
   .gm-style-iw button {display: none !important;}

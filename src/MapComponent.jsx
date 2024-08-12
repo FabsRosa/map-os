@@ -233,79 +233,79 @@ const MapComponent = () => {
   };
 
   return isLoaded ? (
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={initialMapCenter}
-        zoom={12}
-        options={{
-          styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
-          mapTypeControl: false,
-        }}
-        onClick={handleMapClick}
-      >
-        {orders.map(order => (
-          <Marker
-            key={order.id}
-            position={{ lat: order.lat, lng: order.lng }}
-            icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.nomeTec, tecList.find(tec => tec.id == order.idTec)) }}
-            onClick={handleMarkerClick(order)}
-            onMouseOut={handleOrderMouseOut}
-            onMouseOver={handleOrderMouseOver(order)}
-          />
-        ))}
+    <GoogleMap
+      mapContainerStyle={mapContainerStyle}
+      center={initialMapCenter}
+      zoom={12}
+      options={{
+        styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
+        mapTypeControl: false,
+      }}
+      onClick={handleMapClick}
+    >
+      {orders.map(order => (
+        <Marker
+          key={order.id}
+          position={{ lat: order.lat, lng: order.lng }}
+          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.nomeTec, tecList.find(tec => tec.id == order.idTec)) }}
+          onClick={handleMarkerClick(order)}
+          onMouseOut={handleOrderMouseOut}
+          onMouseOver={handleOrderMouseOver(order)}
+        />
+      ))}
 
-        {motos.map(moto => (
-          <Marker
-            key={moto.id}
-            position={{ lat: moto.lat, lng: moto.lng }}
-            icon={{ url: `/icon/motorcycling.png` }}
-            onMouseOut={handleMotoMouseOut}
-            onMouseOver={handleMotoMouseOver(moto)}
-          />
-        ))}
+      {motos.map(moto => (
+        <Marker
+          key={moto.id}
+          position={{ lat: moto.lat, lng: moto.lng }}
+          icon={{ url: `/icon/motorcycling.png` }}
+          onMouseOut={handleMotoMouseOut}
+          onMouseOver={handleMotoMouseOver(moto)}
+        />
+      ))}
 
-        {(highlightedOrder || highlightedMoto) && (
-          <InfoWindow
-            position={{
-              lat: highlightedOrder ? (
-                  orders.find(order => order.id === highlightedOrder).lat
-                ) : (
-                  motos.find(moto => moto.id === highlightedMoto).lat
-                ),
-              lng: highlightedOrder ? (
-                  orders.find(order => order.id === highlightedOrder).lng
-                ) : (
-                  motos.find(moto => moto.id === highlightedMoto).lng
-                )
-              }}
-            options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-          >
-            {
-              highlightedOrder ? (
-                <InfoWindowContentOrder order={orders.find(order => order.id === highlightedOrder)} />
+      {(highlightedOrder || highlightedMoto) && (
+        <InfoWindow
+          position={{
+            lat: highlightedOrder ? (
+                orders.find(order => order.id === highlightedOrder).lat
               ) : (
-                <InfoWindowContentMoto moto={motos.find(moto => moto.id === highlightedMoto)} />
+                motos.find(moto => moto.id === highlightedMoto).lat
+              ),
+            lng: highlightedOrder ? (
+                orders.find(order => order.id === highlightedOrder).lng
+              ) : (
+                motos.find(moto => moto.id === highlightedMoto).lng
               )
-            }
-          </InfoWindow>
-        )}
+            }}
+          options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        >
+          {
+            highlightedOrder ? (
+              <InfoWindowContentOrder order={orders.find(order => order.id === highlightedOrder)} />
+            ) : (
+              <InfoWindowContentMoto moto={motos.find(moto => moto.id === highlightedMoto)} />
+            )
+          }
+        </InfoWindow>
+      )}
 
-        {selectedOrder && (
-          <InfoWindow
-            position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
-            options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-          >
-            <InfoWindowContentOrder
-              key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
-              order={selectedOrder}
-              isEditing={editingOrder === selectedOrder.id}
-              onEditClick={() => handleEditTech(selectedOrder)}
-              onTecChange={handleTecChange}
-              tecList={tecList}
-            />
-          </InfoWindow>
-        )}
-      </GoogleMap>
+      {selectedOrder && (
+        <InfoWindow
+          position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
+          options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        >
+          <InfoWindowContentOrder
+            key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
+            order={selectedOrder}
+            isEditing={editingOrder === selectedOrder.id}
+            onEditClick={() => handleEditTech(selectedOrder)}
+            onTecChange={handleTecChange}
+            tecList={tecList}
+          />
+        </InfoWindow>
+      )}
+    </GoogleMap>
   ) : null;
 };
 

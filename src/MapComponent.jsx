@@ -70,6 +70,26 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
   );
 };
 
+const Sidebar = ({ isOpen, onClose, filters, setFilters }) => {
+  return (
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <button onClick={onClose}>Close</button>
+      {/* Add filter options here */}
+      <div className="filter-option">
+        <label>Filter by Technician:</label>
+        <select onChange={(e) => setFilters({ ...filters, technician: e.target.value })}>
+          <option value="">All</option>
+          {/* Populate with technicians */}
+          <option value="tec1">Tec 1</option>
+          <option value="tec2">Tec 2</option>
+          {/* Add more options as needed */}
+        </select>
+      </div>
+      {/* Add more filters as needed */}
+    </div>
+  );
+};
+
 const InfoWindowContentMoto = ({ moto }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
     <p className='p-big moto'>
@@ -163,11 +183,17 @@ const MapComponent = () => {
   const [highlightedMoto, setHighlightedMoto] = useState(null);
   const [tecList, setTecList] = useState([]);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [filters, setFilters] = useState();
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prevState => !prevState);
+  };
 
   useEffect(() => {
     const fetchMapData = async () => {
@@ -233,79 +259,85 @@ const MapComponent = () => {
   };
 
   return isLoaded ? (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      center={initialMapCenter}
-      zoom={12}
-      options={{
-        styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
-        mapTypeControl: false,
-      }}
-      onClick={handleMapClick}
-    >
-      {orders.map(order => (
-        <Marker
-          key={order.id}
-          position={{ lat: order.lat, lng: order.lng }}
-          icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.nomeTec, tecList.find(tec => tec.id == order.idTec)) }}
-          onClick={handleMarkerClick(order)}
-          onMouseOut={handleOrderMouseOut}
-          onMouseOver={handleOrderMouseOver(order)}
-        />
-      ))}
-
-      {motos.map(moto => (
-        <Marker
-          key={moto.id}
-          position={{ lat: moto.lat, lng: moto.lng }}
-          icon={{ url: `/icon/motorcycling.png` }}
-          onMouseOut={handleMotoMouseOut}
-          onMouseOver={handleMotoMouseOver(moto)}
-        />
-      ))}
-
-      {(highlightedOrder || highlightedMoto) && (
-        <InfoWindow
-          position={{
-            lat: highlightedOrder ? (
-                orders.find(order => order.id === highlightedOrder).lat
-              ) : (
-                motos.find(moto => moto.id === highlightedMoto).lat
-              ),
-            lng: highlightedOrder ? (
-                orders.find(order => order.id === highlightedOrder).lng
-              ) : (
-                motos.find(moto => moto.id === highlightedMoto).lng
-              )
-            }}
-          options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-        >
-          {
-            highlightedOrder ? (
-              <InfoWindowContentOrder order={orders.find(order => order.id === highlightedOrder)} />
-            ) : (
-              <InfoWindowContentMoto moto={motos.find(moto => moto.id === highlightedMoto)} />
-            )
-          }
-        </InfoWindow>
-      )}
-
-      {selectedOrder && (
-        <InfoWindow
-          position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
-          options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-        >
-          <InfoWindowContentOrder
-            key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
-            order={selectedOrder}
-            isEditing={editingOrder === selectedOrder.id}
-            onEditClick={() => handleEditTech(selectedOrder)}
-            onTecChange={handleTecChange}
-            tecList={tecList}
+    <div>
+      <div className="filter-icon" onClick={toggleSidebar}>
+        <img src="/icon/filter.svg" alt="Filter" width="55" height="55" />
+      </div>
+      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} filters={filters} setFilters={setFilters} />
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={initialMapCenter}
+        zoom={12}
+        options={{
+          styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
+          mapTypeControl: false,
+        }}
+        onClick={handleMapClick}
+      >
+        {orders.map(order => (
+          <Marker
+            key={order.id}
+            position={{ lat: order.lat, lng: order.lng }}
+            icon={{ url: getMarkerIcon(highlightedOrder === order.id, order.nomeTec, tecList.find(tec => tec.id == order.idTec)) }}
+            onClick={handleMarkerClick(order)}
+            onMouseOut={handleOrderMouseOut}
+            onMouseOver={handleOrderMouseOver(order)}
           />
-        </InfoWindow>
-      )}
-    </GoogleMap>
+        ))}
+
+        {motos.map(moto => (
+          <Marker
+            key={moto.id}
+            position={{ lat: moto.lat, lng: moto.lng }}
+            icon={{ url: `/icon/motorcycling.png` }}
+            onMouseOut={handleMotoMouseOut}
+            onMouseOver={handleMotoMouseOver(moto)}
+          />
+        ))}
+
+        {(highlightedOrder || highlightedMoto) && (
+          <InfoWindow
+            position={{
+              lat: highlightedOrder ? (
+                  orders.find(order => order.id === highlightedOrder).lat
+                ) : (
+                  motos.find(moto => moto.id === highlightedMoto).lat
+                ),
+              lng: highlightedOrder ? (
+                  orders.find(order => order.id === highlightedOrder).lng
+                ) : (
+                  motos.find(moto => moto.id === highlightedMoto).lng
+                )
+              }}
+            options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+          >
+            {
+              highlightedOrder ? (
+                <InfoWindowContentOrder order={orders.find(order => order.id === highlightedOrder)} />
+              ) : (
+                <InfoWindowContentMoto moto={motos.find(moto => moto.id === highlightedMoto)} />
+              )
+            }
+          </InfoWindow>
+        )}
+
+        {selectedOrder && (
+          <InfoWindow
+            position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
+            options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+          >
+            <InfoWindowContentOrder
+              key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
+              order={selectedOrder}
+              isEditing={editingOrder === selectedOrder.id}
+              onEditClick={() => handleEditTech(selectedOrder)}
+              onTecChange={handleTecChange}
+              tecList={tecList}
+            />
+          </InfoWindow>
+        )}
+      </GoogleMap>
+    </div>
   ) : null;
 };
 

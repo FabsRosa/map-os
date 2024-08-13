@@ -1,12 +1,12 @@
 import React from 'react';
 import ErrorBoundary from './utils/ErrorBoundary';
-import MapComponent from './MapComponent';
+import Map from './Map';
 
 const App = () => {
   return (
     <div className="App">
       <ErrorBoundary>
-        <MapComponent />
+        <Map />
       </ErrorBoundary>
     </div>
   );

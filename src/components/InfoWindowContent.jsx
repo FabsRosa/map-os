@@ -1,3 +1,4 @@
+// Design da dialog de informações de OS
 const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecnicos }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
@@ -36,6 +37,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
   );
 };
 
+// Design da dialog de informações de Moto
 const InfoWindowContentMoto = ({ moto }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
     <p className='p-big moto'>

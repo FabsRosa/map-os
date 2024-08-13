@@ -1,3 +1,4 @@
+// Design da sidebar de filtro
 const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilterChange }) => {
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>

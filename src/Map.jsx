@@ -19,16 +19,19 @@ const initialMapCenter = {
 };
 
 const Map = () => {
+  // Dados de OS e posição
   const [orders, setOrders] = useState([]);
   const [motos, setMotos] = useState([]);
   const [defeitos, setDefeitos] = useState([]);
   const [tecnicos, setTecnicos] = useState([]);
 
+  // Controladores de seleção de markers
   const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [highlightedMoto, setHighlightedMoto] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
 
+  // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: ''});
 
@@ -41,6 +44,7 @@ const Map = () => {
     setIsSidebarOpen(prevState => !prevState);
   };
 
+  // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
       const ordersData = await fetchOrdersData();
@@ -56,6 +60,7 @@ const Map = () => {
     return () => clearInterval(intervalId);
   }, [filters]);
 
+  // Atualiza lista de técnicos não-terceirizados e defeitos
   useEffect(() => {
     const fetchFilterData = async () => {
       const tecData = await fetchTechnicians();
@@ -65,8 +70,12 @@ const Map = () => {
       setDefeitos(defData);
     };
     fetchFilterData();
+
+    const intervalId = setInterval(fetchFilterData, 60000);
+    return () => clearInterval(intervalId);
   }, []);
 
+  // Reseta todos os seletores ao clicar em espaço vazio
   const handleMapClick = useCallback(() => {
     setSelectedOrder(null);
     setHighlightedOrder(null);
@@ -74,17 +83,19 @@ const Map = () => {
     setEditingOrder(null);
   }, []);
 
+  // Mantém dialog de informações ao clicar em um marker
   const handleMarkerClick = useCallback((order) => (e) => {
     e.domEvent.stopPropagation();
     setSelectedOrder(order);
   }, []);
 
+  // Apresenta dialog de informações ao passar o mouse em cima de um marker
   const handleOrderMouseOver = useCallback((order) => () => setHighlightedOrder(order.id), []);
   const handleOrderMouseOut = useCallback(() => setHighlightedOrder(null), []);
-
   const handleMotoMouseOver = useCallback((moto) => () => setHighlightedMoto(moto.id), []);
   const handleMotoMouseOut = useCallback(() => setHighlightedMoto(null), []);
 
+  // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
   const onTecChange = async (idNewTech) => {
     const nomeTec = tecnicos ? tecnicos.find(tec => tec.id == idNewTech).nome : '';
     const updatedOrders = orders.map(order => 
@@ -99,12 +110,14 @@ const Map = () => {
     setEditingOrder(null);
   };
 
+  // Atualiza variáveis de OS e filtro ao alterar os filtros
   const onFilterChange = async (orders, newFilter, tecnicos) => {
     setFilters(newFilter);
     const ordersFiltered = filterMarker(orders, newFilter, tecnicos);
     setOrders(ordersFiltered);
   };
 
+  // Processamento do mapa
   return isLoaded ? (
     <div>
       <Sidebar

@@ -1,3 +1,4 @@
+// Valida as OS com base nos filtros presentes
 const filterMarker = (orders, filter, tecnicos) => {
   return orders.filter(order => {
     if (!filter) {

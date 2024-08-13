@@ -2,6 +2,7 @@ import { create } from 'apisauce';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Retorna posicionamento das motos
 if (!API_BASE_URL) {
   throw new Error('Environment variable VITE_API_BASE_URL is not defined.');
 }

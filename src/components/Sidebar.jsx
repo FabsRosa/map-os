@@ -3,7 +3,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="filter-icon" onClick={onClose}>
-        <img src={!isOpen ? "/icon/filter.svg" : "/icon/clear-filter.svg"} alt="Filter" width="55" height="55" />
+        <img src={!isOpen ? "/icon/filter.svg" : "/icon/clear-filter.svg"} alt="Filter" />
       </div>
       <div className="filter-option n1">
         <label className="filter-label n1">Tipo de Ordem de Serviço</label>

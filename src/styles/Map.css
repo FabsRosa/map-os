@@ -52,9 +52,15 @@
 .filter-icon {
   position: fixed;
   top: 10px;
-  left: 240px;
+  left: 250px;
   z-index: 1000;
   cursor: pointer;
+}
+
+.filter-icon img {
+  width: 55px;
+  height: auto;
+  transition: width 0.2s ease-in-out;
 }
 
 .gm-style-iw button {display: none !important;}

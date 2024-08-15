@@ -18,7 +18,7 @@ const initialMapCenter = {
   lng: -56.08009,
 };
 
-const Map = () => {
+const Map = ({ mapType }) => {
   // Dados de OS e posição
   const [orders, setOrders] = useState([]);
   const [motos, setMotos] = useState([]);
@@ -34,6 +34,8 @@ const Map = () => {
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: ''});
+
+  const [type, setType] = useState(mapType);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -110,6 +112,10 @@ const Map = () => {
     setEditingOrder(null);
   };
 
+  const onTypeChange = async (idNewType) => {
+    setType(idNewType);
+  };
+
   // Atualiza variáveis de OS e filtro ao alterar os filtros
   const onFilterChange = async (orders, newFilter, tecnicos) => {
     setFilters(newFilter);
@@ -128,6 +134,8 @@ const Map = () => {
         tecnicos={tecnicos}
         defeitos={defeitos}
         onFilterChange={onFilterChange}
+        type={type}
+        onTypeChange={onTypeChange}
       />
 
       <GoogleMap
@@ -140,6 +148,15 @@ const Map = () => {
         }}
         onClick={handleMapClick}
       >
+        <Marker
+          key={1}
+          position={{
+            lat: -15.59163,
+            lng: -56.08009,
+          }}
+          icon={{ url: `/icon/Inviolavel.png` }}
+        />
+
         {orders.map(order => (
           <Marker
             key={order.id}

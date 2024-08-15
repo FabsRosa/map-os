@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import ErrorBoundary from './utils/ErrorBoundary';
 import Map from './Map';
 
@@ -6,7 +7,13 @@ const App = () => {
   return (
     <div className="App">
       <ErrorBoundary>
-        <Map />
+      <Router>
+          <Routes>
+            <Route path="/" element={<Map mapType="OS" />} />
+            <Route path="/mapOS" element={<Map mapType="OS" />} />
+            <Route path="/mapAlarm" element={<Map mapType="Alarm" />} />
+          </Routes>
+        </Router>
       </ErrorBoundary>
     </div>
   );

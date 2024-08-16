@@ -25,7 +25,8 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
           onChange={(e) => onFilterChange(orders, { ...filters, tipoOS: e.target.value }, tecnicos)}
         >
           <option value="">Sem filtro</option>
-          <option value="OS-cliente">OS aberta por cliente</option>
+          <option value="OS-cliente">OS Aberta por cliente</option>
+          <option value="OS-agendada">OS Agendada</option>
         </select>
       </div>
       <div className="filter-option n3">

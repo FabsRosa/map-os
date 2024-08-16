@@ -32,6 +32,9 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
       </p>
       <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
       <p className='p-medium'>• OS: {order.id}</p>
+      {order.dataAg ? (
+        <p className='p-medium'>• Data Agendada: {formatDate(order.dataAg)}</p>
+      ) : null}
       <p className='p-small'>• {order.desc}</p>
     </div>
   );
@@ -45,6 +48,25 @@ const InfoWindowContentMoto = ({ moto }) => (
     </p>
   </div>
 );
+
+const formatDate = (dateStr) => {
+  try {
+    const date = new Date(dateStr);
+    
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid date string");
+    }
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", error.message);
+    return null; // or return a fallback value
+  }
+}
 
 export {
   InfoWindowContentOrder,

@@ -12,6 +12,8 @@ const filterMarker = (orders, filter, tecnicos) => {
     if (filter.tipoOS) {
       if (filter.tipoOS === 'OS-cliente') {
         filterOS = order.solic == 10001;
+      } else if (filter.tipoOS === 'OS-agendada') {
+        filterOS = order.dataAg !== null;
       }
     }
 

@@ -33,7 +33,7 @@ const Map = ({ mapType }) => {
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: ''});
+  const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: '', dataAg: ''});
 
   const [type, setType] = useState(mapType);
 
@@ -60,7 +60,7 @@ const Map = ({ mapType }) => {
 
     const intervalId = setInterval(fetchMapData, 5000);
     return () => clearInterval(intervalId);
-  }, [filters]);
+  }, [filters, type]);
 
   // Atualiza lista de técnicos não-terceirizados e defeitos
   useEffect(() => {

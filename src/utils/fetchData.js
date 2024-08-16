@@ -31,6 +31,29 @@ const fetchOrdersData = async () => {
   }
   return [];
 };
+
+// Retorna informações de Alarmes
+const fetchAlarmsData = async () => {
+  try {
+    const responseOS = await apiClient.get('/maps/alarm');
+
+    if (responseOS.ok && responseOS.data) {
+      const alarmsData = responseOS.data.map(alarm => ({
+        lat: parseFloat(alarm.lat),
+        lng: parseFloat(alarm.lng),
+        clientID: alarm.idCliente,
+        clientName: alarm.nomeCliente,
+      }));
+
+      return alarmsData;
+    } else {
+      console.error('Error fetching alarms:', responseOS.problem);
+    }
+  } catch (error) {
+    console.error('Error fetching alarms:', error);
+  }
+  return [];
+};
   
 // Retorna informações de Moto
 const fetchMotosData = async () => {
@@ -46,10 +69,10 @@ const fetchMotosData = async () => {
 
       return motosData;
     } else {
-      console.error('Error fetching orders:', responseMoto.problem);
+      console.error('Error fetching motos:', responseMoto.problem);
     }
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('Error fetching motos:', error);
   }
 
   return [];
@@ -68,10 +91,10 @@ const fetchDefects = async () => {
 
       return defData;
     } else {
-      console.error('Error fetching orders:', response.problem);
+      console.error('Error fetching defects:', response.problem);
     }
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('Error fetching defects:', error);
   }
 
   return [];
@@ -97,10 +120,10 @@ const fetchTechnicians = async () => {
 
       return tecData;
     } else {
-      console.error('Error fetching orders:', response.problem);
+      console.error('Error fetching technicians:', response.problem);
     }
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('Error fetching technicians:', error);
   }
 
   return [];
@@ -108,6 +131,7 @@ const fetchTechnicians = async () => {
 
 export {
   fetchOrdersData,
+  fetchAlarmsData,
   fetchMotosData,
   fetchDefects,
   fetchTechnicians

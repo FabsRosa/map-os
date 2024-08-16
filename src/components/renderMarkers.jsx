@@ -6,7 +6,7 @@ const renderMarkerOrder = (orders, alarms, tecnicos, type, highlightedOrder, han
       <Marker
         key={order.id}
         position={{ lat: order.lat, lng: order.lng }}
-        icon={{ url: getMarkerIconOrder(highlightedOrder === order.id, order.nomeTec, tecnicos.find(tec => tec.id == order.idTec)) }}
+        icon={{ url: getMarkerIconOrder((highlightedOrder ? highlightedOrder.id === order.id : false), order.nomeTec, tecnicos.find(tec => tec.id == order.idTec)) }}
         onClick={handleMarkerClickOrder(order)}
         onMouseOut={handleMouseOutOrder}
         onMouseOver={handleMouseOverOrder(order)}
@@ -49,43 +49,43 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     return (
       <InfoWindow
         position={{
-          lat: orders.find(order => order.id === highlightedOrder).lat,
-          lng: orders.find(order => order.id === highlightedOrder).lng
+          lat: highlightedOrder.lat,
+          lng: highlightedOrder.lng
           }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentOrder order={orders.find(order => order.id === highlightedOrder)} />
+        <InfoWindowContentOrder order={highlightedOrder} />
       </InfoWindow>
     )
   } else if (highlightedMoto) {
     return (
       <InfoWindow
         position={{
-          lat: motos.find(moto => moto.id === highlightedMoto).lat,
-          lng: motos.find(moto => moto.id === highlightedMoto).lng
+          lat: highlightedMoto.lat,
+          lng: highlightedMoto.lng
           }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentMoto moto={motos.find(moto => moto.id === highlightedMoto)} />
+        <InfoWindowContentMoto moto={highlightedMoto} />
       </InfoWindow>
     )
   } else if (highlightedAlarm) {
     return (
       <InfoWindow
         position={{
-          lat: alarms.find(alarm => alarm.clientID === highlightedAlarm).lat,
-          lng: alarms.find(alarm => alarm.clientID === highlightedAlarm).lng
+          lat: highlightedAlarm.lat,
+          lng: highlightedAlarm.lng
           }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentAlarm alarm={alarms.find(alarm => alarm.clientID === highlightedAlarm)} />
+        <InfoWindowContentAlarm alarm={highlightedAlarm} />
       </InfoWindow>
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, onTecChange, tecnicos) => {
-  return (
-    selectedOrder && (
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos) => {
+  if (selectedOrder) {
+    return (
       <InfoWindow
         position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
@@ -100,7 +100,16 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, onTe
         />
       </InfoWindow>
     )
-  )
+  } else if (selectedAlarm) {
+    <InfoWindow
+      position={{ lat: selectedAlarm.lat, lng: selectedAlarm.lng }}
+      options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+    >
+      <InfoWindowContentAlarm
+        alarm={selectedAlarm}
+      />
+    </InfoWindow>
+  }
 }
 
 // Design da dialog de informações de OS

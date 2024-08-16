@@ -105,11 +105,11 @@ const Map = ({ mapType }) => {
   }, []);
 
   // Apresenta dialog de informações ao passar o mouse em cima de um marker
-  const handleMouseOverOrder = useCallback((order) => () => setHighlightedOrder(order.id), []);
+  const handleMouseOverOrder = useCallback((order) => () => setHighlightedOrder(order), []);
   const handleMouseOutOrder = useCallback(() => setHighlightedOrder(null), []);
-  const handleMouseOverAlarm = useCallback((alarm) => () => setHighlightedAlarm(alarm.clientID), []);
+  const handleMouseOverAlarm = useCallback((alarm) => () => setHighlightedAlarm(alarm), []);
   const handleMouseOutAlarm = useCallback(() => setHighlightedAlarm(null), []);
-  const handleMotoMouseOver = useCallback((moto) => () => setHighlightedMoto(moto.id), []);
+  const handleMotoMouseOver = useCallback((moto) => () => setHighlightedMoto(moto), []);
   const handleMotoMouseOut = useCallback(() => setHighlightedMoto(null), []);
 
   // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
@@ -166,7 +166,7 @@ const Map = ({ mapType }) => {
         {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, onTecChange, tecnicos)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos)}
 
       </GoogleMap>
     </div>

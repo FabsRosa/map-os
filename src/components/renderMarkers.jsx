@@ -1,6 +1,6 @@
 import { InfoWindow, Marker } from '@react-google-maps/api';
 
-const renderMarkerOrder = (orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
+const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
     return orders.map(order => (
       <Marker
@@ -37,14 +37,14 @@ const renderMarkerMoto = (motos, handleMotoMouseOut, handleMotoMouseOver) => {
     <Marker
       key={moto.id}
       position={{ lat: moto.lat, lng: moto.lng }}
-      icon={{ url: `/icon/motorcycling.png` }}
+      icon={{ url: getMarkerIconMoto(moto.nomeTatico)}}
       onMouseOut={handleMotoMouseOut}
       onMouseOver={handleMotoMouseOver(moto)}
     />
   ))
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos, handleCalculateDistance) => {
   if (highlightedOrder) {
     return (
       <InfoWindow
@@ -78,12 +78,12 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentAlarm alarm={highlightedAlarm} />
+        <InfoWindowContentAlarm alarm={highlightedAlarm} motos={motos} handleCalculateDistance={handleCalculateDistance}/>
       </InfoWindow>
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos) => {
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -101,14 +101,18 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
       </InfoWindow>
     )
   } else if (selectedAlarm) {
-    <InfoWindow
-      position={{ lat: selectedAlarm.lat, lng: selectedAlarm.lng }}
-      options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-    >
-      <InfoWindowContentAlarm
-        alarm={selectedAlarm}
-      />
-    </InfoWindow>
+      return (
+      <InfoWindow
+        position={{ lat: selectedAlarm.lat, lng: selectedAlarm.lng }}
+        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+      >
+        <InfoWindowContentAlarm
+          key={selectedAlarm.clientID + selectedAlarm.clientName}
+          alarm={selectedAlarm}
+          motos={motos}
+        />
+      </InfoWindow>
+    )
   }
 }
 
@@ -155,13 +159,16 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
 };
 
 // Design da dialog de informações de Alarmes
-const InfoWindowContentAlarm = ({ alarm }) => (
+const InfoWindowContentAlarm = ({ alarm, motos, handleCalculateDistance }) => {
+
+  return (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
     <p className='p-big alarm'>
       • Cliente: {alarm.clientID} · <b>{alarm.clientName}</b>
     </p>
+
   </div>
-);
+)};
 
 // Design da dialog de informações de Moto
 const InfoWindowContentMoto = ({ moto }) => (
@@ -169,6 +176,9 @@ const InfoWindowContentMoto = ({ moto }) => (
     <p className='p-big moto'>
       • Placa: <b>{moto.id}</b>
     </p>
+    {moto.nomeTatico ? (
+        <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
+      ) : null}
   </div>
 );
 
@@ -221,8 +231,17 @@ const getMarkerIconAlarm = (nomeCliente, count) => {
   )}.png`;
 };
 
+// Retorna endereço do ícone
+const getMarkerIconMoto = (nomeTatico) => {
+  return `/icon/motorcycling${nomeTatico ? (
+    `-yellow` // First letter of the name
+  ) : (
+    ``
+  )}.png`;
+};
+
 export {
-  renderMarkerOrder,
+  renderMarkerPin,
   renderMarkerMoto,
   renderHighlightedDialog,
   renderSelectedDialog

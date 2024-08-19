@@ -58,13 +58,14 @@ const fetchAlarmsData = async () => {
 // Retorna informações de Moto
 const fetchMotosData = async () => {
   try {
-    const responseMoto = await apiClient.get('/maps/vehicleLocation');
+    const responseMoto = await apiClient.get('/maps/motoLocation');
 
     if (responseMoto.ok && responseMoto.data) {
       const motosData = responseMoto.data.map(moto => ({
         id: moto.placa,
         lat: parseFloat(moto.lat),
         lng: parseFloat(moto.lng),
+        nomeTatico: moto.nomeTatico ? moto.nomeTatico : null,
       }));
 
       return motosData;

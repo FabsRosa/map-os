@@ -1,4 +1,6 @@
 import { InfoWindow, Marker } from '@react-google-maps/api';
+import { calculateDistance } from '../utils/distanceCalculator';
+import React, { useState, useEffect } from 'react';
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
@@ -44,7 +46,7 @@ const renderMarkerMoto = (motos, handleMotoMouseOut, handleMotoMouseOver) => {
   ))
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos, handleCalculateDistance) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos) => {
   if (highlightedOrder) {
     return (
       <InfoWindow
@@ -78,7 +80,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentAlarm alarm={highlightedAlarm} motos={motos} handleCalculateDistance={handleCalculateDistance}/>
+        <InfoWindowContentAlarm alarm={highlightedAlarm} motos={motos}/>
       </InfoWindow>
     )
   }
@@ -128,7 +130,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
           src='/icon/link.png' 
           alt='Edit' 
           style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-          onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=15&t=m`, '_blank')}
+          onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
         />
       </span>
       <p className='p-medium'>
@@ -165,21 +167,72 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
 };
 
 // Design da dialog de informações de Alarmes
-const InfoWindowContentAlarm = ({ alarm, motos, handleCalculateDistance }) => {
+const InfoWindowContentAlarm = ({ alarm, motos }) => {
+  const [distances, setDistances] = useState([]);
+  const locationAlarm = { lat: alarm.lat, lng: alarm.lng };
+
+  useEffect(() => {
+    const fetchDistances = async () => {
+      const listDistance = await Promise.all(
+        motos
+          .filter(moto => moto.nomeTatico !== null)  // Filter out null values first
+          .map(async moto => {
+            const locationMoto = { lat: moto.lat, lng: moto.lng };
+            try {
+              const result = await calculateDistance(locationMoto, locationAlarm);
+              return result ? { distance: result.distance, duration: result.duration, nomeTatico: moto.nomeTatico } : null;
+            } catch (error) {
+              console.error('Error calculating distance:', error);
+              return null;
+            }
+          })
+      );
+
+      setDistances(listDistance);
+    };
+
+    fetchDistances();
+  }, [alarm, motos]);
+
+  // Wait for the distances to be calculated before rendering
+  if (distances.length === 0) {
+    return (
+      <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+        <span className='p-big alarm'>
+          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+          <img 
+            src='/icon/link.png' 
+            alt='Edit' 
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+            onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
+          />
+        </span>
+        <div className='p-medium'>Calculando distâncias...</div>
+      </div>
+    );
+  }
 
   return (
-  <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <span className='p-big alarm'>
-          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+    <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+      <span className='p-big alarm'>
+        • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
         <img 
           src='/icon/link.png' 
           alt='Edit' 
           style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-          onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=15&t=m`, '_blank')}
+          onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
-  </div>
-)};
+      {distances.map((distance, index) => (
+        distance && (
+          <div className='p-medium alarm' key={index}>
+            <b>{distance.nomeTatico}:</b> {`${distance.distance}, ${distance.duration}.`}
+          </div>
+        )
+      ))}
+    </div>
+  );
+};
 
 // Design da dialog de informações de Moto
 const InfoWindowContentMoto = ({ moto }) => (

@@ -83,10 +83,18 @@
 }
 
 .filter-option {
-  padding: 12px 15px;
+  padding: 9px 15px;
   display: block;
 }
 
 .filter-option.n1 {
   margin-top: 10px;
+}
+
+.custom-textbox.filter {
+  width: 100%; /* Make the input box fill the entire width */
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+  padding: 8px; /* Adjust padding as needed */
+  border: 1px solid #ccc; /* Add a border for visual styling */
+  border-radius: 4px; /* Optional: Add border-radius for rounded corners */
 }

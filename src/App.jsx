@@ -10,8 +10,8 @@ const App = () => {
       <Router>
           <Routes>
             <Route path="/" element={<Map mapType="OS" />} />
-            <Route path="/mapOS" element={<Map mapType="OS" />} />
-            <Route path="/mapAlarm" element={<Map mapType="Alarm" />} />
+            <Route path="/OS" element={<Map mapType="OS" />} />
+            <Route path="/Alarm" element={<Map mapType="Alarm" />} />
           </Routes>
         </Router>
       </ErrorBoundary>

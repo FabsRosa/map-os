@@ -5,7 +5,6 @@ import filterMarker from './utils/filterMarker';
 import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
 import {renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog} from './components/renderMarkers';
 import renderSidebar from './components/Sidebar';
-import { calculateDistance } from './utils/distanceCalculator';
 import './styles/Map.css';
 
 const mapContainerStyle = {
@@ -36,7 +35,7 @@ const Map = ({ mapType }) => {
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: '', dataAg: ''});
+  const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: '', cliente: ''});
 
   const [type, setType] = useState(mapType);
 
@@ -47,18 +46,6 @@ const Map = ({ mapType }) => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(prevState => !prevState);
-  };
-
-  const handleCalculateDistance = (origin, destination) => {
-    calculateDistance(origin, destination, (error, result) => {
-      if (!error) {
-        console.log(`Distance: ${result.distance}, Duration: ${result.duration}`);
-        return {distance: result.distance, duration: result.duration};
-      } else {
-        console.error('Failed to calculate distance:', error);
-        return null;
-      }
-    });
   };
 
   // Atualiza dados de OS e motos
@@ -152,16 +139,19 @@ const Map = ({ mapType }) => {
   };
 
   const mapStyles = [
-    { featureType: 'poi', stylers: [{ visibility: 'off' }] }, // Removes points of interest
-    { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes road labels
-    { featureType: 'transit', stylers: [{ visibility: 'off' }] }, // Removes transit stations and lines
-    { featureType: 'landscape', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes landscape labels
-    { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes water labels
+    { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+    { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+    { featureType: 'landscape', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+    { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
   ];
   
   // Conditionally add administrative labels style
   if (type === 'OS') {
-    mapStyles.push({ featureType: 'administrative', stylers: [{ visibility: 'off' }] });
+    mapStyles.push(
+      { featureType: 'administrative', stylers: [{ visibility: 'off' }] },
+      { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+    );
+    
   }
 
   // Processamento do mapa
@@ -172,7 +162,7 @@ const Map = ({ mapType }) => {
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={initialMapCenter}
-        zoom={14}
+        zoom={13}
         options={{
           styles: mapStyles,
           mapTypeControl: false,
@@ -195,7 +185,7 @@ const Map = ({ mapType }) => {
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}
         
-        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos, handleCalculateDistance)}
+        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos)}
         {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos)}
 
       </GoogleMap>

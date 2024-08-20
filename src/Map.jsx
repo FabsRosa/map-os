@@ -185,7 +185,7 @@ const Map = ({ mapType }) => {
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}
         
-        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos)}
+        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos)}
         {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos)}
 
       </GoogleMap>

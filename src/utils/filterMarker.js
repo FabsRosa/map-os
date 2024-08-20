@@ -9,15 +9,15 @@ const filterMarker = (orders, filter, tecnicos) => {
       let filterCli = true;
 
       if (filter.tipoOS && filter.tipoOS.length > 0) {
-        let OSCli = true;
-        let OSAg = true;
+        let OSCli = false;
+        let OSAg = false;
         if (filter.tipoOS.includes('OS Cliente')) {
           OSCli = order.solic == 10001;
         }
         if (filter.tipoOS.includes('OS Agendada')) {
           OSAg = order.dataAg !== null;
         }
-        filterOS = OSCli && OSAg;
+        filterOS = OSCli || OSAg;
       }
   
       if (filter.defeito && filter.defeito.length > 0) {

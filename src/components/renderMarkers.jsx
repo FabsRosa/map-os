@@ -46,14 +46,14 @@ const renderMarkerMoto = (motos, handleMotoMouseOut, handleMotoMouseOver) => {
   ))
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, orders, alarms, motos) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos) => {
   if (highlightedOrder) {
     return (
       <InfoWindow
         position={{
           lat: highlightedOrder.lat,
           lng: highlightedOrder.lng
-          }}
+        }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
         <InfoWindowContentOrder order={highlightedOrder} />
@@ -65,7 +65,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
         position={{
           lat: highlightedMoto.lat,
           lng: highlightedMoto.lng
-          }}
+        }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
         <InfoWindowContentMoto moto={highlightedMoto} />
@@ -77,7 +77,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
         position={{
           lat: highlightedAlarm.lat,
           lng: highlightedAlarm.lng
-          }}
+        }}
         options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
         <InfoWindowContentAlarm alarm={highlightedAlarm} motos={motos}/>

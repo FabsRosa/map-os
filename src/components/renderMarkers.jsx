@@ -122,9 +122,15 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-      <p className='p-big'>
-        • Cliente: {order.clientID} · <b>{order.clientName}</b>
-      </p>
+      <span className='p-big'>
+          • Cliente: {order.clientID} · <b>{order.clientName}&nbsp;</b>
+        <img 
+          src='/icon/link.png' 
+          alt='Edit' 
+          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+          onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=15&t=m`, '_blank')}
+        />
+      </span>
       <p className='p-medium'>
         • Técnico:&nbsp;
         {isEditing ? (
@@ -163,10 +169,15 @@ const InfoWindowContentAlarm = ({ alarm, motos, handleCalculateDistance }) => {
 
   return (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <p className='p-big alarm'>
-      • Cliente: {alarm.clientID} · <b>{alarm.clientName}</b>
-    </p>
-
+    <span className='p-big alarm'>
+          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+        <img 
+          src='/icon/link.png' 
+          alt='Edit' 
+          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+          onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=15&t=m`, '_blank')}
+        />
+      </span>
   </div>
 )};
 

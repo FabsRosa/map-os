@@ -40,6 +40,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <br />
             <select
               className='custom-select filter'
+              value={filters.tipoOS ? filters.tipoOS : ''}
               onChange={(e) => onFilterChange(orders, { ...filters, tipoOS: e.target.value }, tecnicos)}
             >
               <option value="">Sem filtro</option>
@@ -52,6 +53,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <br />
             <select
               className='custom-select filter'
+              value={filters.defeito ? filters.defeito : ''}
               onChange={(e) => onFilterChange(orders, { ...filters, defeito: e.target.value }, tecnicos)}
             >
               <option value="">Sem filtro</option>
@@ -69,6 +71,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <br />
             <select
               className='custom-select filter'
+              value={filters.tecnico ? filters.tecnico : ''}
               onChange={(e) => onFilterChange(orders, { ...filters, tecnico: e.target.value }, tecnicos)}
             >
             <option value="">Sem filtro</option>

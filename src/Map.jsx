@@ -151,6 +151,19 @@ const Map = ({ mapType }) => {
     setOrders(ordersFiltered);
   };
 
+  const mapStyles = [
+    { featureType: 'poi', stylers: [{ visibility: 'off' }] }, // Removes points of interest
+    { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes road labels
+    { featureType: 'transit', stylers: [{ visibility: 'off' }] }, // Removes transit stations and lines
+    { featureType: 'landscape', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes landscape labels
+    { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] }, // Removes water labels
+  ];
+  
+  // Conditionally add administrative labels style
+  if (type === 'OS') {
+    mapStyles.push({ featureType: 'administrative', stylers: [{ visibility: 'off' }] });
+  }
+
   // Processamento do mapa
   return isLoaded ? (
     <div>
@@ -159,21 +172,25 @@ const Map = ({ mapType }) => {
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={initialMapCenter}
-        zoom={12}
+        zoom={14}
         options={{
-          styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
+          styles: mapStyles,
           mapTypeControl: false,
         }}
         onClick={handleMapClick}
       >
-        {/* <Marker
+        {<Marker
           key={1}
           position={{
             lat: -15.59163,
             lng: -56.08009,
           }}
-          icon={{ url: `/icon/Inviolavel.png` }}
-        /> */}
+          icon={{
+            url: `/icon/Inviolavel.png`,
+            scaledSize: new window.google.maps.Size(30, 30) // Adjust the width and height as needed
+          }}
+          zIndex={google.maps.Marker.MAX_ZINDEX + 1}
+        />}
 
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}

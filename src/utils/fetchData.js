@@ -6,21 +6,40 @@ const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orang
 const fetchOrdersData = async () => {
   try {
     const responseOS = await apiClient.get('/maps/OS');
-
+    let lastClientID = '';
+    let count = 0;
+    
     if (responseOS.ok && responseOS.data) {
-      const ordersData = responseOS.data.map(order => ({
-        id: order.idOS.toString(),
-        lat: parseFloat(order.lat),
-        lng: parseFloat(order.lng),
-        clientID: order.idCliente,
-        clientName: order.nomeCliente,
-        def: order.defeito,
-        desc: order.descricao,
-        idTec: order.idTec,
-        nomeTec: order.nomeTec,
-        solic: order.solic,
-        dataAg: order.dataAg,
-      }));
+      const ordersData = responseOS.data.map(order => {
+        if (lastClientID === order.idCliente) {
+          count++;
+          const angle = count * 30; // 30 degrees for each subsequent marker
+          const radians = (angle * Math.PI) / 180; // Convert angle to radians
+          const radiusIncrement = 0.00002; // Fixed distance for each step
+          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
+    
+          // Adjust lat and lng slightly to create the linear spiral effect without overlap
+          order.lat = parseFloat(order.lat) + radius * Math.sin(radians);
+          order.lng = parseFloat(order.lng) + radius * Math.cos(radians);
+        } else {
+          lastClientID = order.idCliente;
+          count = 0;
+        }
+
+        return {
+          id: order.idOS.toString(),
+          lat: parseFloat(order.lat),
+          lng: parseFloat(order.lng),
+          clientID: order.idCliente,
+          clientName: order.nomeCliente,
+          def: order.defeito,
+          desc: order.descricao,
+          idTec: order.idTec,
+          nomeTec: order.nomeTec,
+          solic: order.solic,
+          dataAg: order.dataAg,
+        };
+      });
 
       return ordersData;
     } else {
@@ -36,15 +55,38 @@ const fetchOrdersData = async () => {
 const fetchAlarmsData = async () => {
   try {
     const responseOS = await apiClient.get('/maps/alarm');
-
+    let lastClientID = '';
+    let count = 0;
+    
     if (responseOS.ok && responseOS.data) {
-      const alarmsData = responseOS.data.map(alarm => ({
-        lat: parseFloat(alarm.lat),
-        lng: parseFloat(alarm.lng),
-        clientID: alarm.idCliente,
-        clientName: alarm.nomeCliente,
-      }));
-
+      const alarmsData = responseOS.data.map(alarm => {
+        if (lastClientID === alarm.idCliente) {
+          count++;
+          const angle = count * 30; // 30 degrees for each subsequent marker
+          const radians = (angle * Math.PI) / 180; // Convert angle to radians
+          const radiusIncrement = 0.00002; // Fixed distance for each step
+          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
+    
+          // Adjust lat and lng slightly to create the linear spiral effect without overlap
+          alarm.lat = parseFloat(alarm.lat) + radius * Math.sin(radians);
+          alarm.lng = parseFloat(alarm.lng) + radius * Math.cos(radians);
+        } else {
+          lastClientID = alarm.idCliente;
+          count = 0;
+        }
+    
+        return {
+          lat: parseFloat(alarm.lat),
+          lng: parseFloat(alarm.lng),
+          clientID: alarm.idCliente,
+          clientName: alarm.nomeCliente,
+          codEvento: alarm.codEvento,
+          dtRecebido: alarm.dtRecebido,
+          dtDeslocamento: alarm.dtDeslocamento,
+          dtLocal: alarm.dtLocal,
+        };
+      });
+      
       return alarmsData;
     } else {
       console.error('Error fetching alarms:', responseOS.problem);

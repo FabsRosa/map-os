@@ -16,6 +16,7 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handl
     ))
   } else if (type === 'Alarm') {
     let count = 0;
+    let id = 0;
     return alarms.map(alarm => {
       if (count > 7) {
         count = 0;
@@ -23,9 +24,9 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handl
 
       return (
       <Marker
-        key={alarm.clientID}
+        key={alarm.clientID + id++}
         position={{ lat: alarm.lat, lng: alarm.lng }}
-        icon={{ url: getMarkerIconAlarm(alarm.clientName, count++) }}
+        icon={{ url: getMarkerIconAlarm(alarm, count++) }}
         onClick={handleMarkerClickAlarm(alarm)}
         onMouseOut={handleMouseOutAlarm}
         onMouseOver={handleMouseOverAlarm(alarm)}
@@ -207,6 +208,10 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
             onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
           />
         </span>
+        <div className='p-medium'>• Código Evento: {alarm.codEvento}</div>
+        <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${alarm.dtRecebido} min` : null}</div>
+      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${alarm.dtDeslocamento} min` : null}</div>
+      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${alarm.dtLocal} min` : null}</div>
         <div className='p-medium'>Calculando distâncias...</div>
       </div>
     );
@@ -223,6 +228,10 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
+      <div className='p-medium'>• Código Evento: {alarm.codEvento}</div>
+      <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${alarm.dtRecebido} min` : null}</div>
+      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${alarm.dtDeslocamento} min` : null}</div>
+      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${alarm.dtLocal} min` : null}</div>
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
@@ -267,32 +276,61 @@ const formatDate = (dateStr) => {
 
 // Retorna endereço do ícone, com base no técnico designado
 const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
-  const color = tec ? (tec.color ? tec.color : 'yellow' ) : 'yellow';
-  const isTerceirizado = color == 'yellow';
-  return `/pin/${color}${isHighlighted ? (
-      `-dot`
-    ) : (
-      `${!isTerceirizado ? (
-        nomeTec ? (
-          `-${nomeTec.charAt(0).toLowerCase()}` // First letter of the name
-        ) : (
-          ``
-        )
-      ) : (
-        `-t` // Terceirizado
-      )}`
-    )}.png`;
-};
+  let color;
+  let isTerceirizado = false;
+  
+  if (tec) {
+    if (tec.color) {
+      color = tec.color;
+    } else {
+      color = 'yellow';
+      isTerceirizado = true;
+    }
+  } else {
+    color = 'yellow';
+    isTerceirizado = true;
+  }
+
+  let iconPath = `/pin/${color}`;
+
+  if (isHighlighted) {
+    iconPath += `-dot`;
+  } else {
+    if (!isTerceirizado) {
+      if (nomeTec) {
+        iconPath += `-${nomeTec.charAt(0).toLowerCase()}`;
+      }
+    } else {
+      iconPath += `-t`; // Terceirizado
+    }
+  }
+
+  iconPath += `.png`;
+  
+  return iconPath;
+}
 
 // Retorna endereço do ícone
-const getMarkerIconAlarm = (nomeCliente, count) => {
+const getMarkerIconAlarm = (alarm, count) => {
   const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
+  let iconPath = `/pin/`;
 
-  return `/pin/${pinColors[count]}${nomeCliente ? (
-    `-${nomeCliente.charAt(0).toLowerCase()}` // First letter of the name
-  ) : (
-    ``
-  )}.png`;
+  if (!alarm.dtRecebido && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+    iconPath += 'yellow';
+  } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+    iconPath += 'red';
+  } else if (alarm.dtLocal === null) {
+    iconPath += 'blue';
+  } else {
+    iconPath += 'green';
+  }
+
+  if (alarm.clientName) {
+    iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
+  }
+
+  iconPath += '.png';
+  return iconPath;
 };
 
 // Retorna endereço do ícone

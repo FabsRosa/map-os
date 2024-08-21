@@ -315,7 +315,7 @@ const getMarkerIconAlarm = (alarm, count) => {
   const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
-  if (!alarm.dtRecebido && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+  if ((!alarm.tempoRecebido || alarm.tempoRecebido) < 10 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'yellow';
   } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'red';

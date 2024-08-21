@@ -82,8 +82,11 @@ const fetchAlarmsData = async () => {
           clientName: alarm.nomeCliente,
           codEvento: alarm.codEvento,
           dtRecebido: alarm.dtRecebido,
+          tempoRecebido: alarm.tempoRecebido,
           dtDeslocamento: alarm.dtDeslocamento,
+          tempoDeslocamento: alarm.tempoDeslocamento,
           dtLocal: alarm.dtLocal,
+          tempoLocal: alarm.tempoLocal,
         };
       });
       

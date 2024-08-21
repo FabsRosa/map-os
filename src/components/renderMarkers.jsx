@@ -208,10 +208,10 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
             onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
           />
         </span>
-        <div className='p-medium'>• Código Evento: {alarm.codEvento}</div>
-        <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${alarm.dtRecebido} min` : null}</div>
-      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${alarm.dtDeslocamento} min` : null}</div>
-      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${alarm.dtLocal} min` : null}</div>
+        <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
+        <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${formatTime(alarm.dtRecebido)}, ${alarm.tempoRecebido} min` : null}</div>
+      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${formatTime(alarm.dtDeslocamento)}, ${alarm.tempoDeslocamento} min` : null}</div>
+      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${formatTime(alarm.dtLocal)}, ${alarm.tempoLocal} min` : null}</div>
         <div className='p-medium'>Calculando distâncias...</div>
       </div>
     );
@@ -228,10 +228,10 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
-      <div className='p-medium'>• Código Evento: {alarm.codEvento}</div>
-      <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${alarm.dtRecebido} min` : null}</div>
-      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${alarm.dtDeslocamento} min` : null}</div>
-      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${alarm.dtLocal} min` : null}</div>
+      <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
+      <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${formatTime(alarm.dtRecebido)}, ${alarm.tempoRecebido} min` : null}</div>
+      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${formatTime(alarm.dtDeslocamento)}, ${alarm.tempoDeslocamento} min` : null}</div>
+      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${formatTime(alarm.dtLocal)}, ${alarm.tempoLocal} min` : null}</div>
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
@@ -341,6 +341,22 @@ const getMarkerIconMoto = (nomeTatico) => {
     ``
   )}.png`;
 };
+
+const formatTime = (isoString) => {
+  try {
+    const date = new Date(isoString);
+
+    // Extract hours and minutes
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  
+    // Format as HH:MM
+    return `${hours}:${minutes}h`;
+  } catch (error) {
+    console.error("Error while converting string of time.")
+    return '';
+  }
+}
 
 export {
   renderMarkerPin,

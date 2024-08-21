@@ -2,7 +2,7 @@ import { InfoWindow, Marker } from '@react-google-maps/api';
 import { calculateDistance } from '../utils/distanceCalculator';
 import React, { useState, useEffect } from 'react';
 
-const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
+const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
     return orders.map(order => (
       <Marker
@@ -15,18 +15,13 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, handl
       />
     ))
   } else if (type === 'Alarm') {
-    let count = 0;
     let id = 0;
     return alarms.map(alarm => {
-      if (count > 7) {
-        count = 0;
-      }
-
       return (
       <Marker
         key={alarm.clientID + id++}
         position={{ lat: alarm.lat, lng: alarm.lng }}
-        icon={{ url: getMarkerIconAlarm(alarm, count++) }}
+        icon={{ url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm) }}
         onClick={handleMarkerClickAlarm(alarm)}
         onMouseOut={handleMouseOutAlarm}
         onMouseOver={handleMouseOverAlarm(alarm)}
@@ -311,8 +306,8 @@ const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
 }
 
 // Retorna endereço do ícone
-const getMarkerIconAlarm = (alarm, count) => {
-  const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
+const getMarkerIconAlarm = (isHighlighted, alarm) => {
+  // const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
   if ((!alarm.tempoRecebido || alarm.tempoRecebido) < 10 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
@@ -325,7 +320,9 @@ const getMarkerIconAlarm = (alarm, count) => {
     iconPath += 'green';
   }
 
-  if (alarm.clientName) {
+  if (isHighlighted) {
+    iconPath += `-dot`;
+  } else if (alarm.clientName) {
     iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
   }
 
@@ -349,9 +346,10 @@ const formatTime = (isoString) => {
     // Extract hours and minutes
     const hours = date.getUTCHours().toString().padStart(2, '0');
     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
   
     // Format as HH:MM
-    return `${hours}:${minutes}h`;
+    return `${hours}:${minutes}:${seconds}`;
   } catch (error) {
     console.error("Error while converting string of time.")
     return '';

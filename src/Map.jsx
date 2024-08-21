@@ -182,7 +182,7 @@ const Map = ({ mapType }) => {
           zIndex={google.maps.Marker.MAX_ZINDEX + 1}
         />}
 
-        {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
+        {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos)}

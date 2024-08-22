@@ -157,7 +157,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
         <p className='p-medium'>• Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}</p>
       ) : null}
       {order.dataAg ? (
-        <p className='p-medium'>• Data Agendada: <b>{formatDate(order.dataAg)}</b></p>
+        <p className='p-medium'>• Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}</p>
       ) : null}
       <p className='p-medium'>• OS: {order.id}</p>
       <p className='p-small'>• {order.desc}</p>

@@ -210,21 +210,21 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
-            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{alarm.tempoRecebido} min</b>
+            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{!alarm.tempoRecebido || alarm.tempoRecebido === 1 ? `${alarm.tempoRecebido} min.` : `${alarm.tempoRecebido} mins.`}</b>
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{alarm.tempoDeslocamento} min</b>
+            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{!alarm.tempoDeslocamento || alarm.tempoDeslocamento === 1 ? `${alarm.tempoDeslocamento} min.` : `${alarm.tempoDeslocamento} mins.`}</b>
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtLocal !== null ? (
           <span>
-            • Local: {formatTime(alarm.dtLocal)}, <b>{alarm.tempoLocal} min</b>
+            • Local: {formatTime(alarm.dtLocal)}, <b>{!alarm.tempoLocal || alarm.tempoLocal === 1 ? `${alarm.tempoLocal} min.` : `${alarm.tempoLocal} mins.`}</b>
           </span>
         ) : null}
       </div>
@@ -248,21 +248,21 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
-            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{alarm.tempoRecebido} min</b>
+            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{!alarm.tempoRecebido || alarm.tempoRecebido === 1 ? `${alarm.tempoRecebido} min.` : `${alarm.tempoRecebido} mins.`}</b>
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{alarm.tempoDeslocamento} min</b>
+            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{!alarm.tempoDeslocamento || alarm.tempoDeslocamento === 1 ? `${alarm.tempoDeslocamento} min.` : `${alarm.tempoDeslocamento} mins.`}</b>
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtLocal !== null ? (
           <span>
-            • Local: {formatTime(alarm.dtLocal)}, <b>{alarm.tempoLocal} min</b>
+            • Local: {formatTime(alarm.dtLocal)}, <b>{!alarm.tempoLocal || alarm.tempoLocal === 1 ? `${alarm.tempoLocal} min.` : `${alarm.tempoLocal} mins.`}</b>
           </span>
         ) : null}
       </div>

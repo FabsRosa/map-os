@@ -27,11 +27,7 @@ const filterMarker = (orders, filter, tecnicos) => {
     }
 
     if (filter.tecnico && filter.tecnico.length > 0) {
-      if (filter.tecnico.includes('TERCEIRIZADO')) {
-          filterTec = !tecnicos.some(tec => tec.id === order.idTec);
-      } else {
-          filterTec = filter.tecnico.includes(order.idTec);
-      }
+      filterTec = (filter.tecnico.includes('TERCEIRIZADO') && !tecnicos.some(tec => tec.id === order.idTec)) || filter.tecnico.includes(order.idTec);
     }
 
     if (filter.cliente) {

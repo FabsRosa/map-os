@@ -103,17 +103,22 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <br />
             <Select
               isMulti
-              options={tecnicos.map(tec => ({
-                value: tec.id,
-                label: tec.nome
-              }))}
-              value={tecnicos
-                .map(tec => ({
+              options={[
+                ...tecnicos.map(tec => ({
                   value: tec.id,
                   label: tec.nome
-                }))
-                .filter(option => filters.tecnico.includes(option.value))
-              }
+                })),
+                { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' } // Add the new option here
+              ]}
+              value={[
+                ...tecnicos
+                  .map(tec => ({
+                    value: tec.id,
+                    label: tec.nome
+                  }))
+                  .filter(option => filters.tecnico.includes(option.value)),
+                filters.tecnico.includes('TERCEIRIZADO') ? { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' } : null
+              ].filter(Boolean)} // Filter out null values
               onChange={(selectedOptions) => {
                 const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
                 onFilterChange(orders, { ...filters, tecnico: selectedValues }, tecnicos);

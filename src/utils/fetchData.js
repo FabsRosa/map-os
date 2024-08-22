@@ -37,6 +37,7 @@ const fetchOrdersData = async () => {
           idTec: order.idTec,
           nomeTec: order.nomeTec,
           solic: order.solic,
+          dataAb: order.dataAb,
           dataAg: order.dataAg,
         };
       });

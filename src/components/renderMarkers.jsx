@@ -153,10 +153,13 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
         )}
       </p>
       <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
-      <p className='p-medium'>• OS: {order.id}</p>
-      {order.dataAg ? (
-        <p className='p-medium'>• Data Agendada: {formatDate(order.dataAg)}</p>
+      {order.dataAb ? (
+        <p className='p-medium'>• Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}</p>
       ) : null}
+      {order.dataAg ? (
+        <p className='p-medium'>• Data Agendada: <b>{formatDate(order.dataAg)}</b></p>
+      ) : null}
+      <p className='p-medium'>• OS: {order.id}</p>
       <p className='p-small'>• {order.desc}</p>
     </div>
   );
@@ -194,21 +197,39 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
   if (distances.length === 0) {
     return (
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-        <span className='p-big alarm'>
-          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
-          <img 
-            src='/icon/link.png' 
-            alt='Edit' 
-            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-            onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
-          />
-        </span>
-        <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
-        <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${formatTime(alarm.dtRecebido)}, ${alarm.tempoRecebido} min` : null}</div>
-      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${formatTime(alarm.dtDeslocamento)}, ${alarm.tempoDeslocamento} min` : null}</div>
-      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${formatTime(alarm.dtLocal)}, ${alarm.tempoLocal} min` : null}</div>
-        <div className='p-medium'>Calculando distâncias...</div>
+      <span className='p-big alarm'>
+        • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+        <img 
+          src='/icon/link.png' 
+          alt='Edit' 
+          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+          onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
+        />
+      </span>
+      <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
+      <div className='p-medium'>
+        {alarm.dtRecebido !== null ? (
+          <span>
+            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{alarm.tempoRecebido} min</b>
+          </span>
+        ) : null}
       </div>
+      <div className='p-medium'>
+        {alarm.dtDeslocamento !== null ? (
+          <span>
+            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{alarm.tempoDeslocamento} min</b>
+          </span>
+        ) : null}
+      </div>
+      <div className='p-medium'>
+        {alarm.dtLocal !== null ? (
+          <span>
+            • Local: {formatTime(alarm.dtLocal)}, <b>{alarm.tempoLocal} min</b>
+          </span>
+        ) : null}
+      </div>
+      <div className='p-medium'>Calculando distâncias...</div>
+    </div>
     );
   }
 
@@ -224,9 +245,27 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         />
       </span>
       <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
-      <div className='p-medium'>{alarm.dtRecebido !== null ? `• Recebido: ${formatTime(alarm.dtRecebido)}, ${alarm.tempoRecebido} min` : null}</div>
-      <div className='p-medium'>{alarm.dtDeslocamento !== null ? `• Deslocamento: ${formatTime(alarm.dtDeslocamento)}, ${alarm.tempoDeslocamento} min` : null}</div>
-      <div className='p-medium'>{alarm.dtLocal !== null ? `• Local: ${formatTime(alarm.dtLocal)}, ${alarm.tempoLocal} min` : null}</div>
+      <div className='p-medium'>
+        {alarm.dtRecebido !== null ? (
+          <span>
+            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{alarm.tempoRecebido} min</b>
+          </span>
+        ) : null}
+      </div>
+      <div className='p-medium'>
+        {alarm.dtDeslocamento !== null ? (
+          <span>
+            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{alarm.tempoDeslocamento} min</b>
+          </span>
+        ) : null}
+      </div>
+      <div className='p-medium'>
+        {alarm.dtLocal !== null ? (
+          <span>
+            • Local: {formatTime(alarm.dtLocal)}, <b>{alarm.tempoLocal} min</b>
+          </span>
+        ) : null}
+      </div>
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
@@ -249,25 +288,6 @@ const InfoWindowContentMoto = ({ moto }) => (
       ) : null}
   </div>
 );
-
-const formatDate = (dateStr) => {
-  try {
-    const date = new Date(dateStr);
-    
-    if (isNaN(date.getTime())) {
-      throw new Error("Invalid date string");
-    }
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  } catch (error) {
-    console.error("Error formatting date:", error.message);
-    return null; // or return a fallback value
-  }
-}
 
 // Retorna endereço do ícone, com base no técnico designado
 const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
@@ -310,7 +330,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
   // const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
-  if ((!alarm.tempoRecebido || alarm.tempoRecebido) < 10 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+  if ((!alarm.tempoRecebido || alarm.tempoRecebido < 8 ) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'yellow';
   } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'red';
@@ -333,7 +353,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 // Retorna endereço do ícone
 const getMarkerIconMoto = (nomeTatico) => {
   return `/icon/motorcycling${nomeTatico ? (
-    `-yellow` // First letter of the name
+    `-yellow`
   ) : (
     ``
   )}.png`;
@@ -341,7 +361,7 @@ const getMarkerIconMoto = (nomeTatico) => {
 
 const formatTime = (isoString) => {
   try {
-    const date = new Date(isoString);
+    const date = toDate(isoString);
 
     // Extract hours and minutes
     const hours = date.getUTCHours().toString().padStart(2, '0');
@@ -353,6 +373,35 @@ const formatTime = (isoString) => {
   } catch (error) {
     console.error("Error while converting string of time.")
     return '';
+  }
+}
+
+const formatDate = (dateStr) => {
+  try {
+    const date = toDate(dateStr);
+    
+    if (isNaN(date.getTime())) {
+      throw new Error("Invalid date string");
+    }
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", error.message);
+    return null; // or return a fallback value
+  }
+}
+
+function toDate(date) {
+  if (typeof date === 'string') {
+    return new Date(date);
+  } else if (date instanceof Date) {
+    return date;
+  } else {
+    throw new Error('Invalid date format');
   }
 }
 

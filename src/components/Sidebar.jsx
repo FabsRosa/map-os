@@ -1,4 +1,6 @@
 import Select from 'react-select';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const renderSidebar = (isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
   return (
@@ -31,7 +33,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
           value={type}
           onChange={(e) => onTypeChange(e.target.value)}
         >
-          <option value="OS">OS</option>
+          <option value="OS">Ordem de Serviço</option>
           <option value="Alarm">Alarme</option>
         </select>
       </div>
@@ -118,6 +120,29 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
               }}
               placeholder="Selecione o técnico"
             />
+          </div>
+          <div className="filter-option n6">
+            <label className="filter-label n6">Período</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <DatePicker
+                selected={filters.dataIni ? new Date(filters.dataIni) : null}
+                onChange={(date) => onFilterChange(orders, { ...filters, dataIni: date }, tecnicos)}
+                isClearable
+                placeholderText="Data Inicial"
+                className='custom-date filter n1'
+                popperPlacement="bottom-start"
+                dateFormat="dd/MM/yyyy"
+              />
+              <DatePicker
+                selected={filters.dataFim ? new Date(filters.dataFim) : null}
+                onChange={(date) => onFilterChange(orders, { ...filters, dataFim: date }, tecnicos)}
+                isClearable
+                placeholderText="Data Final"
+                className='custom-date filter n2'
+                popperPlacement="bottom-start"
+                dateFormat="dd/MM/yyyy"
+              />
+            </div>
           </div>
         </div>
       ) : (

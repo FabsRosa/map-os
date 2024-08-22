@@ -98,3 +98,24 @@
   border: 1px solid #ccc; /* Add a border for visual styling */
   border-radius: 4px; /* Optional: Add border-radius for rounded corners */
 }
+
+.custom-date.filter {
+  font-size: 0.78rem;
+  width: 92%; /* Adjust width to fit side by side with a small gap */
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 5px 0;
+  display: inline-block; /* Ensure the elements are inline */
+}
+
+.custom-date.filter.n2 {
+  width: 100%; /* Adjust width to fit side by side with a small gap */
+}
+
+.filter-option.n6 {
+  display: flex;
+  justify-content: space-between; /* Space out the date pickers evenly */
+  flex-wrap: wrap; /* Ensure wrapping on smaller screens */
+}

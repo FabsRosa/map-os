@@ -1,6 +1,7 @@
 import { InfoWindow, Marker } from '@react-google-maps/api';
 import { calculateDistance } from '../utils/distanceCalculator';
 import React, { useState, useEffect } from 'react';
+import {formatTime, formatDate} from '../utils/handleTime';
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
@@ -210,21 +211,27 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
-            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{!alarm.tempoRecebido || alarm.tempoRecebido === 1 ? `${alarm.tempoRecebido} min.` : `${alarm.tempoRecebido} mins.`}</b>
+            • Recebido: 
+            &nbsp;<b>{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s</b>
+            , {formatTime(alarm.dtRecebido)}
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{!alarm.tempoDeslocamento || alarm.tempoDeslocamento === 1 ? `${alarm.tempoDeslocamento} min.` : `${alarm.tempoDeslocamento} mins.`}</b>
+            • Deslocamento: 
+            &nbsp;<b>{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s</b>
+            , {formatTime(alarm.dtDeslocamento)}
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtLocal !== null ? (
           <span>
-            • Local: {formatTime(alarm.dtLocal)}, <b>{!alarm.tempoLocal || alarm.tempoLocal === 1 ? `${alarm.tempoLocal} min.` : `${alarm.tempoLocal} mins.`}</b>
+            • No Local: 
+            &nbsp;<b>{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s</b>
+            , {formatTime(alarm.dtLocal)}
           </span>
         ) : null}
       </div>
@@ -248,28 +255,34 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
-            • Recebido: {formatTime(alarm.dtRecebido)}, <b>{!alarm.tempoRecebido || alarm.tempoRecebido === 1 ? `${alarm.tempoRecebido} min.` : `${alarm.tempoRecebido} mins.`}</b>
+            • Recebido:
+            &nbsp;<b>{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s</b>
+            , {formatTime(alarm.dtRecebido)}
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento: {formatTime(alarm.dtDeslocamento)}, <b>{!alarm.tempoDeslocamento || alarm.tempoDeslocamento === 1 ? `${alarm.tempoDeslocamento} min.` : `${alarm.tempoDeslocamento} mins.`}</b>
+            • Deslocamento: 
+            &nbsp;<b>{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s</b>
+            , {formatTime(alarm.dtDeslocamento)}
           </span>
         ) : null}
       </div>
       <div className='p-medium'>
         {alarm.dtLocal !== null ? (
           <span>
-            • Local: {formatTime(alarm.dtLocal)}, <b>{!alarm.tempoLocal || alarm.tempoLocal === 1 ? `${alarm.tempoLocal} min.` : `${alarm.tempoLocal} mins.`}</b>
+            • No Local:
+            &nbsp;<b>{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s</b>
+            , {formatTime(alarm.dtLocal)}
           </span>
         ) : null}
       </div>
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
-            <b>{distance.nomeTatico}:</b> {`${distance.distance}, ${distance.duration}.`}
+            {distance.nomeTatico}: {`${distance.distance}, ${distance.duration}.`}
           </div>
         )
       ))}
@@ -332,6 +345,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 
   if ((!alarm.tempoRecebido || alarm.tempoRecebido < 8 ) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'yellow';
+  } else if (alarm.tempoRecebido > 59 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+    iconPath += 'pink';
   } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'red';
   } else if (alarm.dtLocal === null) {
@@ -358,52 +373,6 @@ const getMarkerIconMoto = (nomeTatico) => {
     ``
   )}.png`;
 };
-
-const formatTime = (isoString) => {
-  try {
-    const date = toDate(isoString);
-
-    // Extract hours and minutes
-    const hours = date.getUTCHours().toString().padStart(2, '0');
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
-  
-    // Format as HH:MM
-    return `${hours}:${minutes}:${seconds}`;
-  } catch (error) {
-    console.error("Error while converting string of time.")
-    return '';
-  }
-}
-
-const formatDate = (dateStr) => {
-  try {
-    const date = toDate(dateStr);
-    
-    if (isNaN(date.getTime())) {
-      throw new Error("Invalid date string");
-    }
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  } catch (error) {
-    console.error("Error formatting date:", error.message);
-    return null; // or return a fallback value
-  }
-}
-
-function toDate(date) {
-  if (typeof date === 'string') {
-    return new Date(date);
-  } else if (date instanceof Date) {
-    return date;
-  } else {
-    throw new Error('Invalid date format');
-  }
-}
 
 export {
   renderMarkerPin,

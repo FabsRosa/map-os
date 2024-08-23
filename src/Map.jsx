@@ -51,12 +51,14 @@ const Map = ({ mapType }) => {
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
-      const ordersData = await fetchOrdersData();
-      const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
-      setOrders(ordersFiltered);
-
-      const alarmsData = await fetchAlarmsData();
-      setAlarms(alarmsData);
+      if (type === 'OS'){
+        const ordersData = await fetchOrdersData();
+        const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
+        setOrders(ordersFiltered);
+      } else if (type === 'Alarm') {
+        const alarmsData = await fetchAlarmsData();
+        setAlarms(alarmsData);
+      }
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
@@ -65,7 +67,7 @@ const Map = ({ mapType }) => {
 
     const intervalId = setInterval(fetchMapData, 5000);
     return () => clearInterval(intervalId);
-  }, [filters]);
+  }, [filters, type]);
 
   // Atualiza lista de técnicos não-terceirizados e defeitos
   useEffect(() => {

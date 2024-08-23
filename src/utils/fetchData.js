@@ -1,4 +1,5 @@
 import apiClient from './apiClient';
+import {toDate, getMinutesDifference} from './handleTime';
 
 const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
 
@@ -15,7 +16,7 @@ const fetchOrdersData = async () => {
           count++;
           const angle = count * 30; // 30 degrees for each subsequent marker
           const radians = (angle * Math.PI) / 180; // Convert angle to radians
-          const radiusIncrement = 0.00002; // Fixed distance for each step
+          const radiusIncrement = 0.0003;; // Fixed distance for each step
           const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
     
           // Adjust lat and lng slightly to create the linear spiral effect without overlap
@@ -65,7 +66,7 @@ const fetchAlarmsData = async () => {
           count++;
           const angle = count * 30; // 30 degrees for each subsequent marker
           const radians = (angle * Math.PI) / 180; // Convert angle to radians
-          const radiusIncrement = 0.00002; // Fixed distance for each step
+          const radiusIncrement = 0.0003; // Fixed distance for each step
           const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
     
           // Adjust lat and lng slightly to create the linear spiral effect without overlap
@@ -75,6 +76,9 @@ const fetchAlarmsData = async () => {
           lastClientID = alarm.idCliente;
           count = 0;
         }
+        const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))): null);
+        const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
+        const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
     
         return {
           lat: parseFloat(alarm.lat),
@@ -83,11 +87,14 @@ const fetchAlarmsData = async () => {
           clientName: alarm.nomeCliente,
           codEvento: alarm.codEvento,
           dtRecebido: alarm.dtRecebido,
-          tempoRecebido: (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))): null),
+          tempoRecebido: recebido !== null ? (recebido.minutes !== null ? recebido.minutes : null) : null,
+          segRecebido: recebido !== null ? (recebido.seconds !== null ? recebido.seconds : null) : null,
           dtDeslocamento: alarm.dtDeslocamento,
-          tempoDeslocamento: (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null),
+          tempoDeslocamento: deslocamento !== null ? (deslocamento.minutes !== null ? deslocamento.minutes : null) : null,
+          segDeslocamento: deslocamento !== null ? (deslocamento.seconds !== null ? deslocamento.seconds : null) : null,
           dtLocal: alarm.dtLocal,
-          tempoLocal: (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null),
+          tempoLocal: local !== null ? (local.minutes !== null ? local.minutes : null) : null,
+          segLocal: local !== null ? (local.seconds !== null ? local.seconds : null) : null,
         };
       });
       
@@ -175,33 +182,6 @@ const fetchTechnicians = async () => {
 
   return [];
 };
-
-function toDate(date) {
-  if (typeof date === 'string') {
-    let dateObj = new Date();
-    dateObj.setUTCDate(date)
-    return dateObj;
-  } else if (date instanceof Date) {
-    return date;
-  } else {
-    throw new Error('Invalid date format');
-  }
-}
-
-function getMinutesDifference(date1, date2) {
-  // Ensure date1 and date2 are Date objects
-  if (!(date1 instanceof Date) || !(date2 instanceof Date)) {
-    throw new Error('Both parameters should be Date objects.');
-  }
-  
-  // Get the time difference in milliseconds
-  const differenceInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
-  
-  // Convert milliseconds to minutes
-  const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
-  
-  return differenceInMinutes;
-}
 
 export {
   fetchOrdersData,

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './utils/apiClient';
 import filterMarker from './utils/filterMarker';
-import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
+import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians, checkMotosTracker } from './utils/fetchData';
 import {renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog} from './components/renderMarkers';
 import renderSidebar from './components/Sidebar';
 import './styles/Map.css';
@@ -17,11 +17,15 @@ const initialMapCenter = {
   lng: -56.08009,
 };
 
+const intervalUpdateMap = 20000;
+const intervalUpdateIndex = 60000;
+
 const Map = ({ mapType }) => {
   // Dados de OS e posição
   const [orders, setOrders] = useState([]);
   const [alarms, setAlarms] = useState([]);
   const [motos, setMotos] = useState([]);
+  const [motosTracker, setMotosTracker] = useState([]);
   const [defeitos, setDefeitos] = useState([]);
   const [tecnicos, setTecnicos] = useState([]);
 
@@ -48,6 +52,21 @@ const Map = ({ mapType }) => {
     setIsSidebarOpen(prevState => !prevState);
   };
 
+  // Atualiza lista de técnicos não-terceirizados e defeitos
+  useEffect(() => {
+    const fetchFilterIndex = async () => {
+      const tecData = await fetchTechnicians();
+      setTecnicos(tecData);
+
+      const defData = await fetchDefects();
+      setDefeitos(defData);
+    };
+    fetchFilterIndex();
+
+    const intervalId = setInterval(fetchFilterIndex, intervalUpdateIndex);
+    return () => clearInterval(intervalId);
+  }, []);
+
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
@@ -62,27 +81,15 @@ const Map = ({ mapType }) => {
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
+      if (type === 'OS'){
+        checkMotosTracker(motos, setMotos, motosTracker, setMotosTracker, orders, tecnicos)
+      }
     };
     fetchMapData();
 
-    const intervalId = setInterval(fetchMapData, 5000);
+    const intervalId = setInterval(fetchMapData, intervalUpdateMap);
     return () => clearInterval(intervalId);
-  }, [filters, type]);
-
-  // Atualiza lista de técnicos não-terceirizados e defeitos
-  useEffect(() => {
-    const fetchFilterData = async () => {
-      const tecData = await fetchTechnicians();
-      setTecnicos(tecData);
-
-      const defData = await fetchDefects();
-      setDefeitos(defData);
-    };
-    fetchFilterData();
-
-    const intervalId = setInterval(fetchFilterData, 60000);
-    return () => clearInterval(intervalId);
-  }, []);
+  }, [filters, type, tecnicos, motosTracker]);
 
   // Reseta todos os seletores ao clicar em espaço vazio
   const handleMapClick = useCallback(() => {

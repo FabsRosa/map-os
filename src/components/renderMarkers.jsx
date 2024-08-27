@@ -38,7 +38,6 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
         onClick={handleMarkerClickAlarm(alarm)}
         onMouseOut={handleMouseOutAlarm}
         onMouseOver={handleMouseOverAlarm(alarm)}
-        zIndex={google.maps.Marker.MAX_ZINDEX}
       />
     )})
   }
@@ -58,7 +57,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
         }}
         onMouseOut={handleMotoMouseOut}
         onMouseOver={handleMotoMouseOver(moto)}
-        zIndex={google.maps.Marker.MAX_ZINDEX}
+        zIndex={type === 'OS' ? google.maps.Marker.MAX_ZINDEX : null}
       />
     ))
   } else {

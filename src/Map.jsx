@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './utils/apiClient';
-import filterMarker from './utils/filterMarker';
-import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians, checkMotosTracker } from './utils/fetchData';
+import {filterMarker} from './utils/filterMarker';
+import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
 import {renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog} from './components/renderMarkers';
 import renderSidebar from './components/Sidebar';
 import './styles/Map.css';
@@ -23,9 +23,9 @@ const intervalUpdateIndex = 60000;
 const Map = ({ mapType }) => {
   // Dados de OS e posição
   const [orders, setOrders] = useState([]);
+  const [unfOrders, setUnfOrders] = useState([]);
   const [alarms, setAlarms] = useState([]);
   const [motos, setMotos] = useState([]);
-  const [motosTracker, setMotosTracker] = useState([]);
   const [defeitos, setDefeitos] = useState([]);
   const [tecnicos, setTecnicos] = useState([]);
 
@@ -39,7 +39,7 @@ const Map = ({ mapType }) => {
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useState({tipoOS: '', defeito: '', tecnico: '', cliente: '', dataIni: null, dataFim: null});
+  const [filters, setFilters] = useState({ocultar: '', tipoOS: '', defeito: '', tecnico: '', cliente: '', dataIni: null, dataFim: null});
 
   const [type, setType] = useState(mapType);
 
@@ -70,26 +70,21 @@ const Map = ({ mapType }) => {
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
-      if (type === 'OS'){
         const ordersData = await fetchOrdersData();
+        setUnfOrders(ordersData);
         const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
         setOrders(ordersFiltered);
-      } else if (type === 'Alarm') {
         const alarmsData = await fetchAlarmsData();
         setAlarms(alarmsData);
-      }
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
-      if (type === 'OS'){
-        checkMotosTracker(motos, setMotos, motosTracker, setMotosTracker, orders, tecnicos)
-      }
     };
     fetchMapData();
 
     const intervalId = setInterval(fetchMapData, intervalUpdateMap);
     return () => clearInterval(intervalId);
-  }, [filters, type, tecnicos, motosTracker]);
+  }, [filters, type, tecnicos]);
 
   // Reseta todos os seletores ao clicar em espaço vazio
   const handleMapClick = useCallback(() => {
@@ -186,13 +181,13 @@ const Map = ({ mapType }) => {
           }}
           icon={{
             url: `/icon/Inviolavel.png`,
-            scaledSize: new window.google.maps.Size(30, 30) // Adjust the width and height as needed
+            scaledSize: new window.google.maps.Size(21, 21) // Adjust the width and height as needed
           }}
           zIndex={google.maps.Marker.MAX_ZINDEX + 1}
         />}
 
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
-        {renderMarkerMoto(motos, handleMotoMouseOut, handleMotoMouseOver)}
+        {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMotoMouseOut, handleMotoMouseOver)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos)}
         {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos)}

@@ -1,6 +1,5 @@
 import apiClient from './apiClient';
 import {toDate, getMinutesDifference} from './handleTime';
-import haversineDistance from './haversineDistance';
 
 const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
 
@@ -115,13 +114,14 @@ const fetchMotosData = async () => {
     const responseMoto = await apiClient.get('/maps/motoLocation');
 
     if (responseMoto.ok && responseMoto.data) {
-      const motosData = responseMoto.data.map(moto => ({
-        id: moto.placa,
+      const motosData = responseMoto.data.map(moto => {
+        return { id: moto.id,
         lat: parseFloat(moto.lat),
         lng: parseFloat(moto.lng),
         nomeTatico: moto.nomeTatico ? moto.nomeTatico : null,
-        color: moto.nomeTatico ? 'yellow' : '',
-      }));
+        idleTime: moto.idleTime,
+        }
+      });
 
       return motosData;
     } else {
@@ -185,66 +185,10 @@ const fetchTechnicians = async () => {
   return [];
 };
 
-const checkMotosTracker = (motos, setMotos, motosTracker, setMotosTracker, orders, tecnicos) => {
-  if ((!motos || motos.length === 0) || (!orders || orders.length === 0) || (!tecnicos || tecnicos.length === 0)) {
-    return;
-  }
-
-  if (!motosTracker || motosTracker.length === 0 ) {
-    const motosTrackerData = motos.map(moto => ({
-      id: moto.id,
-      lastTime: Date.now(),
-      lat: moto.lat,
-      lng: moto.lng,
-    }));
-    setMotosTracker(motosTrackerData)
-  }
-
-  const currentTime = Date.now();
-  let hasChanged = false;
-  const motosData = motos.map(moto => {
-    let isCloseBy = true;
-    const motoTracker = motosTracker.find(motoTracker => motoTracker.id === moto.id);
-
-    if (motoTracker) {
-      if (motoTracker.lat === moto.lat && motoTracker.lng === moto.lng) {
-        if (currentTime - motoTracker.lastTime > 5 * 60 * 1000) {
-          isCloseBy = false;
-          orders.forEach(order => {
-            if (order.idTec !== tecnicos[0].id && !tecnicos.some(tecnico => tecnico.id === order.idTec)) {
-              if (haversineDistance(motoTracker.lat, motoTracker.lng, order.lat, order.lng) < 150) {
-                isCloseBy = true;
-                hasChanged = true;
-              }
-            }
-          });
-        }
-      }
-    } /* else {
-      // Add motoTracker
-    } */
-
-    if (!isCloseBy) {
-      if (motoTracker.lastTime - currentTime > 60 * 60 * 1000) {
-        moto.color = 'blue';
-      } else {
-        moto.color = 'red';
-      }
-    }
-
-    return moto;
-  });
-
-  if (hasChanged) {
-    setMotos(motosData);
-  }
-}
-
 export {
   fetchOrdersData,
   fetchAlarmsData,
   fetchMotosData,
   fetchDefects,
   fetchTechnicians,
-  checkMotosTracker
 };

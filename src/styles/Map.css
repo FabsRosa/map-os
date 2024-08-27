@@ -64,6 +64,10 @@
 }
 
 .gm-style-iw button {display: none !important;}
+/* This will remove the outline/border for the focused InfoWindow */
+.gm-style .gm-style-iw {
+  outline: none;
+}
 
 .sidebar {
   position: fixed;
@@ -114,7 +118,7 @@
   width: 100%; /* Adjust width to fit side by side with a small gap */
 }
 
-.filter-option.n6 {
+.filter-option.n7 {
   display: flex;
   justify-content: space-between; /* Space out the date pickers evenly */
   flex-wrap: wrap; /* Ensure wrapping on smaller screens */

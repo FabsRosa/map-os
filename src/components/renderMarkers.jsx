@@ -2,6 +2,12 @@ import { InfoWindow, Marker } from '@react-google-maps/api';
 import { calculateDistance } from '../utils/distanceCalculator';
 import React, { useState, useEffect } from 'react';
 import {formatTime, formatDate} from '../utils/handleTime';
+import haversineDistance from '../utils/haversineDistance';
+import {filterMotos} from '../utils/filterMarker';
+
+const iconSizePinOrder = 31;
+const iconSizePinAlarm = 32;
+const iconSizeMoto = 32;
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
@@ -9,7 +15,10 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
       <Marker
         key={order.id}
         position={{ lat: order.lat, lng: order.lng }}
-        icon={{ url: getMarkerIconOrder((highlightedOrder ? highlightedOrder.id === order.id : false), order.nomeTec, tecnicos.find(tec => tec.id == order.idTec)) }}
+        icon={{
+          url: getMarkerIconOrder((highlightedOrder ? highlightedOrder.id === order.id : false), order.nomeTec, tecnicos.find(tec => tec.id == order.idTec)),
+          scaledSize: new window.google.maps.Size(iconSizePinOrder, iconSizePinOrder)
+        }}
         onClick={handleMarkerClickOrder(order)}
         onMouseOut={handleMouseOutOrder}
         onMouseOver={handleMouseOverOrder(order)}
@@ -22,7 +31,10 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
       <Marker
         key={alarm.clientID + id++}
         position={{ lat: alarm.lat, lng: alarm.lng }}
-        icon={{ url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm) }}
+        icon={{
+          url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm),
+          scaledSize: new window.google.maps.Size(iconSizePinAlarm, iconSizePinAlarm)
+        }}
         onClick={handleMarkerClickAlarm(alarm)}
         onMouseOut={handleMouseOutAlarm}
         onMouseOver={handleMouseOverAlarm(alarm)}
@@ -31,16 +43,26 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
   }
 }
 
-const renderMarkerMoto = (motos, handleMotoMouseOut, handleMotoMouseOver) => {
-  return motos.map(moto => (
-    <Marker
-      key={moto.id}
-      position={{ lat: moto.lat, lng: moto.lng }}
-      icon={{ url: getMarkerIconMoto(moto.nomeTatico)}}
-      onMouseOut={handleMotoMouseOut}
-      onMouseOver={handleMotoMouseOver(moto)}
-    />
-  ))
+const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMotoMouseOut, handleMotoMouseOver) => {
+  if (!motos || motos.length === 0) return null;
+
+  if (filterMotos(filters)) {
+    return motos.map(moto => (
+      <Marker
+        key={moto.id}
+        position={{ lat: moto.lat, lng: moto.lng }}
+        icon={{
+          url: getMarkerIconMoto(moto, unfOrders, tecnicos, type, initialMapCenter),
+          scaledSize: new window.google.maps.Size(iconSizeMoto, iconSizeMoto)
+        }}
+        onMouseOut={handleMotoMouseOut}
+        onMouseOver={handleMotoMouseOver(moto)}
+        zIndex={google.maps.Marker.MAX_ZINDEX}
+      />
+    ))
+  } else {
+    return null;
+  }
 }
 
 const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos) => {
@@ -293,8 +315,11 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 // Design da dialog de informações de Moto
 const InfoWindowContentMoto = ({ moto }) => (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <p className='p-big moto'>
+    <p className='p-big'>
       • Placa: <b>{moto.id}</b>
+    </p>
+    <p className='p-medium'>
+      • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))}d`}</b>
     </p>
     {moto.nomeTatico ? (
         <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
@@ -366,13 +391,54 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 };
 
 // Retorna endereço do ícone
-const getMarkerIconMoto = (nomeTatico) => {
-  return `/icon/motorcycling${nomeTatico ? (
-    `-yellow`
-  ) : (
-    ``
-  )}.png`;
+const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
+  const color = checkMotosTracker(moto, unfOrders, tecnicos, type, initialMapCenter);
+  let iconPath = `/icon/motorcycling`;
+
+  if (color) {
+    iconPath += `-${color}`
+  } else {
+    iconPath += '-green'
+  }
+
+  iconPath += '.png';
+  return iconPath;
 };
+
+const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
+  const idleLimit = 5 * 60 * 1000;
+  const parkLimit = 240 * 60 * 1000;
+  const distanceLimitInMeters = 100;
+  
+  if (moto.nomeTatico) {
+    return 'yellow';
+  }
+  if ((!unfOrders) || (!tecnicos || tecnicos.length === 0)) {
+    return 'green';
+  }
+
+  if (moto.idleTime > idleLimit) {
+    if (haversineDistance(moto.lat, moto.lng, initialMapCenter.lat, initialMapCenter.lng) < distanceLimitInMeters) {
+      return 'gray';
+    } else {
+      for (let index = 0; index < unfOrders.length; index++) {
+        const order = unfOrders[index];
+        if (tecnicos.some(tecnico => tecnico.id === order.idTec)) {
+          if (haversineDistance(moto.lat, moto.lng, order.lat, order.lng) < distanceLimitInMeters) {
+            return 'green';
+          }
+        }
+      }
+    }
+    
+    if (moto.idleTime > parkLimit){
+      return 'gray';
+    } else {
+      return 'softred';
+    }
+  }
+  return 'green';
+}
 
 export {
   renderMarkerPin,

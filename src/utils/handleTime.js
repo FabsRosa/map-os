@@ -1,5 +1,5 @@
 function toDate(date, isTimezoneOffset = true) {
-  if (typeof date === 'string') {
+  if (typeof date === 'string' || typeof date === 'number') {
     if (isTimezoneOffset) {
       // Setting Date without the timezone changing the resulting hour
       return new Date(new Date(date).getTime() + (new Date().getTimezoneOffset()* (1000 * 60)));

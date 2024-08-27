@@ -3,12 +3,17 @@ const filterMarker = (orders, filter, tecnicos) => {
   return orders.filter(order => {
     if (!filter) return true;
 
+    let filterOc = true;
     let filterOS = true;
     let filterDef = true;
     let filterTec = true;
     let filterCli = true;
     let filterDataIni = true;
     let filterDataFim = true;
+
+    if (filter.ocultar && filter.ocultar.length > 0) {
+      filterOc = !filter.ocultar.includes('OS');
+    }
 
     if (filter.tipoOS && filter.tipoOS.length > 0) {
       let OSCli = false;
@@ -45,8 +50,19 @@ const filterMarker = (orders, filter, tecnicos) => {
       filterDataFim = compareDateBefore(order.dataAb, filter.dataFim)
     }
   
-    return filterOS && filterDef && filterTec && filterCli && filterDataIni && filterDataFim;
+    return filterOc && filterOS && filterDef && filterTec && filterCli && filterDataIni && filterDataFim;
   });
+};
+
+const filterMotos = (filter) => {
+  if (!filter) return true;
+
+  let filterOc = true;
+
+  if (filter.ocultar && filter.ocultar.length > 0) {
+    filterOc = !filter.ocultar.includes('Motos');
+  }
+  return filterOc;
 };
 
 // Verifica se a dateBefore é antes ou na mesma data que dateAfter
@@ -76,4 +92,7 @@ function resetTimeToMidnight(date) {
   return date;
 }
   
-export default filterMarker;
+export {
+  filterMarker,
+  filterMotos,
+};

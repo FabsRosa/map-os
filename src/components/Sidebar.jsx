@@ -127,7 +127,32 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             />
           </div>
           <div className="filter-option n6">
-            <label className="filter-label n6">Período</label>
+            <label className="filter-label n6">Ocultar</label>
+            <br />
+            <Select
+              isMulti
+              options={[
+                { value: "OS", label: "Ordens de Serviço" },
+                { value: "Motos", label: "Motos" }
+              ]}
+              value={filters.ocultar ? (
+                filters.ocultar.map(ocultar => ({
+                  value: ocultar,
+                  label: ocultar
+                }))
+              ) : (
+                null
+              )
+              }
+              onChange={(selectedOptions) => {
+                const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                onFilterChange(orders, { ...filters, ocultar: selectedValues }, tecnicos);
+              }}
+              placeholder="Selecione a opção"
+            />
+          </div>
+          <div className="filter-option n7">
+            <label className="filter-label n7">Data de Abertura</label>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <DatePicker
                 selected={filters.dataIni ? new Date(filters.dataIni) : null}

@@ -35,6 +35,7 @@ const Map = ({ mapType }) => {
   const [highlightedAlarm, setHighlightedAlarm] = useState(null);
   const [selectedAlarm, setSelectedAlarm] = useState(null);
   const [highlightedMoto, setHighlightedMoto] = useState(null);
+  const [selectedMoto, setSelectedMoto] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
 
   // Controladores de filtro
@@ -93,6 +94,7 @@ const Map = ({ mapType }) => {
     setSelectedAlarm(null);
     setHighlightedAlarm(null);
     setHighlightedMoto(null);
+    setSelectedMoto(null);
     setEditingOrder(null);
   }, []);
 
@@ -108,13 +110,19 @@ const Map = ({ mapType }) => {
     setSelectedAlarm(alarm);
   }, []);
 
+  // Mantém dialog de informações ao clicar em um marker
+  const handleMarkerClickMoto = useCallback((moto) => (e) => {
+    e.domEvent.stopPropagation();
+    setSelectedMoto(moto);
+  }, []);
+
   // Apresenta dialog de informações ao passar o mouse em cima de um marker
   const handleMouseOverOrder = useCallback((order) => () => setHighlightedOrder(order), []);
   const handleMouseOutOrder = useCallback(() => setHighlightedOrder(null), []);
   const handleMouseOverAlarm = useCallback((alarm) => () => setHighlightedAlarm(alarm), []);
   const handleMouseOutAlarm = useCallback(() => setHighlightedAlarm(null), []);
-  const handleMotoMouseOver = useCallback((moto) => () => setHighlightedMoto(moto), []);
-  const handleMotoMouseOut = useCallback(() => setHighlightedMoto(null), []);
+  const handleMouseOverMoto = useCallback((moto) => () => setHighlightedMoto(moto), []);
+  const handleMouseOutMoto = useCallback(() => setHighlightedMoto(null), []);
 
   // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
   const onTecChange = async (idNewTech) => {
@@ -170,6 +178,7 @@ const Map = ({ mapType }) => {
         options={{
           styles: mapStyles,
           mapTypeControl: false,
+          gestureHandling: 'greedy',
         }}
         onClick={handleMapClick}
       >
@@ -187,10 +196,10 @@ const Map = ({ mapType }) => {
         />}
 
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
-        {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMotoMouseOut, handleMotoMouseOver)}
+        {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos)}
 
       </GoogleMap>
     </div>

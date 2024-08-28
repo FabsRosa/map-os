@@ -14,7 +14,10 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
     return orders.map(order => (
       <Marker
         key={order.id}
-        position={{ lat: order.lat, lng: order.lng }}
+        position={{
+          lat: order.lat,
+          lng: order.lng
+        }}
         icon={{
           url: getMarkerIconOrder((highlightedOrder ? highlightedOrder.id === order.id : false), order.nomeTec, tecnicos.find(tec => tec.id == order.idTec)),
           scaledSize: new window.google.maps.Size(iconSizePinOrder, iconSizePinOrder)
@@ -30,7 +33,10 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
       return (
       <Marker
         key={alarm.clientID + id++}
-        position={{ lat: alarm.lat, lng: alarm.lng }}
+        position={{
+          lat: alarm.lat,
+          lng: alarm.lng
+        }}
         icon={{
           url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm),
           scaledSize: new window.google.maps.Size(iconSizePinAlarm, iconSizePinAlarm)
@@ -43,20 +49,24 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
   }
 }
 
-const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMotoMouseOut, handleMotoMouseOver) => {
+const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto) => {
   if (!motos || motos.length === 0) return null;
 
   if (filterMotos(filters)) {
     return motos.map(moto => (
       <Marker
         key={moto.id}
-        position={{ lat: moto.lat, lng: moto.lng }}
+        position={{
+          lat: moto.lat,
+          lng: moto.lng
+        }}
         icon={{
           url: getMarkerIconMoto(moto, unfOrders, tecnicos, type, initialMapCenter),
           scaledSize: new window.google.maps.Size(iconSizeMoto, iconSizeMoto)
         }}
-        onMouseOut={handleMotoMouseOut}
-        onMouseOver={handleMotoMouseOver(moto)}
+        onClick={handleMarkerClickMoto(moto)}
+        onMouseOut={handleMouseOutMoto}
+        onMouseOver={handleMouseOverMoto(moto)}
         zIndex={type === 'OS' ? google.maps.Marker.MAX_ZINDEX : null}
       />
     ))
@@ -73,21 +83,14 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           lat: highlightedOrder.lat,
           lng: highlightedOrder.lng
         }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
-      > 
-        <InfoWindowContentOrder order={highlightedOrder} />
-      </InfoWindow>
-    )
-  } else if (highlightedMoto) {
-    return (
-      <InfoWindow
-        position={{
-          lat: highlightedMoto.lat,
-          lng: highlightedMoto.lng
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
         }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
       > 
-        <InfoWindowContentMoto moto={highlightedMoto} />
+        <InfoWindowContentOrder
+          order={highlightedOrder}
+        />
       </InfoWindow>
     )
   } else if (highlightedAlarm) {
@@ -97,19 +100,48 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           lat: highlightedAlarm.lat,
           lng: highlightedAlarm.lng
         }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
+        }}
       > 
-        <InfoWindowContentAlarm alarm={highlightedAlarm} motos={motos}/>
+        <InfoWindowContentAlarm
+          alarm={highlightedAlarm}
+          motos={motos}
+        />
+      </InfoWindow>
+    )
+  } else if (highlightedMoto) {
+    return (
+      <InfoWindow
+        position={{
+          lat: highlightedMoto.lat,
+          lng: highlightedMoto.lng
+        }}
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
+        }}
+      > 
+        <InfoWindowContentMoto
+          moto={highlightedMoto}
+        />
       </InfoWindow>
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, onTecChange, tecnicos, motos) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos) => {
   if (selectedOrder) {
     return (
       <InfoWindow
-        position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        position={{
+          lat: selectedOrder.lat,
+          lng: selectedOrder.lng
+        }}
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
+        }}
       >
         <InfoWindowContentOrder
           key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
@@ -124,13 +156,32 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
   } else if (selectedAlarm) {
       return (
       <InfoWindow
-        position={{ lat: selectedAlarm.lat, lng: selectedAlarm.lng }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        position={{
+          lat: selectedAlarm.lat,
+          lng: selectedAlarm.lng
+        }}
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
+        }}
       >
         <InfoWindowContentAlarm
-          key={selectedAlarm.clientID + selectedAlarm.clientName}
           alarm={selectedAlarm}
           motos={motos}
+        />
+      </InfoWindow>
+    )
+  } else if (selectedMoto) {
+    return (
+      <InfoWindow
+        position={{
+          lat: selectedMoto.lat,
+          lng: selectedMoto.lng
+        }}
+        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+      > 
+        <InfoWindowContentMoto
+          moto={selectedMoto}
         />
       </InfoWindow>
     )

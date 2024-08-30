@@ -11,10 +11,6 @@ const filterMarker = (orders, filter, tecnicos) => {
     let filterDataIni = true;
     let filterDataFim = true;
 
-    if (filter.ocultar && filter.ocultar.length > 0) {
-      filterOc = !filter.ocultar.includes('OS');
-    }
-
     if (filter.tipoOS && filter.tipoOS.length > 0) {
       let OSCli = false;
       let OSAg = false;
@@ -40,6 +36,18 @@ const filterMarker = (orders, filter, tecnicos) => {
       filterCli =
         order.clientName.toLowerCase().includes(normalizedFilter) ||
         order.clientID.toLowerCase().replace(/^0+/, '').includes(normalizedFilter);
+    }
+
+    if (filter.ocultar && filter.ocultar.length > 0) {
+      let filterOcOS = true;
+      let filterOcTec = true;
+      if (filter.ocultar.includes('OS')) {
+        filterOcOS = false;
+      }
+      if (filter.ocultar.includes('OS Inviolavel e Terceirizados')) {
+        filterOcTec = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
+      }
+      filterOc = filterOcOS && filterOcTec;
     }
 
     if (filter.dataIni) {

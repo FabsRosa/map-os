@@ -132,8 +132,9 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <Select
               isMulti
               options={[
-                { value: "OS", label: "Ordens de Serviço" },
-                { value: "Motos", label: "Motos" }
+                { value: "OS", label: "OS: Todas" },
+                { value: "OS Inviolavel e Terceirizados", label: "OS: Atribuída à Inviolável e Terceirizado" },
+                { value: "Motos", label: "Motos: Todas" }
               ]}
               value={filters.ocultar ? (
                 filters.ocultar.map(ocultar => ({

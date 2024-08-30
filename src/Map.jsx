@@ -185,8 +185,8 @@ const Map = ({ mapType }) => {
         {<Marker
           key={1}
           position={{
-            lat: -15.59163,
-            lng: -56.08009,
+            lat: -15.59154,
+            lng: -56.08001,
           }}
           icon={{
             url: `/icon/Inviolavel.png`,

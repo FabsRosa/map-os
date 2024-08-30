@@ -57,7 +57,8 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
               isMulti
               options={[
                 { value: "OS Cliente", label: "Aberta por cliente" },
-                { value: "OS Agendada", label: "Agendada" }
+                { value: "OS Agendada", label: "Agendada" },
+                { value: "OS Atribuida", label: "Atribuída à Técnico" },
               ]}
               value={filters.tipoOS ? (
                 filters.tipoOS.map(tipoOS => ({

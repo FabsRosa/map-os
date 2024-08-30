@@ -14,13 +14,17 @@ const filterMarker = (orders, filter, tecnicos) => {
     if (filter.tipoOS && filter.tipoOS.length > 0) {
       let OSCli = false;
       let OSAg = false;
+      let OSAt = false;
       if (filter.tipoOS.includes('OS Cliente')) {
         OSCli = order.solic == 10001;
       }
       if (filter.tipoOS.includes('OS Agendada')) {
         OSAg = order.dataAg !== null;
       }
-      filterOS = OSCli || OSAg;
+      if (filter.tipoOS.includes('OS Atribuida')) {
+        OSAt = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
+      }
+      filterOS = OSCli || OSAg || OSAt;
     }
 
     if (filter.defeito && filter.defeito.length > 0) {

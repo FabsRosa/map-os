@@ -12,19 +12,19 @@ const filterMarker = (orders, filter, tecnicos) => {
     let filterDataFim = true;
 
     if (filter.tipoOS && filter.tipoOS.length > 0) {
-      let OSCli = false;
-      let OSAg = false;
-      let OSAt = false;
-      if (filter.tipoOS.includes('OS Cliente')) {
+      let OSCli = true;
+      let OSAg = true;
+      let OSAt = true;
+      if (filter.tipoOS.includes('Cliente')) {
         OSCli = order.solic == 10001;
       }
-      if (filter.tipoOS.includes('OS Agendada')) {
+      if (filter.tipoOS.includes('Agendada')) {
         OSAg = order.dataAg !== null;
       }
-      if (filter.tipoOS.includes('OS Atribuida')) {
+      if (filter.tipoOS.includes('Atribuida')) {
         OSAt = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
       }
-      filterOS = OSCli || OSAg || OSAt;
+      filterOS = OSCli && OSAg && OSAt;
     }
 
     if (filter.defeito && filter.defeito.length > 0) {
@@ -44,14 +44,10 @@ const filterMarker = (orders, filter, tecnicos) => {
 
     if (filter.ocultar && filter.ocultar.length > 0) {
       let filterOcOS = true;
-      let filterOcTec = true;
       if (filter.ocultar.includes('OS')) {
         filterOcOS = false;
       }
-      if (filter.ocultar.includes('OS Inviolavel e Terceirizados')) {
-        filterOcTec = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
-      }
-      filterOc = filterOcOS && filterOcTec;
+      filterOc = filterOcOS;
     }
 
     if (filter.dataIni) {

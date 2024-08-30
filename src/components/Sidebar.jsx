@@ -56,9 +56,9 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <Select
               isMulti
               options={[
-                { value: "OS Cliente", label: "Aberta por cliente" },
-                { value: "OS Agendada", label: "Agendada" },
-                { value: "OS Atribuida", label: "Atribuída à Técnico" },
+                { value: "Cliente", label: "Aberta por cliente" },
+                { value: "Agendada", label: "Agendada" },
+                { value: "Atribuida", label: "Atribuída à Técnico" },
               ]}
               value={filters.tipoOS ? (
                 filters.tipoOS.map(tipoOS => ({
@@ -134,7 +134,6 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
               isMulti
               options={[
                 { value: "OS", label: "OS: Todas" },
-                { value: "OS Inviolavel e Terceirizados", label: "OS: Atribuída à Inviolável e Terceirizado" },
                 { value: "Motos", label: "Motos: Todas" }
               ]}
               value={filters.ocultar ? (

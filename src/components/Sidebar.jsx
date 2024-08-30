@@ -106,11 +106,11 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
               <Select
                 isMulti
                 options={[
+                  { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' }, // Add the new option here
                   ...tecnicos.map(tec => ({
                     value: tec.id,
                     label: tec.nome
-                  })),
-                  { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' } // Add the new option here
+                  }))
                 ]}
                 value={[
                   ...tecnicos

@@ -56,7 +56,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <Select
               isMulti
               options={[
-                { value: "Cliente", label: "Aberta por cliente" },
+                { value: "Cliente", label: "Aberta por Cliente" },
                 { value: "Agendada", label: "Agendada" },
                 { value: "Atribuida", label: "Atribuída à Técnico" },
               ]}

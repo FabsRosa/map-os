@@ -8,8 +8,10 @@ const filterMarker = (orders, filter, tecnicos) => {
     let filterDef = true;
     let filterTec = true;
     let filterCli = true;
-    let filterDataIni = true;
-    let filterDataFim = true;
+    let filterdataIniAb = true;
+    let filterdataFimAb = true;
+    let filterdataIniAg = true;
+    let filterdataFimAg = true;
 
     if (filter.tipoOS && filter.tipoOS.length > 0) {
       let OSCli = true;
@@ -50,15 +52,39 @@ const filterMarker = (orders, filter, tecnicos) => {
       filterOc = filterOcOS;
     }
 
-    if (filter.dataIni) {
-      filterDataIni = compareDateBefore(filter.dataIni, order.dataAb)
+    if (filter.dataIniAb) {
+      if (order.dataAb) {
+        filterdataIniAb = compareDateBefore(filter.dataIniAb, order.dataAb)
+      } else {
+        filterdataIniAb = false;
+      }
     }
 
-    if (filter.dataFim) {
-      filterDataFim = compareDateBefore(order.dataAb, filter.dataFim)
+    if (filter.dataFimAb) {
+      if (order.dataAb) {
+        filterdataFimAb = compareDateBefore(order.dataAb, filter.dataFimAb)
+      } else {
+        filterdataFimAb = false;
+      }
+    }
+
+    if (filter.dataIniAg) {
+      if (order.dataAg) {
+        filterdataIniAg = compareDateBefore(filter.dataIniAg, order.dataAg)
+      } else {
+        filterdataIniAg = false;
+      }
+    }
+
+    if (filter.dataFimAg) {
+      if (order.dataAg) {
+        filterdataFimAg = compareDateBefore(order.dataAg, filter.dataFimAg)
+      } else {
+        filterdataFimAg = false;
+      }
     }
   
-    return filterOc && filterOS && filterDef && filterTec && filterCli && filterDataIni && filterDataFim;
+    return filterOc && filterOS && filterDef && filterTec && filterCli && filterdataIniAb && filterdataFimAb && filterdataIniAg && filterdataFimAg;
   });
 };
 

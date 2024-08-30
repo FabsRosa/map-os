@@ -40,7 +40,19 @@ const Map = ({ mapType }) => {
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [filters, setFilters] = useState({ocultar: '', tipoOS: '', defeito: '', tecnico: '', cliente: '', dataIni: null, dataFim: null});
+  const [filters, setFilters] = useState(
+    {
+      ocultar: '',
+      tipoOS: '',
+      defeito: '',
+      tecnico: '',
+      cliente: '',
+      dataIniAb: null,
+      dataFimAb: null,
+      dataIniAg: null,
+      dataFimAg: null
+    }
+  );
 
   const [type, setType] = useState(mapType);
 

@@ -57,12 +57,6 @@
   cursor: pointer;
 }
 
-.filter-icon img {
-  width: 55px;
-  height: auto;
-  transition: width 0.2s ease-in-out;
-}
-
 .gm-style-iw button {display: none !important;}
 /* This will remove the outline/border for the focused InfoWindow */
 .gm-style .gm-style-iw {
@@ -73,13 +67,26 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 230px;
-  height: 100%;
+  width: 250px;
+  max-height: 100vh;
   background-color: #fff;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   z-index: 1000;
+  border-radius: 0 0px 7.5px 0;
+  padding-bottom: 10px;
+}
+
+.sidebar-items {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.filter-icon img {
+  width: 55px;
+  height: auto;
+  transition: width 0.2s ease-in-out;
 }
 
 .sidebar.open {
@@ -105,21 +112,15 @@
 
 .custom-date.filter {
   font-size: 0.78rem;
-  width: 92%; /* Adjust width to fit side by side with a small gap */
+  width: 100%; /* Adjust width to fit side by side with a small gap */
   box-sizing: border-box;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin: 5px 0;
+  margin-top: 3px;
   display: inline-block; /* Ensure the elements are inline */
 }
 
-.custom-date.filter.n2 {
-  width: 100%; /* Adjust width to fit side by side with a small gap */
-}
-
-.filter-option.n7 {
-  display: flex;
-  justify-content: space-between; /* Space out the date pickers evenly */
-  flex-wrap: wrap; /* Ensure wrapping on smaller screens */
+.custom-date.filter.n1 {
+  width: 92%
 }

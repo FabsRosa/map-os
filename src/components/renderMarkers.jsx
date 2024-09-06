@@ -480,7 +480,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
 
   if (moto.idleTime > idleLimit) {
     if (haversineDistance(moto.lat, moto.lng, initialMapCenter.lat, initialMapCenter.lng) < distanceLimitInMeters) {
-      return 'green';
+      return 'gray';
     } else {
       for (let index = 0; index < unfOrders.length; index++) {
         const order = unfOrders[index];

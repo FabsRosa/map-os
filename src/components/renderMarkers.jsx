@@ -444,7 +444,17 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 // Retorna endereço do ícone
 const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
   const color = checkMotosTracker(moto, unfOrders, tecnicos, type, initialMapCenter);
-  let iconPath = `/icon/motorcycling`;
+  
+  let iconPath;
+  if (moto && moto.type) {
+    if (moto.type == 1) {
+      iconPath = `/icon/car`;
+    } else if (moto.type == 2) {
+      iconPath = `/icon/moto`;
+    }
+  } else {
+    iconPath = `/icon/moto`;
+  }
 
   if (color) {
     iconPath += `-${color}`
@@ -485,7 +495,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
     if (moto.idleTime > parkLimit){
       return 'gray';
     } else {
-      return 'softred';
+      return 'red';
     }
   }
   return 'green';

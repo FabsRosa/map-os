@@ -120,6 +120,7 @@ const fetchMotosData = async () => {
         lng: parseFloat(moto.lng),
         nomeTatico: moto.nomeTatico ? moto.nomeTatico : null,
         idleTime: moto.idleTime,
+        type: moto.type,
         }
       });
 

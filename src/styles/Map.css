@@ -52,7 +52,7 @@
 .filter-icon {
   position: fixed;
   top: 10px;
-  left: 250px;
+  left: 270px;
   z-index: 1000;
   cursor: pointer;
 }

@@ -444,7 +444,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 // Retorna endereço do ícone
 const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
   const color = checkMotosTracker(moto, unfOrders, tecnicos, type, initialMapCenter);
-  
+
   let iconPath;
   if (moto && moto.type) {
     if (moto.type == 1) {
@@ -480,7 +480,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
 
   if (moto.idleTime > idleLimit) {
     if (haversineDistance(moto.lat, moto.lng, initialMapCenter.lat, initialMapCenter.lng) < distanceLimitInMeters) {
-      return 'gray';
+      return 'green';
     } else {
       for (let index = 0; index < unfOrders.length; index++) {
         const order = unfOrders[index];

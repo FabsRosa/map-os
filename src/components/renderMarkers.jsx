@@ -8,6 +8,7 @@ import {filterMotos} from '../utils/filterMarker';
 const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
 const iconSizeMoto = 32;
+const iconSizeCar = 27;
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
@@ -53,23 +54,26 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
   if (!motos || motos.length === 0) return null;
 
   if (filterMotos(filters)) {
-    return motos.map(moto => (
-      <Marker
-        key={moto.id}
-        position={{
-          lat: moto.lat,
-          lng: moto.lng
-        }}
-        icon={{
-          url: getMarkerIconMoto(moto, unfOrders, tecnicos, type, initialMapCenter),
-          scaledSize: new window.google.maps.Size(iconSizeMoto, iconSizeMoto)
-        }}
-        onClick={handleMarkerClickMoto(moto)}
-        onMouseOut={handleMouseOutMoto}
-        onMouseOver={handleMouseOverMoto(moto)}
-        zIndex={type === 'OS' ? google.maps.Marker.MAX_ZINDEX : null}
-      />
-    ))
+    return motos.map(moto => {
+      const iconSize = moto.type == 1 ? iconSizeCar : iconSizeMoto;
+      return (
+        <Marker
+          key={moto.id}
+          position={{
+            lat: moto.lat,
+            lng: moto.lng
+          }}
+          icon={{
+            url: getMarkerIconMoto(moto, unfOrders, tecnicos, type, initialMapCenter),
+            scaledSize: new window.google.maps.Size(iconSize, iconSize)
+          }}
+          onClick={handleMarkerClickMoto(moto)}
+          onMouseOut={handleMouseOutMoto}
+          onMouseOver={handleMouseOverMoto(moto)}
+          zIndex={type === 'OS' ? google.maps.Marker.MAX_ZINDEX : null}
+        />
+      )
+    })
   } else {
     return null;
   }
@@ -370,7 +374,7 @@ const InfoWindowContentMoto = ({ moto }) => (
       • Placa: <b>{moto.id}</b>
     </p>
     <p className='p-medium'>
-      • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))}d`}</b>
+      • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))} dias`}</b>
     </p>
     {moto.nomeTatico ? (
         <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>

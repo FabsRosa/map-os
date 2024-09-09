@@ -1,6 +1,7 @@
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "../styles/Sidebar.css";
 
 const renderSidebar = (isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
   return (
@@ -27,9 +28,10 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
       </div>
       <div className="sidebar-items">
         <div className="filter-option n1">
-          <label className="filter-label n1">Tipo de Mapa</label>
+          <label className="filter-label n1" htmlFor="mapType">Tipo de Mapa</label>
           <br />
           <select
+            id="mapType"
             className='custom-select filter'
             value={type}
             onChange={(e) => onTypeChange(e.target.value)}
@@ -38,38 +40,33 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
             <option value="Alarm">Alarme</option>
           </select>
         </div>
-        { type === 'OS' ? (
+        {type === 'OS' && (
           <div>
             <div className="filter-option n2">
-              <label className="filter-label n2">Nome ou Código do Cliente</label>
+              <label className="filter-label n2" htmlFor="clienteFilter">Nome ou Código do Cliente</label>
               <br />
               <input
+                id="clienteFilter"
                 type="text"
                 className='custom-textbox filter'
-                value={filters.cliente ? filters.cliente : ''}
+                value={filters.cliente || ''}
                 onChange={(e) => onFilterChange(orders, { ...filters, cliente: e.target.value }, tecnicos)}
                 placeholder="Digite o nome ou código"
               />
             </div>
+
             <div className="filter-option n3">
               <label className="filter-label n3">Tipo de Ordem de Serviço</label>
               <br />
               <Select
+                id="tipoOS"
                 isMulti
                 options={[
                   { value: "Cliente", label: "Aberta por Cliente" },
                   { value: "Agendada", label: "Agendada" },
                   { value: "Atribuida", label: "Atribuída à Técnico" },
                 ]}
-                value={filters.tipoOS ? (
-                  filters.tipoOS.map(tipoOS => ({
-                    value: tipoOS,
-                    label: tipoOS
-                  }))
-                ) : (
-                  null
-                )
-                }
+                value={filters.tipoOS ? filters.tipoOS.map(tipoOS => ({ value: tipoOS, label: tipoOS })) : null}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
                   onFilterChange(orders, { ...filters, tipoOS: selectedValues }, tecnicos);
@@ -77,22 +74,21 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                 placeholder="Selecione tipo OS"
               />
             </div>
+
             <div className="filter-option n4">
               <label className="filter-label n4">Defeito</label>
               <br />
               <Select
+                id="defeito"
                 isMulti
                 options={defeitos.map(def => ({
                   value: def.defeito,
                   label: def.defeito
                 }))}
-                value={defeitos
-                  .map(def => ({
-                    value: def.defeito,
-                    label: def.defeito
-                  }))
-                  .filter(option => filters.defeito.includes(option.value))
-                }
+                value={defeitos.map(def => ({
+                  value: def.defeito,
+                  label: def.defeito
+                })).filter(option => filters.defeito.includes(option.value))}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
                   onFilterChange(orders, { ...filters, defeito: selectedValues }, tecnicos);
@@ -100,27 +96,27 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                 placeholder="Selecione o defeito"
               />
             </div>
+
             <div className="filter-option n5">
               <label className="filter-label n5">Técnico</label>
               <br />
               <Select
+                id="tecnico"
                 isMulti
                 options={[
-                  { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' }, // Add the new option here
+                  { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' },
                   ...tecnicos.map(tec => ({
                     value: tec.id,
                     label: tec.nome
                   }))
                 ]}
                 value={[
-                  ...tecnicos
-                    .map(tec => ({
-                      value: tec.id,
-                      label: tec.nome
-                    }))
-                    .filter(option => filters.tecnico.includes(option.value)),
+                  ...tecnicos.map(tec => ({
+                    value: tec.id,
+                    label: tec.nome
+                  })).filter(option => filters.tecnico.includes(option.value)),
                   filters.tecnico.includes('TERCEIRIZADO') ? { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' } : null
-                ].filter(Boolean)} // Filter out null values
+                ].filter(Boolean)}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
                   onFilterChange(orders, { ...filters, tecnico: selectedValues }, tecnicos);
@@ -128,24 +124,18 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                 placeholder="Selecione o técnico"
               />
             </div>
+
             <div className="filter-option n6">
               <label className="filter-label n6">Ocultar</label>
               <br />
               <Select
+                id="ocultar"
                 isMulti
                 options={[
                   { value: "OS", label: "OS: Todas" },
                   { value: "Motos", label: "Motos: Todas" }
                 ]}
-                value={filters.ocultar ? (
-                  filters.ocultar.map(ocultar => ({
-                    value: ocultar,
-                    label: ocultar
-                  }))
-                ) : (
-                  null
-                )
-                }
+                value={filters.ocultar ? filters.ocultar.map(ocultar => ({ value: ocultar, label: ocultar })) : null}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
                   onFilterChange(orders, { ...filters, ocultar: selectedValues }, tecnicos);
@@ -153,10 +143,12 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                 placeholder="Selecione a opção"
               />
             </div>
+
             <div className="filter-option n7">
-              <label className="filter-label n7">Data de Abertura</label>
+              <label className="filter-label n7" htmlFor="dataAberturaIni">Data de Abertura</label>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <DatePicker
+                  id="dataAberturaIni"
                   selected={filters.dataIniAb ? new Date(filters.dataIniAb) : null}
                   onChange={(date) => onFilterChange(orders, { ...filters, dataIniAb: date }, tecnicos)}
                   isClearable
@@ -166,6 +158,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                   dateFormat="dd/MM/yyyy"
                 />
                 <DatePicker
+                  id="dataAberturaFim"
                   selected={filters.dataFimAb ? new Date(filters.dataFimAb) : null}
                   onChange={(date) => onFilterChange(orders, { ...filters, dataFimAb: date }, tecnicos)}
                   isClearable
@@ -176,10 +169,12 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                 />
               </div>
             </div>
+
             <div className="filter-option n8">
-              <label className="filter-label n8">Data de Agendamento</label>
+              <label className="filter-label n8" htmlFor="dataAgendamentoIni">Data de Agendamento</label>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <DatePicker
+                  id="dataAgendamentoIni"
                   selected={filters.dataIniAg ? new Date(filters.dataIniAg) : null}
                   onChange={(date) => onFilterChange(orders, { ...filters, dataIniAg: date }, tecnicos)}
                   isClearable
@@ -189,6 +184,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                   dateFormat="dd/MM/yyyy"
                 />
                 <DatePicker
+                  id="dataAgendamentoFim"
                   selected={filters.dataFimAg ? new Date(filters.dataFimAg) : null}
                   onChange={(date) => onFilterChange(orders, { ...filters, dataFimAg: date }, tecnicos)}
                   isClearable
@@ -200,8 +196,6 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
               </div>
             </div>
           </div>
-        ) : (
-          null
         )}
       </div>
     </div>

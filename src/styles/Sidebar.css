@@ -1,0 +1,69 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  max-height: 100vh;
+  background-color: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  border-radius: 0 0px 7.5px 0;
+  padding-bottom: 10px;
+}
+
+.sidebar-items {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.filter-icon {
+  position: fixed;
+  top: 10px;
+  left: 270px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.filter-icon img {
+  width: 55px;
+  height: auto;
+  transition: width 0.2s ease-in-out;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.filter-option {
+  padding: 9px 15px;
+  display: block;
+}
+
+.filter-option.n1 {
+  margin-top: 10px;
+}
+
+.custom-textbox.filter {
+  width: 100%; /* Make the input box fill the entire width */
+  box-sizing: border-box; /* Ensure padding and border are included in the width */
+  padding: 8px; /* Adjust padding as needed */
+  border: 1px solid #ccc; /* Add a border for visual styling */
+  border-radius: 4px; /* Optional: Add border-radius for rounded corners */
+}
+
+.custom-date.filter {
+  font-size: 0.78rem;
+  width: 100%; /* Adjust width to fit side by side with a small gap */
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 3px;
+  display: inline-block; /* Ensure the elements are inline */
+}
+
+.custom-date.filter.n1 {
+  width: 92%
+}

@@ -21,6 +21,9 @@ const intervalUpdateMap = 20000;
 const intervalUpdateIndex = 60000;
 
 const Map = ({ mapType }) => {
+  // Controlador de tipo de mapa
+  const [type, setType] = useState(mapType);
+
   // Dados de OS e posição
   const [orders, setOrders] = useState([]);
   const [unfOrders, setUnfOrders] = useState([]);
@@ -53,8 +56,6 @@ const Map = ({ mapType }) => {
       dataFimAg: null
     }
   );
-
-  const [type, setType] = useState(mapType);
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -190,6 +191,7 @@ const Map = ({ mapType }) => {
         options={{
           styles: mapStyles,
           mapTypeControl: false,
+          fullscreenControl: false,
           gestureHandling: 'greedy',
         }}
         onClick={handleMapClick}

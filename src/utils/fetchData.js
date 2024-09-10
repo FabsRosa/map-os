@@ -33,6 +33,7 @@ const fetchOrdersData = async () => {
           lng: parseFloat(order.lng),
           clientID: order.idCliente,
           clientName: order.nomeCliente,
+          clientRazao: order.razaoCliente,
           def: order.defeito,
           desc: order.descricao,
           idTec: order.idTec,

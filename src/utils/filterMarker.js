@@ -38,10 +38,18 @@ const filterMarker = (orders, filter, tecnicos) => {
     }
 
     if (filter.cliente) {
+      let filterOS = false;
+      if (/^\d{6}$/.test(filter.cliente)) { //If it has exactly 6 numbers
+        filterOS = filter.cliente == order.id;
+      }
+      
       const normalizedFilter = filter.cliente.toLowerCase().replace(/^0+/, '');
-      filterCli =
+      const filterClient =
         order.clientName.toLowerCase().includes(normalizedFilter) ||
+        order.clientRazao.toLowerCase().includes(normalizedFilter) ||
         order.clientID.toLowerCase().replace(/^0+/, '').includes(normalizedFilter);
+      
+      filterCli = filterClient || filterOS;
     }
 
     if (filter.ocultar && filter.ocultar.length > 0) {

@@ -79,7 +79,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
   }
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters) => {
   if (highlightedOrder) {
     return (
       <InfoWindow
@@ -94,6 +94,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
       > 
         <InfoWindowContentOrder
           order={highlightedOrder}
+          filters={filters}
         />
       </InfoWindow>
     )
@@ -134,7 +135,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos, filters) => {
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -154,6 +155,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           onEditClick={() => setEditingOrder(selectedOrder.id)}
           onTecChange={onTecChange}
           tecnicos={tecnicos}
+          filters={filters}
         />
       </InfoWindow>
     )
@@ -193,7 +195,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecnicos }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecnicos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   return (
@@ -207,6 +209,9 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
           onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
         />
       </span>
+      {(filters && filters.cliente) ? (
+        <p className='p-medium'>• Razão Social: {order.clientRazao}</p>
+      ) : null}
       <p className='p-medium'>
         • Técnico:&nbsp;
         {isEditing ? (

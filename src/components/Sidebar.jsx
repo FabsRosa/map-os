@@ -43,7 +43,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
         {type === 'OS' && (
           <div>
             <div className="filter-option n2">
-              <label className="filter-label n2" htmlFor="clienteFilter">Nome ou Código do Cliente</label>
+              <label className="filter-label n2" htmlFor="clienteFilter">Cliente ou nº OS</label>
               <br />
               <input
                 id="clienteFilter"

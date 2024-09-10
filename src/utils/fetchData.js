@@ -86,6 +86,7 @@ const fetchAlarmsData = async () => {
           clientID: alarm.idCliente,
           clientName: alarm.nomeCliente,
           codEvento: alarm.codEvento,
+          tipoEvento: alarm.tipoEvento,
           dtRecebido: alarm.dtRecebido,
           tempoRecebido: recebido !== null ? (recebido.minutes !== null ? recebido.minutes : null) : null,
           segRecebido: recebido !== null ? (recebido.seconds !== null ? recebido.seconds : null) : null,

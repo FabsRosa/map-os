@@ -17,7 +17,7 @@ const initialMapCenter = {
   lng: -56.08009,
 };
 
-const intervalUpdateMap = 20000;
+const intervalUpdateMap = 15000;
 const intervalUpdateIndex = 60000;
 
 const Map = ({ mapType }) => {

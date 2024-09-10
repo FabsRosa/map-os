@@ -284,7 +284,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
-      <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
+      <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
@@ -328,7 +328,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
-      <div className='p-medium'>• Código Evento: <b>{alarm.codEvento}</b></div>
+      <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
@@ -453,7 +453,7 @@ const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
   if (moto && moto.type) {
     if (moto.type == 1) {
       iconPath = `/icon/car`;
-    } else if (moto.type == 2) {
+    } else {
       iconPath = `/icon/moto`;
     }
   } else {

@@ -1,7 +1,7 @@
 import apiClient from './apiClient';
 import {toDate, getMinutesDifference} from './handleTime';
 
-const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'darkred'];
+const pinColors = ['blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'darkred'];
 
 // Retorna informações de OS
 const fetchOrdersData = async () => {
@@ -164,16 +164,24 @@ const fetchTechnicians = async () => {
   try {
     const response = await apiClient.get('/maps/tec');
     if (response.ok && response.data) {
-      let colorIndex = 0;
+      let colorIndex = -1;
       const tecData = response.data.map(tec => {
-        if (colorIndex > 7) {
+        if (colorIndex > 6) {
           colorIndex = 0;
+        }
+        
+        let color;
+        if (colorIndex === -1) {
+          color = 'red'
+          colorIndex++;
+        } else {
+          color = pinColors[colorIndex++]
         }
 
         return {
           id: tec.idTec,
           nome: tec.nomeTec,
-          color: pinColors[colorIndex++ % pinColors.length],
+          color: color,
         };
       });
 

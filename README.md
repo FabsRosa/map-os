@@ -17,7 +17,7 @@
 
   <p>
     <a href="path-to-image" target="_blank">
-      <img src="https://github.com/user-attachments/assets/07668345-be78-4258-adcc-54a55ad53c22" alt="Application Screenshot" style="max-width: 100%; height: auto;" />
+      <img src="https://github.com/user-attachments/assets/85c5a25f-5763-424d-b623-3015fa78663e" alt="Application Screenshot" style="max-width: 100%; height: auto;" />
     </a>
   </p>
 </div>

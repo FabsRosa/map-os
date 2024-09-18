@@ -431,7 +431,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
   if ((!alarm.tempoRecebido || alarm.tempoRecebido < 8 ) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'yellow';
   } else if (alarm.tempoRecebido > 59 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
-    iconPath += 'darkred';
+    iconPath += 'pink';
   } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'red';
   } else if (alarm.dtLocal === null) {

@@ -14,10 +14,4 @@
     <li><strong>Motorcycle Status Monitoring:</strong> Motorcycle icons change color dynamically based on their movement. If a motorcycle remains idle for too long in an inappropriate location, the color changes to alert the user.</li>
     <li><strong>Multiple Map Views:</strong> The application supports two distinct map types—one displaying service orders and another dedicated to monitoring alarms, offering tailored insights depending on the user's needs.</li>
   </ul>
-
-  <p>
-    <a href="path-to-image" target="_blank">
-      <img src="https://github.com/user-attachments/assets/85c5a25f-5763-424d-b623-3015fa78663e" alt="Application Screenshot" style="max-width: 100%; height: auto;" />
-    </a>
-  </p>
 </div>

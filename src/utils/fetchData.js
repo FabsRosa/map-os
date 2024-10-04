@@ -29,8 +29,8 @@ const fetchOrdersData = async () => {
 
         return {
           id: order.idOS.toString(),
-          lat: parseFloat(order.lat),
-          lng: parseFloat(order.lng),
+          lat: order.lat ? parseFloat(order.lat) : (-15.5946388337158 + getRandomNumber()),
+          lng: order.lng ? parseFloat(order.lng) : (-56.1441360169476 + getRandomNumber()),
           clientID: order.idCliente,
           clientName: order.nomeCliente,
           clientRazao: order.razaoCliente,
@@ -80,10 +80,11 @@ const fetchAlarmsData = async () => {
         const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))): null);
         const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
         const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
-    
+
         return {
-          lat: parseFloat(alarm.lat),
-          lng: parseFloat(alarm.lng),
+          // If there is no location, the pin will be in a randon position in river
+          lat: alarm.lat ? parseFloat(alarm.lat) : (-15.5946388337158 + getRandomNumber()),
+          lng: alarm.lng ? parseFloat(alarm.lng) : (-56.1441360169476 + getRandomNumber()),
           clientID: alarm.idCliente,
           clientName: alarm.nomeCliente,
           codEvento: alarm.codEvento,
@@ -195,6 +196,13 @@ const fetchTechnicians = async () => {
 
   return [];
 };
+
+const getRandomNumber = () => {
+  const min = -0.00050000000000;
+  const max = 0;
+  const randomNumber = Math.random() * (max - min) + min;
+  return parseFloat(randomNumber.toFixed(13));
+}
 
 export {
   fetchOrdersData,

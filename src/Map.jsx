@@ -184,6 +184,26 @@ const Map = ({ mapType }) => {
     <div>
       {renderSidebar(isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
 
+      {type === 'OS' && (
+      <div className="counter order">
+        <span>OS ›</span>
+        <span className="count order">{orders ? orders.length : 0}</span>
+      </div>
+      )}
+
+      {type === 'Alarm' && (
+      <div>
+        <div className="counter alarm">
+          <span>Alarmes ›</span>
+          <span className="count alarm">{alarms ? alarms.length : 0}</span>
+        </div>
+        <div className="counter tatico">
+          <span>Táticos ›</span>
+          <span className="count tatico">{motos ? motos.filter(moto => moto.nomeTatico !== null).length : 0}</span>
+        </div>
+      </div>
+      )}
+
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={initialMapCenter}

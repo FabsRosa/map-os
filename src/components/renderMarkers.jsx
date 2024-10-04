@@ -1,6 +1,7 @@
 import { InfoWindow, Marker } from '@react-google-maps/api';
-import { calculateDistance } from '../utils/distanceCalculator';
+import DOMPurify from 'dompurify';
 import React, { useState, useEffect } from 'react';
+import { calculateDistance } from '../utils/distanceCalculator';
 import {formatTime, formatDate} from '../utils/handleTime';
 import haversineDistance from '../utils/haversineDistance';
 import {filterMotos} from '../utils/filterMarker';
@@ -200,8 +201,17 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-      <span className='p-big'>
-          • Cliente: {order.clientID} · <b>{order.clientName}&nbsp;</b>
+      <span
+        className='p-big'
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        • Cliente: {order.clientID} · <b>{order.clientName}&nbsp;</b>
         <img 
           src='/icon/link.png' 
           alt='Edit' 
@@ -237,13 +247,23 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, te
       </p>
       <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
       {order.dataAb ? (
-        <p className='p-medium'>• Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}</p>
+        <p className='p-medium'>• Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
+          <img 
+            src='/icon/clock.png' 
+            alt='Edit' 
+            style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
+            onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
+          />
+        </p>
       ) : null}
       {order.dataAg ? (
         <p className='p-medium'>• Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}</p>
       ) : null}
       <p className='p-medium'>• OS: {order.id}</p>
-      <p className='p-small'>• {order.desc}</p>
+      <p
+        className='p-small'
+        dangerouslySetInnerHTML={{ __html: `• ${DOMPurify.sanitize(order.desc.replace(/\n/g, '<br />&nbsp;&nbsp;'))}` }}
+      ></p>
     </div>
   );
 };
@@ -294,8 +314,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtRecebido !== null ? (
           <span>
             • Recebido: 
-            &nbsp;<b>{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s</b>
-            , {formatTime(alarm.dtRecebido)}
+            &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
+            , <b>{formatTime(alarm.dtRecebido)}</b>
           </span>
         ) : null}
       </div>
@@ -303,8 +323,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtDeslocamento !== null ? (
           <span>
             • Deslocamento: 
-            &nbsp;<b>{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s</b>
-            , {formatTime(alarm.dtDeslocamento)}
+            &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
+            , <b>{formatTime(alarm.dtDeslocamento)}</b>
           </span>
         ) : null}
       </div>
@@ -312,8 +332,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtLocal !== null ? (
           <span>
             • No Local: 
-            &nbsp;<b>{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s</b>
-            , {formatTime(alarm.dtLocal)}
+            &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
+            , <b>{formatTime(alarm.dtLocal)}</b>
           </span>
         ) : null}
       </div>
@@ -338,8 +358,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtRecebido !== null ? (
           <span>
             • Recebido:
-            &nbsp;<b>{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s</b>
-            , {formatTime(alarm.dtRecebido)}
+            &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
+            , <b>{formatTime(alarm.dtRecebido)}</b>
           </span>
         ) : null}
       </div>
@@ -347,8 +367,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtDeslocamento !== null ? (
           <span>
             • Deslocamento: 
-            &nbsp;<b>{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s</b>
-            , {formatTime(alarm.dtDeslocamento)}
+            &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
+            , <b>{formatTime(alarm.dtDeslocamento)}</b>
           </span>
         ) : null}
       </div>
@@ -356,8 +376,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         {alarm.dtLocal !== null ? (
           <span>
             • No Local:
-            &nbsp;<b>{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s</b>
-            , {formatTime(alarm.dtLocal)}
+            &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
+            , <b>{formatTime(alarm.dtLocal)}</b>
           </span>
         ) : null}
       </div>

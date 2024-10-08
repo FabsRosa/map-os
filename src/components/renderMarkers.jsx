@@ -136,7 +136,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos, filters) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, tecnicos, motos, filters) => {
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -155,6 +155,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           isEditing={editingOrder === selectedOrder.id}
           onEditClick={() => setEditingOrder(selectedOrder.id)}
           onTecChange={onTecChange}
+          onScheduleChange={onScheduleChange}
           tecnicos={tecnicos}
           filters={filters}
         />
@@ -196,7 +197,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, tecnicos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, tecnicos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   return (

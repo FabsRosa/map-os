@@ -152,6 +152,15 @@ const Map = ({ mapType }) => {
     setEditingOrder(null);
   };
 
+  // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
+  const onScheduleChange = async (idOS, newDate) => {
+    if (new Date(newDate) == 'Invalid Date') {
+      return;
+    }
+
+    await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
+  };
+
   const onTypeChange = async (idNewType) => {
     setType(idNewType);
   };
@@ -233,7 +242,7 @@ const Map = ({ mapType }) => {
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, tecnicos, motos, filters)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, tecnicos, motos, filters)}
 
       </GoogleMap>
     </div>

@@ -82,3 +82,21 @@
 .counter.tatico {
   top: 70px;
 }
+
+.custom-date.filter {
+  font-size: 0.78rem;
+  width: 100%; /* Adjust width to fit side by side with a small gap */
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 3px;
+  display: inline-block; /* Ensure the elements are inline */
+}
+
+.schedulingBox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+}

@@ -2,9 +2,11 @@ import { InfoWindow, Marker } from '@react-google-maps/api';
 import DOMPurify from 'dompurify';
 import React, { useState, useEffect } from 'react';
 import { calculateDistance } from '../utils/distanceCalculator';
-import {formatTime, formatDate} from '../utils/handleTime';
+import {formatTime, formatDate, toISOStringWithLocalTimezone} from '../utils/handleTime';
 import haversineDistance from '../utils/haversineDistance';
 import {filterMotos} from '../utils/filterMarker';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
@@ -136,7 +138,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, tecnicos, motos, filters) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, motos, filters) => {
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -156,6 +158,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           onEditClick={() => setEditingOrder(selectedOrder.id)}
           onTecChange={onTecChange}
           onScheduleChange={onScheduleChange}
+          isSchedulingOrder={isSchedulingOrder}
+          setIsSchedulingOrder={setIsSchedulingOrder}
           tecnicos={tecnicos}
           filters={filters}
         />
@@ -197,7 +201,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, tecnicos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   return (
@@ -212,7 +216,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           textOverflow: 'ellipsis',
         }}
       >
-        • Cliente: {order.clientID} · <b>{order.clientName}&nbsp;</b>
+        • Cliente: {order.clientID} ·&nbsp;<b>{order.clientName}&nbsp;</b>
         <img 
           src='/icon/link.png' 
           alt='Edit' 
@@ -248,17 +252,40 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
       </p>
       <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
       {order.dataAb ? (
-        <p className='p-medium'>• Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
-          <img 
-            src='/icon/clock.png' 
-            alt='Edit' 
-            style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-            onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
-          />
-        </p>
+        <div>
+          <p className='p-medium'>
+            • Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
+            {!order.dataAg && (
+              <img 
+                src='/icon/clock.png' 
+                alt='Edit' 
+                style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
+                onClick={() => setIsSchedulingOrder(true)}
+              />
+            )}
+          </p>
+          {(isSchedulingOrder && !order.dataAg) && (
+            <DatePicker
+              selected={new Date()}
+              onChange={(newDate) => onScheduleChange(order.id, toISOStringWithLocalTimezone(newDate))}
+              inline
+              onClickOutside={() => setIsSchedulingOrder(false)} 
+            />
+          )}
+        </div>
       ) : null}
       {order.dataAg ? (
-        <p className='p-medium'>• Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}</p>
+        <div>
+          <p className='p-medium'>
+            • Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}
+            <img 
+              src='/icon/clock.png' 
+              alt='Edit' 
+              style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
+              onClick={() => setIsSchedulingOrder(true)}
+            />
+          </p>
+        </div>
       ) : null}
       <p className='p-medium'>• OS: {order.id}</p>
       <p

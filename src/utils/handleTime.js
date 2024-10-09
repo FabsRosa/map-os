@@ -70,9 +70,30 @@ const formatDate = (dateStr) => {
   }
 }
 
+const toISOStringWithLocalTimezone = (date) => {
+  // Get the timezone offset in minutes (negative means behind UTC)
+  const timezoneOffset = date.getTimezoneOffset();
+
+  // Convert the timezone offset from minutes to milliseconds
+  const localDate = new Date(date.getTime() - timezoneOffset * 60000);
+
+  // Format manually to keep the local hours intact
+  const year = localDate.getUTCFullYear();
+  const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(localDate.getUTCDate()).padStart(2, '0');
+  const hours = String(localDate.getUTCHours()).padStart(2, '0');
+  const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
+  const milliseconds = String(localDate.getUTCMilliseconds()).padStart(3, '0');
+
+  // Construct the ISO string with 'Z' at the end (indicating UTC)
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+}
+
 export {
   toDate,
   getMinutesDifference,
   formatTime,
   formatDate,
+  toISOStringWithLocalTimezone,
 };

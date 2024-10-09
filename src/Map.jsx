@@ -6,6 +6,8 @@ import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTe
 import {renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog} from './components/renderMarkers';
 import renderSidebar from './components/Sidebar';
 import './styles/Map.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const mapContainerStyle = {
   width: '100vw',
@@ -40,6 +42,7 @@ const Map = ({ mapType }) => {
   const [highlightedMoto, setHighlightedMoto] = useState(null);
   const [selectedMoto, setSelectedMoto] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [isSchedulingOrder, setIsSchedulingOrder] = useState(false);
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -154,11 +157,13 @@ const Map = ({ mapType }) => {
 
   // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
   const onScheduleChange = async (idOS, newDate) => {
-    if (new Date(newDate) == 'Invalid Date') {
+    if (new Date(newDate) == 'Invalid Date' || typeof newDate !== 'string') {
       return;
     }
 
     await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
+
+    setIsSchedulingOrder(false);
   };
 
   const onTypeChange = async (idNewType) => {
@@ -192,6 +197,23 @@ const Map = ({ mapType }) => {
   return isLoaded ? (
     <div>
       {renderSidebar(isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
+
+      {isSchedulingOrder && (
+        <div className='schedulingBox'>
+        <DatePicker
+          id="scheduleDate"
+          className='custom-date filter'
+          selected={new Date()}
+          onChange={(newDate) => onScheduleChange(order.id, toISOStringWithLocalTimezone(newDate))}
+          open={isSchedulingOrder}
+          shouldCloseOnSelect={true}
+          showPopperArrow={false}
+          onClickOutside={() => setIsSchedulingOrder(false)}
+          customInput={<div style={{ display: "none" }} />}
+          // dateFormat="dd/MM/yyyy"
+        />
+        </div>
+      )}
 
       {type === 'OS' && (
       <div className="counter order">
@@ -242,7 +264,7 @@ const Map = ({ mapType }) => {
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, tecnicos, motos, filters)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, motos, filters)}
 
       </GoogleMap>
     </div>

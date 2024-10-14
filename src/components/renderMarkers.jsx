@@ -138,7 +138,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, motos, filters) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, motos, filters) => {
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -158,8 +158,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           onEditClick={() => setEditingOrder(selectedOrder.id)}
           onTecChange={onTecChange}
           onScheduleChange={onScheduleChange}
-          isSchedulingOrder={isSchedulingOrder}
-          setIsSchedulingOrder={setIsSchedulingOrder}
+          schedulingOrder={schedulingOrder}
+          setSchedulingOrder={setSchedulingOrder}
           tecnicos={tecnicos}
           filters={filters}
         />
@@ -201,7 +201,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   return (
@@ -260,16 +260,16 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
                 src='/icon/clock.png' 
                 alt='Edit' 
                 style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-                onClick={() => setIsSchedulingOrder(true)}
+                onClick={() => setSchedulingOrder(true)}
               />
             )}
           </p>
-          {(isSchedulingOrder && !order.dataAg) && (
+          {(schedulingOrder && !order.dataAg) && (
             <DatePicker
               selected={new Date()}
               onChange={(newDate) => onScheduleChange(order.id, toISOStringWithLocalTimezone(newDate))}
               inline
-              onClickOutside={() => setIsSchedulingOrder(false)} 
+              onClickOutside={() => setSchedulingOrder(false)} 
             />
           )}
         </div>
@@ -282,7 +282,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
               src='/icon/clock.png' 
               alt='Edit' 
               style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-              onClick={() => setIsSchedulingOrder(true)}
+              onClick={() => setSchedulingOrder(true)}
             />
           </p>
         </div>

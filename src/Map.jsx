@@ -42,7 +42,7 @@ const Map = ({ mapType }) => {
   const [highlightedMoto, setHighlightedMoto] = useState(null);
   const [selectedMoto, setSelectedMoto] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
-  const [isSchedulingOrder, setIsSchedulingOrder] = useState(false);
+  const [schedulingOrder, setSchedulingOrder] = useState(false);
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -163,7 +163,7 @@ const Map = ({ mapType }) => {
 
     await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
 
-    setIsSchedulingOrder(false);
+    setSchedulingOrder(false);
   };
 
   const onTypeChange = async (idNewType) => {
@@ -197,23 +197,6 @@ const Map = ({ mapType }) => {
   return isLoaded ? (
     <div>
       {renderSidebar(isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
-
-      {isSchedulingOrder && (
-        <div className='schedulingBox'>
-        <DatePicker
-          id="scheduleDate"
-          className='custom-date filter'
-          selected={new Date()}
-          onChange={(newDate) => onScheduleChange(order.id, toISOStringWithLocalTimezone(newDate))}
-          open={isSchedulingOrder}
-          shouldCloseOnSelect={true}
-          showPopperArrow={false}
-          onClickOutside={() => setIsSchedulingOrder(false)}
-          customInput={<div style={{ display: "none" }} />}
-          // dateFormat="dd/MM/yyyy"
-        />
-        </div>
-      )}
 
       {type === 'OS' && (
       <div className="counter order">
@@ -264,7 +247,7 @@ const Map = ({ mapType }) => {
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
         
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, isSchedulingOrder, setIsSchedulingOrder, tecnicos, motos, filters)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, motos, filters)}
 
       </GoogleMap>
     </div>

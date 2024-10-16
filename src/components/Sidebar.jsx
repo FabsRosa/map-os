@@ -1,6 +1,8 @@
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
+import { ptBR } from 'date-fns/locale'; 
 import "react-datepicker/dist/react-datepicker.css";
+
 import "../styles/Sidebar.css";
 
 const renderSidebar = (isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
@@ -156,6 +158,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                   className='custom-date filter n1'
                   popperPlacement="bottom-start"
                   dateFormat="dd/MM/yyyy"
+                  locale={ptBR}
                 />
                 <DatePicker
                   id="dataAberturaFim"
@@ -166,6 +169,7 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
                   className='custom-date filter n2'
                   popperPlacement="bottom-start"
                   dateFormat="dd/MM/yyyy"
+                  locale={ptBR}
                 />
               </div>
             </div>

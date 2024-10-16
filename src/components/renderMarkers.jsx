@@ -1,12 +1,14 @@
-import { InfoWindow, Marker } from '@react-google-maps/api';
-import DOMPurify from 'dompurify';
 import React, { useState, useEffect } from 'react';
-import { calculateDistance } from '../utils/distanceCalculator';
-import {formatTime, formatDate, toISOStringWithLocalTimezone} from '../utils/handleTime';
+import DOMPurify from 'dompurify';
+import { InfoWindow, Marker } from '@react-google-maps/api';
+import DatePicker from "react-datepicker";
+import { ptBR } from 'date-fns/locale'; 
+import "react-datepicker/dist/react-datepicker.css";
+
 import haversineDistance from '../utils/haversineDistance';
 import {filterMotos} from '../utils/filterMarker';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { calculateDistance } from '../utils/distanceCalculator';
+import {formatTime, formatDate, toISOStringWithLocalTimezone} from '../utils/handleTime';
 
 const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
@@ -82,7 +84,9 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
   }
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick) => {
+  hideCloseButton();
+
   if (highlightedOrder) {
     return (
       <InfoWindow
@@ -94,6 +98,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       > 
         <InfoWindowContentOrder
           order={highlightedOrder}
@@ -112,6 +117,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       > 
         <InfoWindowContentAlarm
           alarm={highlightedAlarm}
@@ -130,6 +136,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       > 
         <InfoWindowContentMoto
           moto={highlightedMoto}
@@ -138,7 +145,9 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, motos, filters) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick) => {
+  hideCloseButton();
+
   if (selectedOrder) {
     return (
       <InfoWindow
@@ -148,11 +157,12 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
         }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       >
         <InfoWindowContentOrder
-          key={selectedOrder.id + selectedOrder.nomeTec} // Unique key to force re-render
+          key={selectedOrder.id + selectedOrder.nomeTec + selectedOrder.dataAg} // Unique key to force re-render
           order={selectedOrder}
           isEditing={editingOrder === selectedOrder.id}
           onEditClick={() => setEditingOrder(selectedOrder.id)}
@@ -160,6 +170,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           onScheduleChange={onScheduleChange}
           schedulingOrder={schedulingOrder}
           setSchedulingOrder={setSchedulingOrder}
+          schedulingDate={schedulingDate}
+          setSchedulingDate={setSchedulingDate}
           tecnicos={tecnicos}
           filters={filters}
         />
@@ -176,6 +188,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       >
         <InfoWindowContentAlarm
           alarm={selectedAlarm}
@@ -190,7 +203,11 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           lat: selectedMoto.lat,
           lng: selectedMoto.lng
         }}
-        options={{ pixelOffset: new window.google.maps.Size(0, -40), disableAutoPan: true }}
+        options={{
+          pixelOffset: new window.google.maps.Size(0, -40),
+          disableAutoPan: true
+        }}
+        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
       > 
         <InfoWindowContentMoto
           moto={selectedMoto}
@@ -201,99 +218,117 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
-  return (
-    <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-      <span
-        className='p-big'
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}
-      >
-        • Cliente: {order.clientID} ·&nbsp;<b>{order.clientName}&nbsp;</b>
-        <img 
-          src='/icon/link.png' 
-          alt='Edit' 
-          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-          onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
+  if (schedulingOrder) {
+    showCloseButton();
+
+    return (
+      <div className='schedulingBox'>
+        <DatePicker
+          id="schedulingDate"
+          selected={schedulingDate}
+          onChange={(newDate) => setSchedulingDate(newDate)}
+          isClearable
+          placeholderText="Data Agendada"
+          className='custom-date filter'
+          dateFormat="dd/MM/yyyy"
+          locale={ptBR}
+          open={true}
         />
-      </span>
-      {(filters && filters.cliente) ? (
-        <p className='p-medium'>• Razão Social: {order.clientRazao}</p>
-      ) : null}
-      <p className='p-medium'>
-        • Técnico:&nbsp;
-        {isEditing ? (
-          <select className='custom-select' value={isTecInList ? order.idTec : ''} onChange={(e) => onTecChange(e.target.value)}>
-            <option value='' disabled>TERCEIRIZADO</option>
-            {tecnicos.map(tec => (
-              <option key={tec.id} value={tec.id}>
-                {tec.nome}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span>
-            <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
-            <img 
-              src='/icon/down-arrow.png' 
-              alt='Edit' 
-              style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-              onClick={onEditClick}
-            />
-          </span>
-        )}
-      </p>
-      <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
-      {order.dataAb ? (
-        <div>
-          <p className='p-medium'>
-            • Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
-            {!order.dataAg && (
+        <button
+          className='schedulingButton'
+          onClick={() => onScheduleChange(order.id, toISOStringWithLocalTimezone(schedulingDate))}
+        >
+          Ok
+        </button>
+      </div>
+    )
+  } else {
+    return (
+      <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+        <span
+          className='p-big'
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          • Cliente: {order.clientID} ·&nbsp;<b>{order.clientName}&nbsp;</b>
+          <img 
+            src='/icon/link.png' 
+            alt='Edit' 
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+            onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
+          />
+        </span>
+        {(filters && filters.cliente) ? (
+          <p className='p-medium'>• Razão Social: {order.clientRazao}</p>
+        ) : null}
+        <p className='p-medium'>
+          • Técnico:&nbsp;
+          {isEditing ? (
+            <select className='custom-select' value={isTecInList ? order.idTec : ''} onChange={(e) => onTecChange(e.target.value)}>
+              <option value='' disabled>TERCEIRIZADO</option>
+              {tecnicos.map(tec => (
+                <option key={tec.id} value={tec.id}>
+                  {tec.nome}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span>
+              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
+              <img 
+                src='/icon/down-arrow.png' 
+                alt='Edit' 
+                style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+                onClick={onEditClick}
+              />
+            </span>
+          )}
+        </p>
+        <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
+        {order.dataAb ? (
+          <div>
+            <p className='p-medium'>
+              • Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
+              {!order.dataAg && (
+                <img 
+                  src='/icon/clock.png' 
+                  alt='Edit' 
+                  style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
+                  onClick={() => {setSchedulingOrder(order.id); setSchedulingDate(order.dataAg);}}
+                />
+              )}
+            </p>
+          </div>
+        ) : null}
+        {order.dataAg ? (
+          <div>
+            <p className='p-medium'>
+              • Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}
               <img 
                 src='/icon/clock.png' 
                 alt='Edit' 
                 style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-                onClick={() => setSchedulingOrder(true)}
+                onClick={() => {setSchedulingOrder(order.id); setSchedulingDate(order.dataAg);}}
               />
-            )}
-          </p>
-          {(schedulingOrder && !order.dataAg) && (
-            <DatePicker
-              selected={new Date()}
-              onChange={(newDate) => onScheduleChange(order.id, toISOStringWithLocalTimezone(newDate))}
-              inline
-              onClickOutside={() => setSchedulingOrder(false)} 
-            />
-          )}
-        </div>
-      ) : null}
-      {order.dataAg ? (
-        <div>
-          <p className='p-medium'>
-            • Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}
-            <img 
-              src='/icon/clock.png' 
-              alt='Edit' 
-              style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-              onClick={() => setSchedulingOrder(true)}
-            />
-          </p>
-        </div>
-      ) : null}
-      <p className='p-medium'>• OS: {order.id}</p>
-      <p
-        className='p-small'
-        dangerouslySetInnerHTML={{ __html: `• ${DOMPurify.sanitize(order.desc.replace(/\n/g, '<br />&nbsp;&nbsp;'))}` }}
-      ></p>
-    </div>
-  );
+            </p>
+          </div>
+        ) : null}
+        <p className='p-medium'>• OS: {order.id}</p>
+        <p
+          className='p-small'
+          dangerouslySetInnerHTML={{ __html: `• ${DOMPurify.sanitize(order.desc.replace(/\n/g, '<br />&nbsp;&nbsp;'))}` }}
+        ></p>
+      </div>
+    );
+  }
 };
 
 // Design da dialog de informações de Alarmes
@@ -557,6 +592,27 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
   }
   return 'green';
 }
+
+// Function to add the CSS rule to hide the close button
+const hideCloseButton = () => {
+  let style = document.getElementById('hide-close-button-style');
+
+  // Check if the style element already exists to avoid duplicates
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'hide-close-button-style';
+    style.innerHTML = `.gm-style-iw button { display: none !important; }`;
+    document.head.appendChild(style);
+  }
+};
+
+// Function to remove the CSS rule to show the close button again
+const showCloseButton = () => {
+  const style = document.getElementById('hide-close-button-style');
+  if (style) {
+    style.parentNode.removeChild(style);  // Ensure removal
+  }
+};
 
 export {
   renderMarkerPin,

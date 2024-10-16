@@ -42,7 +42,8 @@ const Map = ({ mapType }) => {
   const [highlightedMoto, setHighlightedMoto] = useState(null);
   const [selectedMoto, setSelectedMoto] = useState(null);
   const [editingOrder, setEditingOrder] = useState(null);
-  const [schedulingOrder, setSchedulingOrder] = useState(false);
+  const [schedulingOrder, setSchedulingOrder] = useState(null);
+  const [schedulingDate, setSchedulingDate] = useState(null);
 
   // Controladores de filtro
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -101,7 +102,7 @@ const Map = ({ mapType }) => {
 
     const intervalId = setInterval(fetchMapData, intervalUpdateMap);
     return () => clearInterval(intervalId);
-  }, [filters, type, tecnicos]);
+  }, [filters, type, tecnicos, schedulingOrder]);
 
   // Reseta todos os seletores ao clicar em espaço vazio
   const handleMapClick = useCallback(() => {
@@ -112,6 +113,8 @@ const Map = ({ mapType }) => {
     setHighlightedMoto(null);
     setSelectedMoto(null);
     setEditingOrder(null);
+    setSchedulingOrder(null);
+    setSchedulingDate(null);
   }, []);
 
   // Mantém dialog de informações ao clicar em um marker
@@ -157,13 +160,14 @@ const Map = ({ mapType }) => {
 
   // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
   const onScheduleChange = async (idOS, newDate) => {
-    if (new Date(newDate) == 'Invalid Date' || typeof newDate !== 'string') {
+    if (newDate !== null && (new Date(newDate) == 'Invalid Date' || typeof newDate !== 'string')) {
       return;
     }
 
     await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
 
-    setSchedulingOrder(false);
+    setSchedulingOrder(null);
+    setSchedulingDate(null);
   };
 
   const onTypeChange = async (idNewType) => {
@@ -246,8 +250,8 @@ const Map = ({ mapType }) => {
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
         
-        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, tecnicos, motos, filters)}
+        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick)}
 
       </GoogleMap>
     </div>

@@ -71,6 +71,9 @@ const formatDate = (dateStr) => {
 }
 
 const toISOStringWithLocalTimezone = (date) => {
+  if (!date) {
+    return null;
+  }
   // Get the timezone offset in minutes (negative means behind UTC)
   const timezoneOffset = date.getTimezoneOffset();
 
@@ -81,7 +84,7 @@ const toISOStringWithLocalTimezone = (date) => {
   const year = localDate.getUTCFullYear();
   const month = String(localDate.getUTCMonth() + 1).padStart(2, '0');
   const day = String(localDate.getUTCDate()).padStart(2, '0');
-  const hours = String(localDate.getUTCHours()).padStart(2, '0');
+  const hours = '08'
   const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
   const seconds = String(localDate.getUTCSeconds()).padStart(2, '0');
   const milliseconds = String(localDate.getUTCMilliseconds()).padStart(3, '0');

@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { InfoWindow, Marker } from '@react-google-maps/api';
 import DatePicker from "react-datepicker";
-import { ptBR } from 'date-fns/locale'; 
+import { ptBR } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 
 import haversineDistance from '../utils/haversineDistance';
-import {filterMotos} from '../utils/filterMarker';
-import { calculateDistance } from '../utils/distanceCalculator';
-import {formatTime, formatDate, toISOStringWithLocalTimezone} from '../utils/handleTime';
+import { filterMotos } from '../utils/filterMarker';
+import { formatTime, formatDate, toISOStringWithLocalTimezone } from '../utils/handleTime';
 
 const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
@@ -37,21 +36,22 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
     let id = 0;
     return alarms.map(alarm => {
       return (
-      <Marker
-        key={alarm.clientID + id++}
-        position={{
-          lat: alarm.lat,
-          lng: alarm.lng
-        }}
-        icon={{
-          url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm),
-          scaledSize: new window.google.maps.Size(iconSizePinAlarm, iconSizePinAlarm)
-        }}
-        onClick={handleMarkerClickAlarm(alarm)}
-        onMouseOut={handleMouseOutAlarm}
-        onMouseOver={handleMouseOverAlarm(alarm)}
-      />
-    )})
+        <Marker
+          key={alarm.clientID + id++}
+          position={{
+            lat: alarm.lat,
+            lng: alarm.lng
+          }}
+          icon={{
+            url: getMarkerIconAlarm((highlightedAlarm ? highlightedAlarm.clientID === alarm.clientID : false), alarm),
+            scaledSize: new window.google.maps.Size(iconSizePinAlarm, iconSizePinAlarm)
+          }}
+          onClick={handleMarkerClickAlarm(alarm)}
+          onMouseOut={handleMouseOutAlarm}
+          onMouseOver={handleMouseOverAlarm(alarm)}
+        />
+      )
+    })
   }
 }
 
@@ -98,8 +98,8 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
-      > 
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
+      >
         <InfoWindowContentOrder
           order={highlightedOrder}
           filters={filters}
@@ -117,8 +117,8 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
-      > 
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
+      >
         <InfoWindowContentAlarm
           alarm={highlightedAlarm}
           motos={motos}
@@ -136,8 +136,8 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
-      > 
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
+      >
         <InfoWindowContentMoto
           moto={highlightedMoto}
         />
@@ -159,7 +159,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true,
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
         <InfoWindowContentOrder
           key={selectedOrder.id + selectedOrder.nomeTec + selectedOrder.dataAg} // Unique key to force re-render
@@ -178,7 +178,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
       </InfoWindow>
     )
   } else if (selectedAlarm) {
-      return (
+    return (
       <InfoWindow
         position={{
           lat: selectedAlarm.lat,
@@ -188,7 +188,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
         <InfoWindowContentAlarm
           alarm={selectedAlarm}
@@ -207,8 +207,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true
         }}
-        onCloseClick={() => {hideCloseButton(); handleMapClick();}}
-      > 
+        onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
+      >
         <InfoWindowContentMoto
           moto={selectedMoto}
         />
@@ -259,10 +259,10 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           }}
         >
           • Cliente: {order.clientID} ·&nbsp;<b>{order.clientName}&nbsp;</b>
-          <img 
-            src='/icon/link.png' 
-            alt='Edit' 
-            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+          <img
+            src='/icon/link.png'
+            alt='Edit'
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
             onClick={() => window.open(`https://www.google.com/maps?q=${order.lat},${order.lng}&z=13&t=m`, '_blank')}
           />
         </span>
@@ -283,10 +283,10 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           ) : (
             <span>
               <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
-              <img 
-                src='/icon/down-arrow.png' 
-                alt='Edit' 
-                style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+              <img
+                src='/icon/down-arrow.png'
+                alt='Edit'
+                style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
                 onClick={onEditClick}
               />
             </span>
@@ -298,11 +298,11 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
             <p className='p-medium'>
               • Data Abertura: <b>{formatDate(order.dataAb)}</b>, {formatTime(order.dataAb)}
               {!order.dataAg && (
-                <img 
-                  src='/icon/clock.png' 
-                  alt='Edit' 
-                  style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-                  onClick={() => {setSchedulingOrder(order.id); setSchedulingDate(order.dataAg);}}
+                <img
+                  src='/icon/clock.png'
+                  alt='Edit'
+                  style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }}
+                  onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); }}
                 />
               )}
             </p>
@@ -312,11 +312,11 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           <div>
             <p className='p-medium'>
               • Data Agendada: <b>{formatDate(order.dataAg)}</b>, {formatTime(order.dataAg)}
-              <img 
-                src='/icon/clock.png' 
-                alt='Edit' 
-                style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }} 
-                onClick={() => {setSchedulingOrder(order.id); setSchedulingDate(order.dataAg);}}
+              <img
+                src='/icon/clock.png'
+                alt='Edit'
+                style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }}
+                onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); }}
               />
             </p>
           </div>
@@ -344,8 +344,8 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           .map(async moto => {
             const locationMoto = { lat: moto.lat, lng: moto.lng };
             try {
-              const result = await calculateDistance(locationMoto, locationAlarm);
-              return result ? { distance: result.distance, duration: result.duration, nomeTatico: moto.nomeTatico } : null;
+              const result = haversineDistance(locationMoto.lat, locationMoto.lng, locationAlarm.lat, locationAlarm.lng);
+              return result ? { distance: result, nomeTatico: moto.nomeTatico } : null;
             } catch (error) {
               console.error('Error calculating distance:', error);
               return null;
@@ -363,45 +363,45 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
   if (distances.length === 0) {
     return (
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-      <span className='p-big alarm'>
-        • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
-        <img 
-          src='/icon/link.png' 
-          alt='Edit' 
-          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
-          onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
-        />
-      </span>
-      <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
-      <div className='p-medium'>
-        {alarm.dtRecebido !== null ? (
-          <span>
-            • Recebido: 
-            &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
-            , <b>{formatTime(alarm.dtRecebido)}</b>
-          </span>
-        ) : null}
+        <span className='p-big alarm'>
+          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+          <img
+            src='/icon/link.png'
+            alt='Edit'
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
+            onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
+          />
+        </span>
+        <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
+        <div className='p-medium'>
+          {alarm.dtRecebido !== null ? (
+            <span>
+              • Recebido:
+              &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
+              , <b>{formatTime(alarm.dtRecebido)}</b>
+            </span>
+          ) : null}
+        </div>
+        <div className='p-medium'>
+          {alarm.dtDeslocamento !== null ? (
+            <span>
+              • Deslocamento:
+              &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
+              , <b>{formatTime(alarm.dtDeslocamento)}</b>
+            </span>
+          ) : null}
+        </div>
+        <div className='p-medium'>
+          {alarm.dtLocal !== null ? (
+            <span>
+              • No Local:
+              &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
+              , <b>{formatTime(alarm.dtLocal)}</b>
+            </span>
+          ) : null}
+        </div>
+        <div className='p-medium'>Calculando distâncias...</div>
       </div>
-      <div className='p-medium'>
-        {alarm.dtDeslocamento !== null ? (
-          <span>
-            • Deslocamento: 
-            &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
-            , <b>{formatTime(alarm.dtDeslocamento)}</b>
-          </span>
-        ) : null}
-      </div>
-      <div className='p-medium'>
-        {alarm.dtLocal !== null ? (
-          <span>
-            • No Local: 
-            &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
-            , <b>{formatTime(alarm.dtLocal)}</b>
-          </span>
-        ) : null}
-      </div>
-      <div className='p-medium'>Calculando distâncias...</div>
-    </div>
     );
   }
 
@@ -409,10 +409,10 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
       <span className='p-big alarm'>
         • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
-        <img 
-          src='/icon/link.png' 
-          alt='Edit' 
-          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }} 
+        <img
+          src='/icon/link.png'
+          alt='Edit'
+          style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
@@ -429,7 +429,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento: 
+            • Deslocamento:
             &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
             , <b>{formatTime(alarm.dtDeslocamento)}</b>
           </span>
@@ -447,7 +447,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
-            {distance.nomeTatico}: {`${distance.distance}, ${distance.duration}.`}
+            {distance.nomeTatico}: {`${distance.distance < 1000 ? `${distance.distance.toFixed(2)}m` : `${(distance.distance / 1000).toFixed(2)}km`}.`}
           </div>
         )
       ))}
@@ -465,8 +465,8 @@ const InfoWindowContentMoto = ({ moto }) => (
       • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))} dias`}</b>
     </p>
     {moto.nomeTatico ? (
-        <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
-      ) : null}
+      <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
+    ) : null}
   </div>
 );
 
@@ -474,7 +474,7 @@ const InfoWindowContentMoto = ({ moto }) => (
 const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
   let color;
   let isTerceirizado = false;
-  
+
   if (tec) {
     if (tec.color) {
       color = tec.color;
@@ -502,7 +502,7 @@ const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
   }
 
   iconPath += `.png`;
-  
+
   return iconPath;
 }
 
@@ -511,7 +511,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
   // const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
-  if ((!alarm.tempoRecebido || alarm.tempoRecebido < 8 ) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
+  if ((!alarm.tempoRecebido || alarm.tempoRecebido < 8) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'yellow';
   } else if (alarm.tempoRecebido > 59 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
     iconPath += 'pink';
@@ -562,7 +562,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
   const idleLimit = 5 * 60 * 1000;
   const parkLimit = 240 * 60 * 1000;
   const distanceLimitInMeters = 100;
-  
+
   if (moto.nomeTatico) {
     return 'yellow';
   }
@@ -583,8 +583,8 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
         }
       }
     }
-    
-    if (moto.idleTime > parkLimit){
+
+    if (moto.idleTime > parkLimit) {
       return 'gray';
     } else {
       return 'red';

@@ -1,3 +1,5 @@
+// Deprecated due to high costs associated with it.
+
 export const calculateDistance = (origin, destination) => {
   return new Promise((resolve, reject) => {
     if (!window.google || !window.google.maps) {

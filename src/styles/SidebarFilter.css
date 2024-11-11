@@ -1,4 +1,4 @@
-.sidebar {
+.sidebarFilter {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,7 +13,7 @@
   padding-bottom: 10px;
 }
 
-.sidebar-items {
+.sidebarFilter-items {
   max-height: 100vh;
   overflow-y: auto;
 }
@@ -32,7 +32,7 @@
   transition: width 0.2s ease-in-out;
 }
 
-.sidebar.open {
+.sidebarFilter.open {
   transform: translateX(0);
 }
 

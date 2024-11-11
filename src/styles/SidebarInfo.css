@@ -1,0 +1,65 @@
+.sidebarInfo {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  max-height: 100vh;
+  background-color: #fff;
+  box-shadow: rgba(0, 0, 0, 0.2) 2px 0px 5px;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  border-radius: 0px 0px 0px 7.5px;
+  padding-bottom: 10px;
+}
+
+.sidebarInfo-items {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.info-icon {
+  position: fixed;
+  top: 25px;
+  right: 275px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.info-icon img {
+  width: 40px;
+  height: auto;
+  transition: width 0.2s ease-in-out;
+}
+
+.sidebarInfo.open {
+  transform: translateX(0);
+}
+
+.counter {
+  position: fixed;
+  top: 75px;
+  right: 270px;
+  padding: 8px 12px;
+  background-color: rgba(70, 130, 180, 0.8); /* Softer, semi-transparent blue */
+  color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000;
+/*   display: flex;
+  align-items: center; */
+}
+
+.counter span {
+  margin-right: 4px;
+}
+
+.count {
+  font-size: 19px;
+}
+
+.counter.tatico {
+  top: 145px;
+}

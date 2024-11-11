@@ -578,7 +578,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
         const order = unfOrders[index];
         if (order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec)) {
           if (haversineDistance(moto.lat, moto.lng, order.lat, order.lng) < distanceLimitInMeters) {
-            return 'green';
+            return 'blue';
           }
         }
       }

@@ -1,15 +1,15 @@
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
-import { ptBR } from 'date-fns/locale'; 
+import { ptBR } from 'date-fns/locale';
 import "react-datepicker/dist/react-datepicker.css";
 
-import "../styles/Sidebar.css";
+import "../styles/SidebarFilter.css";
 
-const renderSidebar = (isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
+const renderSidebarFilter = (isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
   return (
-    <Sidebar
-      isOpen={isSidebarOpen}
-      onClose={toggleSidebar}
+    <SidebarFilter
+      isOpen={isSidebarFilterOpen}
+      onClose={toggleSidebarFilter}
       orders={orders}
       filters={filters}
       tecnicos={tecnicos}
@@ -22,13 +22,13 @@ const renderSidebar = (isSidebarOpen, toggleSidebar, orders, filters, tecnicos, 
 }
 
 // Design da sidebar de filtro
-const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange }) => {
+const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange }) => {
   return (
-    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+    <div className={`sidebarFilter ${isOpen ? 'open' : ''}`}>
       <div className="filter-icon" onClick={onClose}>
-        <img src={!isOpen ? "/icon/filter.svg" : "/icon/clear-filter.svg"} alt="Filter" />
+        <img src={!isOpen ? "/icon/filter.svg" : "/icon/filter-clear.svg"} alt="Filter" />
       </div>
-      <div className="sidebar-items">
+      <div className="sidebarFilter-items">
         <div className="filter-option n1">
           <label className="filter-label n1" htmlFor="mapType">Tipo de Mapa</label>
           <br />
@@ -206,4 +206,4 @@ const Sidebar = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilte
   );
 };
 
-export default renderSidebar;
+export default renderSidebarFilter;

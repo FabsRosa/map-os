@@ -55,34 +55,6 @@
   outline: none;
 }
 
-.counter {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 8px 12px;
-  background-color: rgba(70, 130, 180, 0.8); /* Softer, semi-transparent blue */
-  color: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
-  font-size: 14px;
-  font-weight: bold;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-}
-
-.counter span {
-  margin-right: 4px;
-}
-
-.count {
-  font-size: 19px;
-}
-
-.counter.tatico {
-  top: 70px;
-}
-
 .custom-date.filter {
   font-size: 0.78rem;
   width: 100%; /* Adjust width to fit side by side with a small gap */
@@ -112,7 +84,7 @@
   padding: 5px 8px;
   border-radius: 3px;
   border: none;
-  background-color: rgba(70, 130, 180, 0.8);
+  background-color: rgb(70, 131, 180);
   color: #fff;
   cursor: pointer;
 }

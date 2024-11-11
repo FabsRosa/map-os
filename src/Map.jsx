@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './utils/apiClient';
-import {filterMarker} from './utils/filterMarker';
+import { filterMarker } from './utils/filterMarker';
 import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
-import {renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog} from './components/renderMarkers';
-import renderSidebar from './components/Sidebar';
+import { renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog } from './components/renderMarkers';
+import renderSidebarFilter from './components/SidebarFilter';
+import renderSidebarInfo from './components/SidebarInfo';
 import './styles/Map.css';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 const mapContainerStyle = {
   width: '100vw',
@@ -45,8 +44,17 @@ const Map = ({ mapType }) => {
   const [schedulingOrder, setSchedulingOrder] = useState(null);
   const [schedulingDate, setSchedulingDate] = useState(null);
 
+  const [isSidebarInfoOpen, setIsSidebarInfoOpen] = useState(false);
+  const [infos, setInfos] = useState(
+    {
+      osAlarme: 0,
+      osArrombamento: 0,
+
+    }
+  );
+
   // Controladores de filtro
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarFilterOpen, setIsSidebarFilterOpen] = useState(false);
   const [filters, setFilters] = useState(
     {
       ocultar: '',
@@ -66,8 +74,12 @@ const Map = ({ mapType }) => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prevState => !prevState);
+  const toggleSidebarFilter = () => {
+    setIsSidebarFilterOpen(prevState => !prevState);
+  };
+
+  const toggleSidebarInfo = () => {
+    setIsSidebarInfoOpen(prevState => !prevState);
   };
 
   // Atualiza lista de técnicos não-terceirizados e defeitos
@@ -88,12 +100,12 @@ const Map = ({ mapType }) => {
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
-        const ordersData = await fetchOrdersData();
-        setUnfOrders(ordersData);
-        const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
-        setOrders(ordersFiltered);
-        const alarmsData = await fetchAlarmsData();
-        setAlarms(alarmsData);
+      const ordersData = await fetchOrdersData();
+      setUnfOrders(ordersData);
+      const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
+      setOrders(ordersFiltered);
+      const alarmsData = await fetchAlarmsData();
+      setAlarms(alarmsData);
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
@@ -146,7 +158,7 @@ const Map = ({ mapType }) => {
   // Atualiza as variáveis e faz update no banco ao alterar o técnico designado de uma OS
   const onTecChange = async (idNewTech) => {
     const nomeTec = tecnicos ? tecnicos.find(tec => tec.id == idNewTech).nome : '';
-    const updatedOrders = orders.map(order => 
+    const updatedOrders = orders.map(order =>
       order.id == editingOrder ? { ...order, idTec: idNewTech, nomeTec: nomeTec } : order
     );
     setOrders(updatedOrders);
@@ -187,40 +199,21 @@ const Map = ({ mapType }) => {
     { featureType: 'landscape', elementType: 'labels', stylers: [{ visibility: 'off' }] },
     { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
   ];
-  
+
   // Conditionally add administrative labels style
   if (type === 'OS') {
     mapStyles.push(
       { featureType: 'administrative', stylers: [{ visibility: 'off' }] },
       { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] },
     );
-    
+
   }
 
   // Processamento do mapa
   return isLoaded ? (
     <div>
-      {renderSidebar(isSidebarOpen, toggleSidebar, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
-
-      {type === 'OS' && (
-      <div className="counter order">
-        <span>OS ›</span>
-        <span className="count order">{orders ? orders.length : 0}</span>
-      </div>
-      )}
-
-      {type === 'Alarm' && (
-      <div>
-        <div className="counter alarm">
-          <span>Alarmes ›</span>
-          <span className="count alarm">{alarms ? alarms.length : 0}</span>
-        </div>
-        <div className="counter tatico">
-          <span>Táticos ›</span>
-          <span className="count tatico">{motos ? motos.filter(moto => moto.nomeTatico !== null).length : 0}</span>
-        </div>
-      </div>
-      )}
+      {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
+      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, onTypeChange, orders, alarms, motos)}
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -249,7 +242,7 @@ const Map = ({ mapType }) => {
 
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
-        
+
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick)}
         {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick)}
 

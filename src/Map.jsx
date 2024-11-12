@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './utils/apiClient';
 import { filterMarker } from './utils/filterMarker';
-import { fetchOrdersData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
+import { fetchOrdersData, fetchInfosData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
 import { renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog } from './components/renderMarkers';
 import renderSidebarFilter from './components/SidebarFilter';
 import renderSidebarInfo from './components/SidebarInfo';
@@ -45,13 +45,7 @@ const Map = ({ mapType }) => {
   const [schedulingDate, setSchedulingDate] = useState(null);
 
   const [isSidebarInfoOpen, setIsSidebarInfoOpen] = useState(false);
-  const [infos, setInfos] = useState(
-    {
-      osAlarme: 0,
-      osArrombamento: 0,
-
-    }
-  );
+  const [infos, setInfos] = useState([]);
 
   // Controladores de filtro
   const [isSidebarFilterOpen, setIsSidebarFilterOpen] = useState(false);
@@ -109,6 +103,8 @@ const Map = ({ mapType }) => {
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
+      const infosData = await fetchInfosData();
+      setInfos(infosData);
     };
     fetchMapData();
 
@@ -223,6 +219,8 @@ const Map = ({ mapType }) => {
           styles: mapStyles,
           mapTypeControl: false,
           fullscreenControl: false,
+          zoomControl: false,
+          streetViewControl: false,
           gestureHandling: 'greedy',
         }}
         onClick={handleMapClick}

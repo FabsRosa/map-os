@@ -25,9 +25,12 @@ const SidebarInfo = ({ isOpen, onClose, infos, type, onTypeChange, orders, alarm
         <img src="/icon/info.svg" alt="Info" />
       </div>
       <div className="sidebarInfo-items">
-        <p>Texto</p>
-        <p>Texto</p>
-        <p>Texto</p>
+        {infos.map((info, index) => (
+          <div key={index} className="sidebarInfo-item">
+            <span className="sidebarInfo-label">{info.label}: </span>
+            <span className="sidebarInfo-value">{info.value}</span>
+          </div>
+        ))}
       </div>
       <div className="sidebarInfo-popup">
         {type === 'OS' && (

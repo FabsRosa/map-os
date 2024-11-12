@@ -1,5 +1,5 @@
 import apiClient from './apiClient';
-import {toDate, getMinutesDifference} from './handleTime';
+import { toDate, getMinutesDifference } from './handleTime';
 
 const pinColors = ['blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'darkred'];
 
@@ -9,7 +9,7 @@ const fetchOrdersData = async () => {
     const responseOS = await apiClient.get('/maps/OS');
     let lastClientID = '';
     let count = 0;
-    
+
     if (responseOS.ok && responseOS.data) {
       const ordersData = responseOS.data.map(order => {
         if (lastClientID === order.idCliente) {
@@ -17,8 +17,8 @@ const fetchOrdersData = async () => {
           const angle = count * 30; // 30 degrees for each subsequent marker
           const radians = (angle * Math.PI) / 180; // Convert angle to radians
           const radiusIncrement = 0.0003;; // Fixed distance for each step
-          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
-    
+          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1); // Increase radius slightly with each step
+
           // Adjust lat and lng slightly to create the linear spiral effect without overlap
           order.lat = parseFloat(order.lat) + radius * Math.sin(radians);
           order.lng = parseFloat(order.lng) + radius * Math.cos(radians);
@@ -54,13 +54,42 @@ const fetchOrdersData = async () => {
   return [];
 };
 
+// Retorna informações da barra lateral SidebarInfo
+const fetchInfosData = async () => {
+  try {
+    const responseInfos = await apiClient.get('/maps/BI');
+
+    if (responseInfos.ok && responseInfos.data) {
+      return (
+        [
+          { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
+          { label: "OS Cliente", value: responseInfos.data.qtdOsCliente },
+          // { label: "Agendadas p/ Hoje", value: 999 },
+          { label: "Retorno", value: responseInfos.data.qtdRetorno },
+          { label: "Pausadas", value: responseInfos.data.qtdPausada },
+          { label: "Instalação", value: responseInfos.data.qtdInstalacao },
+          { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
+          { label: "Arromabamento", value: responseInfos.data.qtdArrombamento },
+          { label: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
+          { label: "Sem Acesso", value: responseInfos.data.qtdSemAcess },
+        ]
+      );
+    } else {
+      console.error('Error fetching infos:', responseInfos.problem);
+    }
+  } catch (error) {
+    console.error('Error fetching infos:', error);
+  }
+  return [];
+};
+
 // Retorna informações de Alarmes
 const fetchAlarmsData = async () => {
   try {
     const responseOS = await apiClient.get('/maps/alarm');
     let lastClientID = '';
     let count = 0;
-    
+
     if (responseOS.ok && responseOS.data) {
       const alarmsData = responseOS.data.map(alarm => {
         if (lastClientID === alarm.idCliente) {
@@ -68,8 +97,8 @@ const fetchAlarmsData = async () => {
           const angle = count * 30; // 30 degrees for each subsequent marker
           const radians = (angle * Math.PI) / 180; // Convert angle to radians
           const radiusIncrement = 0.0003; // Fixed distance for each step
-          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1) ; // Increase radius slightly with each step
-    
+          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1); // Increase radius slightly with each step
+
           // Adjust lat and lng slightly to create the linear spiral effect without overlap
           alarm.lat = parseFloat(alarm.lat) + radius * Math.sin(radians);
           alarm.lng = parseFloat(alarm.lng) + radius * Math.cos(radians);
@@ -77,7 +106,7 @@ const fetchAlarmsData = async () => {
           lastClientID = alarm.idCliente;
           count = 0;
         }
-        const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))): null);
+        const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))) : null);
         const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
         const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
 
@@ -100,7 +129,7 @@ const fetchAlarmsData = async () => {
           segLocal: local !== null ? (local.seconds !== null ? local.seconds : null) : null,
         };
       });
-      
+
       return alarmsData;
     } else {
       console.error('Error fetching alarms:', responseOS.problem);
@@ -110,7 +139,7 @@ const fetchAlarmsData = async () => {
   }
   return [];
 };
-  
+
 // Retorna informações de Moto
 const fetchMotosData = async () => {
   try {
@@ -118,12 +147,13 @@ const fetchMotosData = async () => {
 
     if (responseMoto.ok && responseMoto.data) {
       const motosData = responseMoto.data.map(moto => {
-        return { id: moto.id,
-        lat: parseFloat(moto.lat),
-        lng: parseFloat(moto.lng),
-        nomeTatico: moto.nomeTatico ? moto.nomeTatico : null,
-        idleTime: moto.idleTime,
-        type: moto.type,
+        return {
+          id: moto.id,
+          lat: parseFloat(moto.lat),
+          lng: parseFloat(moto.lng),
+          nomeTatico: moto.nomeTatico ? moto.nomeTatico : null,
+          idleTime: moto.idleTime,
+          type: moto.type,
         }
       });
 
@@ -170,7 +200,7 @@ const fetchTechnicians = async () => {
         if (colorIndex > 6) {
           colorIndex = 0;
         }
-        
+
         let color;
         if (colorIndex === -1) {
           color = 'red'
@@ -206,6 +236,7 @@ const getRandomNumber = () => {
 
 export {
   fetchOrdersData,
+  fetchInfosData,
   fetchAlarmsData,
   fetchMotosData,
   fetchDefects,

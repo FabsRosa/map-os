@@ -15,22 +15,30 @@ const filterMarker = (orders, filter, tecnicos) => {
 
     if (filter.tipoOS && filter.tipoOS.length > 0) {
       let OSCli = true;
-      let OSAg = true;
-      let OSAt = true;
       if (filter.tipoOS.includes('Cliente')) {
         OSCli = order.solic == 10001;
       }
+
+      let OSAg = true;
       if (filter.tipoOS.includes('Agendada')) {
         OSAg = order.dataAg !== null;
       }
+
+      let OSAt = true;
       if (filter.tipoOS.includes('Atribuida')) {
         OSAt = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
       }
-      filterOS = OSCli && OSAg && OSAt;
+
+      let OSPausada = true;
+      if (filter.tipoOS.includes('Pausada')) {
+        OSAt = order.isPausada == true;
+      }
+      
+      filterOS = OSCli && OSAg && OSAt && OSPausada;
     }
 
     if (filter.defeito && filter.defeito.length > 0) {
-      filterDef = filter.defeito.includes(order.def);
+      filterDef = filter.defeito.includes(order.idDef);
     }
 
     if (filter.tecnico && filter.tecnico.length > 0) {

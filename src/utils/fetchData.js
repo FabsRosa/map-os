@@ -34,13 +34,15 @@ const fetchOrdersData = async () => {
           clientID: order.idCliente,
           clientName: order.nomeCliente,
           clientRazao: order.razaoCliente,
-          def: order.defeito,
+          def: order.descDefeito,
+          idDef: order.idDefeito,
           desc: order.descricao,
           idTec: order.idTec,
           nomeTec: order.nomeTec,
           solic: order.solic,
           dataAb: order.dataAb,
           dataAg: order.dataAg,
+          isPausada: order.isPausada,
         };
       });
 
@@ -62,16 +64,16 @@ const fetchInfosData = async () => {
     if (responseInfos.ok && responseInfos.data) {
       return (
         [
-          { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
           { label: "OS Cliente", value: responseInfos.data.qtdOsCliente },
-          // { label: "Agendadas p/ Hoje", value: 999 },
+          { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
           { label: "Retorno", value: responseInfos.data.qtdRetorno },
-          { label: "Pausadas", value: responseInfos.data.qtdPausada },
-          { label: "Instalação", value: responseInfos.data.qtdInstalacao },
           { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
           { label: "Arromabamento", value: responseInfos.data.qtdArrombamento },
           { label: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
           { label: "Sem Acesso", value: responseInfos.data.qtdSemAcess },
+          { label: "Instalação", value: responseInfos.data.qtdInstalacao },
+          { label: "Pausadas", value: responseInfos.data.qtdPausada },
+          // { label: "Agendadas p/ Hoje", value: 999 },
         ]
       );
     } else {
@@ -175,7 +177,8 @@ const fetchDefects = async () => {
     if (response.ok && response.data) {
       const defData = response.data.map(def => {
         return {
-          defeito: def.defeito,
+          idDefeito: def.idDefeito,
+          descDefeito: def.descDefeito,
         };
       });
 

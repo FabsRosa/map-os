@@ -19,7 +19,7 @@ const initialMapCenter = {
 };
 
 const intervalUpdateMap = 15000;
-const intervalUpdateIndex = 60000;
+const intervalUpdateIndex = 300000;
 
 const Map = ({ mapType }) => {
   // Controlador de tipo de mapa
@@ -46,6 +46,7 @@ const Map = ({ mapType }) => {
 
   const [isSidebarInfoOpen, setIsSidebarInfoOpen] = useState(false);
   const [infos, setInfos] = useState([]);
+  const [selectedInfos, setSelectedInfos] = useState(null);
 
   // Controladores de filtro
   const [isSidebarFilterOpen, setIsSidebarFilterOpen] = useState(false);
@@ -209,7 +210,7 @@ const Map = ({ mapType }) => {
   return isLoaded ? (
     <div>
       {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
-      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, onTypeChange, orders, alarms, motos)}
+      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters)}
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}

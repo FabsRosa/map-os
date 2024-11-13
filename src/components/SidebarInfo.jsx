@@ -2,23 +2,24 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/SidebarInfo.css";
 
-const renderSidebarInfo = (isSidebarInfoOpen, toggleSidebarInfo, infos, type, onTypeChange, orders, alarms, motos) => {
+const renderSidebarInfo = (isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters) => {
   return (
     <SidebarInfo
       isOpen={isSidebarInfoOpen}
       onClose={toggleSidebarInfo}
       infos={infos}
       type={type}
-      onTypeChange={onTypeChange}
       orders={orders}
       alarms={alarms}
       motos={motos}
+      filters={filters}
+      setFilters={setFilters}
     />
   )
 }
 
 // Design da sidebarInfo
-const SidebarInfo = ({ isOpen, onClose, infos, type, onTypeChange, orders, alarms, motos }) => {
+const SidebarInfo = ({ isOpen, onClose, infos, type, orders, alarms, motos, filters, setFilters }) => {
   return (
     <div className={`sidebarInfo ${isOpen ? 'open' : ''}`}>
       <div className="info-icon" onClick={onClose}>
@@ -26,7 +27,11 @@ const SidebarInfo = ({ isOpen, onClose, infos, type, onTypeChange, orders, alarm
       </div>
       <div className="sidebarInfo-items">
         {infos.map((info, index) => (
-          <div key={index} className="sidebarInfo-item">
+          <div
+            key={index}
+            className="sidebarInfo-item"
+            onClick={() => handleItemInfoClick(info, filters, setFilters)}
+          >
             <span className="sidebarInfo-label">{info.label}: </span>
             <span className="sidebarInfo-value">{info.value}</span>
           </div>
@@ -56,5 +61,51 @@ const SidebarInfo = ({ isOpen, onClose, infos, type, onTypeChange, orders, alarm
     </div>
   );
 };
+
+const isInfoSelectd = (info, filters, setFilters) => {
+
+  if (info.label ==="OS Cliente") {
+    return filters.tipoOS.includes('Cliente');
+  } else if (info.label ==="OS Alarme") {
+
+  } else if (info.label ==="Retorno") {
+
+  } else if (info.label ==="Falha de Comunicação") {
+
+  } else if (info.label ==="Arromabamento") {
+
+  } else if (info.label ==="Solic. Imagem") {
+
+  } else if (info.label ==="Sem Acesso") {
+
+  } else if (info.label ==="Instalação") {
+
+  } else if (info.label ==="Pausadas") {
+
+  }
+}
+
+const handleItemInfoClick = (info, filters, setFilters) => {
+
+  if (info.label ==="OS Cliente") {
+
+  } else if (info.label ==="OS Alarme") {
+
+  } else if (info.label ==="Retorno") {
+
+  } else if (info.label ==="Falha de Comunicação") {
+
+  } else if (info.label ==="Arromabamento") {
+
+  } else if (info.label ==="Solic. Imagem") {
+
+  } else if (info.label ==="Sem Acesso") {
+
+  } else if (info.label ==="Instalação") {
+
+  } else if (info.label ==="Pausadas") {
+
+  }
+}
 
 export default renderSidebarInfo;

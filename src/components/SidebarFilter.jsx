@@ -67,6 +67,7 @@ const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, o
                   { value: "Cliente", label: "Aberta por Cliente" },
                   { value: "Agendada", label: "Agendada" },
                   { value: "Atribuida", label: "Atribuída à Técnico" },
+                  { value: "Pausada", label: "Pausada" },
                 ]}
                 value={filters.tipoOS ? filters.tipoOS.map(tipoOS => ({ value: tipoOS, label: tipoOS })) : null}
                 onChange={(selectedOptions) => {
@@ -84,12 +85,12 @@ const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, o
                 id="defeito"
                 isMulti
                 options={defeitos.map(def => ({
-                  value: def.defeito,
-                  label: def.defeito
+                  value: def.idDefeito,
+                  label: def.descDefeito
                 }))}
                 value={defeitos.map(def => ({
-                  value: def.defeito,
-                  label: def.defeito
+                  value: def.idDefeito,
+                  label: def.descDefeito
                 })).filter(option => filters.defeito.includes(option.value))}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];

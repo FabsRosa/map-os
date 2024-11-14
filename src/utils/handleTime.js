@@ -53,6 +53,10 @@ const formatTime = (isoString) => {
 
 const formatDate = (dateStr) => {
   try {
+    if (typeof dateStr === 'string') {
+      dateStr = dateStr.slice(0, -1);
+    }
+
     const date = toDate(dateStr, false);
     
     if (isNaN(date.getTime())) {

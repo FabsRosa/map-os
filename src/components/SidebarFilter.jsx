@@ -65,9 +65,10 @@ const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, o
                 isMulti
                 options={[
                   { value: "Cliente", label: "Aberta por Cliente" },
-                  { value: "Agendada", label: "Agendada" },
                   { value: "Atribuida", label: "Atribuída à Técnico" },
                   { value: "Pausada", label: "Pausada" },
+                  { value: "Agendada", label: "Agendada" },
+                  { value: "Agendada Hoje", label: "Agendada p/ Hoje" },
                 ]}
                 value={filters.tipoOS ? filters.tipoOS.map(tipoOS => ({ value: tipoOS, label: tipoOS })) : null}
                 onChange={(selectedOptions) => {

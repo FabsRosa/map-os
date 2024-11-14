@@ -24,6 +24,24 @@ const filterMarker = (orders, filter, tecnicos) => {
         OSAg = order.dataAg !== null;
       }
 
+      let OSAgHj = true;
+      if (filter.tipoOS.includes('Agendada Hoje')) {
+        let dataIniAg = true;
+        if (order.dataAg) {
+          dataIniAg = compareDateBefore(new Date(), order.dataAg)
+        } else {
+          dataIniAg = false;
+        }
+        
+        let dataFimAg = true;
+        if (order.dataAg) {
+          dataFimAg = compareDateBefore(order.dataAg, new Date())
+        } else {
+          dataFimAg = false;
+        }
+        OSAgHj = dataIniAg && dataFimAg;
+      }
+
       let OSAt = true;
       if (filter.tipoOS.includes('Atribuida')) {
         OSAt = order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec);
@@ -34,7 +52,7 @@ const filterMarker = (orders, filter, tecnicos) => {
         OSAt = order.isPausada == true;
       }
       
-      filterOS = OSCli && OSAg && OSAt && OSPausada;
+      filterOS = OSCli && OSAg && OSAt && OSPausada && OSAgHj;
     }
 
     if (filter.defeito && filter.defeito.length > 0) {
@@ -117,6 +135,11 @@ const filterMotos = (filter) => {
 
 // Verifica se a dateBefore é antes ou na mesma data que dateAfter
 const compareDateBefore = (dateBefore, dateAfter) => {
+  // Remove the ending Z so the date stops being UTC and no longer is converted wrongly (Damn Sigma.)
+  if (typeof dateAfter === 'string') {
+    dateAfter = dateAfter.slice(0, -1);
+  }
+
   // Convert both to Date objects
   dateBefore = toDate(dateBefore);
   dateAfter = toDate(dateAfter);

@@ -210,7 +210,7 @@ const Map = ({ mapType }) => {
   return isLoaded ? (
     <div>
       {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
-      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters)}
+      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters, defeitos, onFilterChange, tecnicos)}
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}

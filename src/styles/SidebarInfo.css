@@ -42,13 +42,23 @@
 
 .sidebarInfo-item {
   background: #ffffff;
-  /* border-radius: 8px; */
   padding: 10px 18px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between; /* Aligns label and value to opposite sides */
-  align-items: center; /* Vertically center align label and value */
+  justify-content: space-between;
+  align-items: center;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.sidebarInfo-item.selected {
+  background-color: #2e66a5;
+  color: #fff;
+}
+
+.sidebarInfo-item.included {
+  background-color: #5d9bd5;
+  color: #fff;
 }
 
 .sidebarInfo-item:hover {
@@ -61,11 +71,27 @@
   color: #3a3a3a;
 }
 
+.sidebarInfo-label.selected {
+  color: #ffffff;
+}
+
+.sidebarInfo-label.included {
+  color: #ffffff;
+}
+
 .sidebarInfo-value {
   font-size: 1.3em;
   color: rgba(70, 121, 180); /* Use Material Color for emphasis */
   font-weight: bold;
   margin-top: 4px;
+}
+
+.sidebarInfo-value.selected {
+  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
+}
+
+.sidebarInfo-value.included {
+  color: rgb(255, 255, 255); /* Use Material Color for emphasis */
 }
 
 .counter {

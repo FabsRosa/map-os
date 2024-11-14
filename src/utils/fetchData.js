@@ -68,12 +68,12 @@ const fetchInfosData = async () => {
           { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
           { label: "Retorno", value: responseInfos.data.qtdRetorno },
           { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
-          { label: "Arromabamento", value: responseInfos.data.qtdArrombamento },
+          { label: "Arrombamento", value: responseInfos.data.qtdArrombamento },
           { label: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
-          { label: "Sem Acesso", value: responseInfos.data.qtdSemAcess },
+          { label: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
           { label: "Instalação", value: responseInfos.data.qtdInstalacao },
           { label: "Pausadas", value: responseInfos.data.qtdPausada },
-          // { label: "Agendadas p/ Hoje", value: 999 },
+          { label: "Agendadas p/ Hoje", value: responseInfos.data.qtdAgendadaHoje },
         ]
       );
     } else {

@@ -242,8 +242,8 @@ const Map = ({ mapType }) => {
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
 
-        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick)}
+        {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick, unfOrders, initialMapCenter)}
 
       </GoogleMap>
     </div>

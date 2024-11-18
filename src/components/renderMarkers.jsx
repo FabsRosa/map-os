@@ -69,7 +69,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
             lng: moto.lng
           }}
           icon={{
-            url: getMarkerIconMoto(moto, unfOrders, tecnicos, type, initialMapCenter),
+            url: getMarkerIconMoto(moto, unfOrders, tecnicos, initialMapCenter),
             scaledSize: new window.google.maps.Size(iconSize, iconSize)
           }}
           onClick={handleMarkerClickMoto(moto)}
@@ -84,7 +84,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
   }
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter) => {
   hideCloseButton();
 
   if (highlightedOrder) {
@@ -140,12 +140,15 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
       >
         <InfoWindowContentMoto
           moto={highlightedMoto}
+          unfOrders={unfOrders}
+          tecnicos={tecnicos}
+          initialMapCenter={initialMapCenter}
         />
       </InfoWindow>
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick, unfOrders, initialMapCenter) => {
   hideCloseButton();
 
   if (selectedOrder) {
@@ -211,6 +214,9 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
       >
         <InfoWindowContentMoto
           moto={selectedMoto}
+          unfOrders={unfOrders}
+          tecnicos={tecnicos}
+          initialMapCenter={initialMapCenter}
         />
       </InfoWindow>
     )
@@ -456,8 +462,14 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 };
 
 // Design da dialog de informações de Moto
-const InfoWindowContentMoto = ({ moto }) => (
+const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter}) => {
+  const motoColor = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter);
+
+  return (
   <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+    <p className='p-big'>
+      <b>{getMotoStatus(motoColor)}</b>
+    </p>
     <p className='p-big'>
       • Placa: <b>{moto.id}</b>
     </p>
@@ -468,7 +480,25 @@ const InfoWindowContentMoto = ({ moto }) => (
       <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
     ) : null}
   </div>
-);
+)};
+
+const getMotoStatus = (motoColor) => {
+  let status = '';
+
+  if (motoColor === 'green') {
+    status = 'Em deslocamento';
+  } else if (motoColor === 'gray') {
+    status = 'Estacionada';
+  } else if (motoColor === 'blue') {
+    status = 'Em atendimento';
+  } else if (motoColor === 'red') {
+    status = 'Parada';
+  } else if (motoColor === 'yellow') {
+    status = 'Tático';
+  }
+
+  return status;
+}
 
 // Retorna endereço do ícone, com base no técnico designado
 const getMarkerIconOrder = (isHighlighted, nomeTec, tec) => {
@@ -534,8 +564,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 };
 
 // Retorna endereço do ícone
-const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
-  const color = checkMotosTracker(moto, unfOrders, tecnicos, type, initialMapCenter);
+const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter) => {
+  const color = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter);
 
   let iconPath;
   if (moto && moto.type) {
@@ -558,7 +588,7 @@ const getMarkerIconMoto = (moto, unfOrders, tecnicos, type, initialMapCenter) =>
   return iconPath;
 };
 
-const checkMotosTracker = (moto, unfOrders, tecnicos, type, initialMapCenter) => {
+const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter) => {
   const idleLimit = 5 * 60 * 1000;
   const parkLimit = 240 * 60 * 1000;
   const distanceLimitInMeters = 100;

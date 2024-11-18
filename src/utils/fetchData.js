@@ -73,6 +73,7 @@ const fetchInfosData = async () => {
           { label: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
           { label: "Instalação", value: responseInfos.data.qtdInstalacao },
           { label: "Pausadas", value: responseInfos.data.qtdPausada },
+          { label: "Agendadas", value: responseInfos.data.qtdAgendada },
           { label: "Agendadas p/ Hoje", value: responseInfos.data.qtdAgendadaHoje },
         ]
       );

@@ -140,6 +140,10 @@ const isInfoSelected = (info, filters, defeitos) => {
     if (filters.tipoOS.includes('Pausada')) {
       return 'selected';
     }
+  } else if (info.label ==="Agendadas") {
+    if (filters.tipoOS.includes('Agendada')) {
+      return 'selected';
+    }
   } else if (info.label ==="Agendadas p/ Hoje") {
     if (filters.tipoOS.includes('Agendada Hoje')) {
       return 'selected';
@@ -280,6 +284,20 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
       onFilterChange(
         orders,
         { ...filters, tipoOS: filters.tipoOS.filter(item => item !== 'Pausada') },
+        tecnicos
+      );
+    }
+  } else if (info.label ==="Agendadas") {
+    if (selected == ''){
+      onFilterChange(
+        orders,
+        { ...filters, tipoOS: [...filters.tipoOS, 'Agendada'] },
+        tecnicos
+      );
+    } else {
+      onFilterChange(
+        orders,
+        { ...filters, tipoOS: filters.tipoOS.filter(item => item !== 'Agendada') },
         tecnicos
       );
     }

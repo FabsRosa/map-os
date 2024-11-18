@@ -65,6 +65,9 @@ const fetchInfosData = async () => {
       return (
         [
           { label: "OS Cliente", value: responseInfos.data.qtdOsCliente },
+          { label: "Pausadas", value: responseInfos.data.qtdPausada },
+          { label: "Agendadas", value: responseInfos.data.qtdAgendada },
+          { label: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
           { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
           { label: "Retorno", value: responseInfos.data.qtdRetorno },
           { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
@@ -72,9 +75,6 @@ const fetchInfosData = async () => {
           { label: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
           { label: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
           { label: "Instalação", value: responseInfos.data.qtdInstalacao },
-          { label: "Pausadas", value: responseInfos.data.qtdPausada },
-          { label: "Agendadas", value: responseInfos.data.qtdAgendada },
-          { label: "Agendadas p/ Hoje", value: responseInfos.data.qtdAgendadaHoje },
         ]
       );
     } else {

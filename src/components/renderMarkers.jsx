@@ -148,7 +148,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick, unfOrders, initialMapCenter) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter) => {
   hideCloseButton();
 
   if (selectedOrder) {
@@ -170,12 +170,14 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           isEditing={editingOrder === selectedOrder.id}
           onEditClick={() => setEditingOrder(selectedOrder.id)}
           onTecChange={onTecChange}
+          onDefChange={onDefChange}
           onScheduleChange={onScheduleChange}
           schedulingOrder={schedulingOrder}
           setSchedulingOrder={setSchedulingOrder}
           schedulingDate={schedulingDate}
           setSchedulingDate={setSchedulingDate}
           tecnicos={tecnicos}
+          defeitos={defeitos}
           filters={filters}
         />
       </InfoWindow>
@@ -224,7 +226,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   if (schedulingOrder) {
@@ -248,6 +250,12 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           onClick={() => onScheduleChange(order.id, toISOStringWithLocalTimezone(schedulingDate))}
         >
           Ok
+        </button>
+        <button
+          className='schedulingBackButton'
+          onClick={() => setSchedulingOrder(null)}
+        >
+          Volta
         </button>
       </div>
     )
@@ -298,7 +306,28 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
             </span>
           )}
         </p>
-        <p className='p-medium'>• Defeito: <b>{order.def}</b></p>
+        <p className='p-medium'>
+          • Defeito:&nbsp;
+          {isEditing ? (
+            <select className='custom-select' value={order.idDef} onChange={(e) => onDefChange(e.target.value)}>
+              {defeitos.map(def => (
+                <option key={def.idDefeito} value={def.idDefeito}>
+                  {def.descDefeito}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span>
+              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.def}</b>
+              <img
+                src='/icon/down-arrow.png'
+                alt='Edit'
+                style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
+                onClick={onEditClick}
+              />
+            </span>
+          )}
+        </p>
         {order.dataAb ? (
           <div>
             <p className='p-medium'>
@@ -492,7 +521,7 @@ const getMotoStatus = (motoColor) => {
   } else if (motoColor === 'blue') {
     status = 'Em atendimento';
   } else if (motoColor === 'red') {
-    status = 'Parada';
+    status = 'Parado';
   } else if (motoColor === 'yellow') {
     status = 'Tático';
   }
@@ -555,8 +584,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 
   if (isHighlighted) {
     iconPath += `-dot`;
-  } else if (alarm.clientName) {
-    iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
+  // } else if (alarm.clientName) {
+  //   iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
   }
 
   iconPath += '.png';

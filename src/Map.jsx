@@ -173,10 +173,32 @@ const Map = ({ mapType }) => {
       return;
     }
 
-    await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
+    const updatedOrders = orders.map(order =>
+      order.id == schedulingOrder ? { ...order, dataAg: newDate } : order
+    );
+    setOrders(updatedOrders);
 
+    const updatedSelectedOrder = selectedOrder ? { ...selectedOrder, dataAg: newDate } : selectedOrder;
+    setSelectedOrder(updatedSelectedOrder);
+
+    await apiClient.post(`/maps/updateScheduled`, { idOS: idOS, date: newDate });
     setSchedulingOrder(null);
     setSchedulingDate(null);
+  };
+
+  // Atualiza as variáveis e faz update no banco ao alterar o defeito de uma OS
+  const onDefChange = async (idNewDef) => {
+    const nomeDef = defeitos ? defeitos.find(def => def.idDefeito == idNewDef).descDefeito : '';
+    const updatedOrders = orders.map(order =>
+      order.id == editingOrder ? { ...order, idDef: idNewDef, def: nomeDef } : order
+    );
+    setOrders(updatedOrders);
+
+    const updatedSelectedOrder = selectedOrder ? { ...selectedOrder, idDef: idNewDef, def: nomeDef } : selectedOrder;
+    setSelectedOrder(updatedSelectedOrder);
+
+    await apiClient.post(`/maps/updateDef`, { idOS: editingOrder, idDef: idNewDef });
+    setEditingOrder(null);
   };
 
   const onTypeChange = async (idNewType) => {
@@ -243,7 +265,7 @@ const Map = ({ mapType }) => {
         {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
 
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter)}
-        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, motos, filters, handleMapClick, unfOrders, initialMapCenter)}
+        {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter)}
 
       </GoogleMap>
     </div>

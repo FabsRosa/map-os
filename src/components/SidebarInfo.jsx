@@ -90,63 +90,63 @@ const isInfoSelected = (info, filters, defeitos) => {
 
   if (info.label ==="OS Cliente") {
     if (filters.tipoOS.includes('Cliente')) {
-      return 'selected';
+      return 'selectedTipoOS';
     }
   } else if (info.label ==="OS Alarme") {
     if (isOSAlarme) {
-      return 'selected';
+      return 'selectedDef';
     }
   } else if (info.label ==="Retorno") {
     if (filters.defeito.includes(132)) {
       if (isOSAlarme) {
-        return 'included';
+        return 'includedDef';
       } else {
-        return 'selected';
+        return 'selectedDef';
       }
     }
   } else if (info.label ==="Falha de Comunicação") {
     if (filters.defeito.includes(12)) {
       if (isOSAlarme) {
-        return 'included';
+        return 'includedDef';
       } else {
-        return 'selected';
+        return 'selectedDef';
       }
     }
   } else if (info.label ==="Arrombamento") {
     if (filters.defeito.includes(27)) {
       if (isOSAlarme) {
-        return 'included';
+        return 'includedDef';
       } else {
-        return 'selected';
+        return 'selectedDef';
       }
     }
   } else if (info.label ==="Solic. Imagem") {
     if (filters.defeito.includes(66)) {
       if (isOSAlarme) {
-        return 'included';
+        return 'includedDef';
       } else {
-        return 'selected';
+        return 'selectedDef';
       }
     }
   } else if (info.label ==="Sem Acesso Imagem") {
     if (filters.defeito.includes(71)) {
-      return 'selected';
+      return 'selectedDef';
     }
   } else if (info.label ==="Instalação") {
     if (filters.defeito.includes(1)) {
-      return 'selected';
+      return 'selectedDef';
     }
   } else if (info.label ==="Pausadas") {
     if (filters.tipoOS.includes('Pausada')) {
-      return 'selected';
+      return 'selectedTipoOS';
     }
   } else if (info.label ==="Agendadas") {
     if (filters.tipoOS.includes('Agendada')) {
-      return 'selected';
+      return 'selectedTipoOS';
     }
-  } else if (info.label ==="Agendadas p/ Hoje") {
+  } else if (info.label ==="Agendadas para Hoje") {
     if (filters.tipoOS.includes('Agendada Hoje')) {
-      return 'selected';
+      return 'selectedTipoOS';
     }
   }
 
@@ -301,7 +301,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Agendadas p/ Hoje") {
+  } else if (info.label ==="Agendadas para Hoje") {
     if (selected == ''){
       onFilterChange(
         orders,

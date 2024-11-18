@@ -56,9 +56,64 @@
   color: #fff;
 }
 
+.sidebarInfo-label.selected {
+  color: #ffffff;
+}
+
+.sidebarInfo-value.selected {
+  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
+}
+
+.sidebarInfo-item.selectedTipoOS {
+  background-color: #3e4f9a;
+  color: #fff;
+}
+
+.sidebarInfo-label.selectedTipoOS {
+  color: #ffffff;
+}
+
+.sidebarInfo-value.selectedTipoOS {
+  color: rgb(206, 214, 255); /* Use Material Color for emphasis */
+}
+
+.sidebarInfo-item.selectedDef {
+  background-color: #2e66a5;
+  color: #fff;
+}
+
+.sidebarInfo-label.selectedDef {
+  color: #ffffff;
+}
+
+.sidebarInfo-value.selectedDef {
+  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
+}
+
 .sidebarInfo-item.included {
   background-color: #5d9bd5;
   color: #fff;
+}
+
+.sidebarInfo-label.included {
+  color: #ffffff;
+}
+
+.sidebarInfo-value.included {
+  color: rgb(255, 255, 255); /* Use Material Color for emphasis */
+}
+
+.sidebarInfo-item.includedDef {
+  background-color: #4d81b1;
+  color: #fff;
+}
+
+.sidebarInfo-label.includedDef {
+  color: #ffffff;
+}
+
+.sidebarInfo-value.includedDef {
+  color: rgb(255, 255, 255); /* Use Material Color for emphasis */
 }
 
 .sidebarInfo-item:hover {
@@ -71,27 +126,11 @@
   color: #3a3a3a;
 }
 
-.sidebarInfo-label.selected {
-  color: #ffffff;
-}
-
-.sidebarInfo-label.included {
-  color: #ffffff;
-}
-
 .sidebarInfo-value {
   font-size: 1.3em;
   color: rgba(70, 121, 180); /* Use Material Color for emphasis */
   font-weight: bold;
   margin-top: 4px;
-}
-
-.sidebarInfo-value.selected {
-  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
-}
-
-.sidebarInfo-value.included {
-  color: rgb(255, 255, 255); /* Use Material Color for emphasis */
 }
 
 .counter {

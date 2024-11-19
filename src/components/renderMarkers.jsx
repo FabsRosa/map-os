@@ -517,7 +517,7 @@ const getMotoStatus = (motoColor) => {
   if (motoColor === 'green') {
     status = 'Em deslocamento';
   } else if (motoColor === 'gray') {
-    status = 'Estacionada';
+    status = 'Estacionado';
   } else if (motoColor === 'blue') {
     status = 'Em atendimento';
   } else if (motoColor === 'red') {

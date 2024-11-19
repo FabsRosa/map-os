@@ -27,10 +27,15 @@ const fetchOrdersData = async () => {
           count = 0;
         }
 
+        let randomCoord;
+        if (!order.lat && !order.lng) {
+          randomCoord = getRandomPosition(order.idOS);
+        }
+
         return {
           id: order.idOS.toString(),
-          lat: order.lat ? parseFloat(order.lat) : (-15.5946388337158 + getRandomNumber()),
-          lng: order.lng ? parseFloat(order.lng) : (-56.1441360169476 + getRandomNumber()),
+          lat: order.lat ? parseFloat(order.lat) : randomCoord.lat,
+          lng: order.lng ? parseFloat(order.lng) : randomCoord.lng,
           clientID: order.idCliente,
           clientName: order.nomeCliente,
           clientRazao: order.razaoCliente,
@@ -65,9 +70,9 @@ const fetchInfosData = async () => {
       return (
         [
           { label: "OS Cliente", value: responseInfos.data.qtdOsCliente },
-          { label: "Pausadas", value: responseInfos.data.qtdPausada },
           { label: "Agendadas", value: responseInfos.data.qtdAgendada },
           { label: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
+          { label: "Pausadas", value: responseInfos.data.qtdPausada },
           { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
           { label: "Retorno", value: responseInfos.data.qtdRetorno },
           { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
@@ -112,7 +117,7 @@ const fetchAlarmsData = async () => {
         const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))) : null);
         const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
         const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
-
+        
         return {
           // If there is no location, the pin will be in a randon position in river
           lat: alarm.lat ? parseFloat(alarm.lat) : (-15.5946388337158 + getRandomNumber()),
@@ -236,6 +241,33 @@ const getRandomNumber = () => {
   const max = 0;
   const randomNumber = Math.random() * (max - min) + min;
   return parseFloat(randomNumber.toFixed(13));
+}
+
+function getRandomPosition(idOS) {
+  const hash = simpleHash(idOS.toString());
+
+  const minLat = -15.5910388337158; // Min latitude
+  const maxLat = -15.5982388337158; // Max latitude
+  const minLng = -56.1405360169476; // Min longitude
+  const maxLng = -56.1478360169476; // Max longitude
+  
+  // Normalize the hash to a number between 0 and 1
+  const normalizedLat = (hash % 10000) / 10000;
+  const normalizedLng = ((hash / 10000) % 10000) / 10000;
+
+  const latitude = minLat + normalizedLat * (maxLat - minLat);
+  const longitude = minLng + normalizedLng * (maxLng - minLng);
+  
+  return { lat: latitude, lng: longitude };
+}
+
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
 }
 
 export {

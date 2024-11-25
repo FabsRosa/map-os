@@ -359,7 +359,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
         <p className='p-medium'>• OS: {order.id}</p>
         <p
           className='p-small'
-          dangerouslySetInnerHTML={{ __html: `• ${DOMPurify.sanitize(order.desc.replace(/\n/g, '<br />&nbsp;&nbsp;'))}` }}
+          dangerouslySetInnerHTML={{ __html: removeBLEnd(`• ${DOMPurify.sanitize(order.desc.replace(/\n/g, '<br />'))}`) }}
         ></p>
       </div>
     );
@@ -672,6 +672,21 @@ const showCloseButton = () => {
     style.parentNode.removeChild(style);  // Ensure removal
   }
 };
+
+const removeBLEnd = (string) => {
+  if (typeof string !== 'string') {
+      return '';
+  }
+  while (string.endsWith("&nbsp;") || string.endsWith("<br>")) {
+    if (string.endsWith("&nbsp;")) {
+      string = string.slice(0, -6); // Remove the last 6 characters
+    } else if (string.endsWith("<br>")) {
+      string = string.slice(0, -4); // Remove the last 4 characters
+      
+    }
+  }
+  return string;
+}
 
 export {
   renderMarkerPin,

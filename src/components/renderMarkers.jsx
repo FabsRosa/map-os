@@ -584,8 +584,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 
   if (isHighlighted) {
     iconPath += `-dot`;
-  // } else if (alarm.clientName) {
-  //   iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
+  } else if (alarm.clientName) {
+    iconPath += `-${alarm.clientName.charAt(0).toLowerCase()}`; // First letter of the name
   }
 
   iconPath += '.png';

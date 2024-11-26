@@ -124,6 +124,7 @@ const fetchAlarmsData = async () => {
           lng: alarm.lng ? parseFloat(alarm.lng) : (-56.1441360169476 + getRandomNumber()),
           clientID: alarm.idCliente,
           clientName: alarm.nomeCliente,
+          clientRazao: alarm.razaoCliente,
           codEvento: alarm.codEvento,
           tipoEvento: alarm.tipoEvento,
           dtRecebido: alarm.dtRecebido,

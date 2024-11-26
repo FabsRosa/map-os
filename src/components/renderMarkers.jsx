@@ -407,6 +407,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
             onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
           />
         </span>
+        <div className='p-medium'>• Razão Social: {alarm.clientRazao}</div>
         <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
         <div className='p-medium'>
           {alarm.dtRecebido !== null ? (
@@ -451,6 +452,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
+      <div className='p-medium'>• Razão Social: {alarm.clientRazao}</div>
       <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (

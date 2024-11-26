@@ -23,6 +23,7 @@ const renderSidebarInfo = (isSidebarInfoOpen, toggleSidebarInfo, infos, type, or
 
 // Design da sidebarInfo
 const SidebarInfo = ({ isOpen, onClose, infos, type, orders, alarms, motos, filters, setFilters, defeitos, onFilterChange, tecnicos }) => {
+  const excludedDefectsOSAlarme = [1, 7, 71, 87, 130, 133, 138];
   return (
     <div className={`sidebarInfo ${isOpen ? 'open' : ''}`}>
       <div className="info-icon" onClick={onClose}>
@@ -30,12 +31,12 @@ const SidebarInfo = ({ isOpen, onClose, infos, type, orders, alarms, motos, filt
       </div>
       <div className="sidebarInfo-items">
         {infos.map((info, index) => {
-          const selected = isInfoSelected(info, filters, defeitos);
+          const selected = isInfoSelected(info, filters, defeitos, excludedDefectsOSAlarme);
           return (
             <div
               key={index}
               className={`sidebarInfo-item ${selected}`}
-              onClick={() => handleItemInfoClick(info, filters, defeitos, orders, onFilterChange, tecnicos, selected)}
+              onClick={() => handleItemInfoClick(info, filters, defeitos, excludedDefectsOSAlarme, orders, onFilterChange, tecnicos, selected)}
             >
               <span className={`sidebarInfo-label ${selected}`}>{info.label}: </span>
               <span className={`sidebarInfo-value ${selected}`}>{info.value}</span>
@@ -68,35 +69,34 @@ const SidebarInfo = ({ isOpen, onClose, infos, type, orders, alarms, motos, filt
   );
 };
 
-const isInfoSelected = (info, filters, defeitos) => {
+const isInfoSelected = (info, filters, defeitos, excludedDefectsOSAlarme) => {
   let isOSAlarme = false;
   if (
-    info.label ==="OS Alarme"
-    || info.label ==="Retorno"
-    || info.label ==="Falha de Comunicação"
-    || info.label ==="Arrombamento"
-    || info.label ==="Solic. Imagem"
-    || info.label ==="Sem Acesso Imagem"
+    info.field ==="OS Alarme"
+    || info.field ==="Retorno"
+    || info.field ==="Falha de Comunicação"
+    || info.field ==="Arrombamento"
+    || info.field ==="Solic. Imagem"
+    || info.field ==="Sem Acesso Imagem"
   ) {
-    const excludedDefects = [1, 7, 71, 87, 130, 133];
     const filteredDefects = defeitos
     .map(defeito => defeito.idDefeito)
-    .filter(id => !excludedDefects.includes(id));
+    .filter(id => !excludedDefectsOSAlarme.includes(id));
 
     if (filteredDefects.every(id => filters.defeito.includes(id))) {
       isOSAlarme = true
     }
   }
 
-  if (info.label ==="OS Cliente") {
+  if (info.field ==="OS Cliente") {
     if (filters.tipoOS.includes('Cliente')) {
       return 'selectedTipoOS';
     }
-  } else if (info.label ==="OS Alarme") {
+  } else if (info.field ==="OS Alarme") {
     if (isOSAlarme) {
       return 'selectedDef';
     }
-  } else if (info.label ==="Retorno") {
+  } else if (info.field ==="Retorno") {
     if (filters.defeito.includes(132)) {
       if (isOSAlarme) {
         return 'includedDef';
@@ -104,7 +104,7 @@ const isInfoSelected = (info, filters, defeitos) => {
         return 'selectedDef';
       }
     }
-  } else if (info.label ==="Falha de Comunicação") {
+  } else if (info.field ==="Falha de Comunicação") {
     if (filters.defeito.includes(12)) {
       if (isOSAlarme) {
         return 'includedDef';
@@ -112,7 +112,7 @@ const isInfoSelected = (info, filters, defeitos) => {
         return 'selectedDef';
       }
     }
-  } else if (info.label ==="Arrombamento") {
+  } else if (info.field ==="Arrombamento") {
     if (filters.defeito.includes(27)) {
       if (isOSAlarme) {
         return 'includedDef';
@@ -120,7 +120,7 @@ const isInfoSelected = (info, filters, defeitos) => {
         return 'selectedDef';
       }
     }
-  } else if (info.label ==="Solic. Imagem") {
+  } else if (info.field ==="Solic. Imagem") {
     if (filters.defeito.includes(66)) {
       if (isOSAlarme) {
         return 'includedDef';
@@ -128,23 +128,23 @@ const isInfoSelected = (info, filters, defeitos) => {
         return 'selectedDef';
       }
     }
-  } else if (info.label ==="Sem Acesso Imagem") {
+  } else if (info.field ==="Sem Acesso Imagem") {
     if (filters.defeito.includes(71)) {
       return 'selectedDef';
     }
-  } else if (info.label ==="Instalação") {
+  } else if (info.field ==="Instalação") {
     if (filters.defeito.includes(1)) {
       return 'selectedDef';
     }
-  } else if (info.label ==="Pausadas") {
+  } else if (info.field ==="Pausadas") {
     if (filters.tipoOS.includes('Pausada')) {
       return 'selectedTipoOS';
     }
-  } else if (info.label ==="Agendadas") {
+  } else if (info.field ==="Agendadas") {
     if (filters.tipoOS.includes('Agendada')) {
       return 'selectedTipoOS';
     }
-  } else if (info.label ==="Agendadas para Hoje") {
+  } else if (info.field ==="Agendadas para Hoje") {
     if (filters.tipoOS.includes('Agendada Hoje')) {
       return 'selectedTipoOS';
     }
@@ -153,8 +153,8 @@ const isInfoSelected = (info, filters, defeitos) => {
   return '';
 }
 
-const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, tecnicos, selected) => {
-  if (info.label ==="OS Cliente") {
+const handleItemInfoClick = (info, filters, defeitos, excludedDefectsOSAlarme, orders, onFilterChange, tecnicos, selected) => {
+  if (info.field ==="OS Cliente") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -168,17 +168,15 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="OS Alarme") {
+  } else if (info.field ==="OS Alarme") {
     if (selected == ''){
-      const excludedDefects = [1, 7, 71, 87, 130, 133];
-      
       onFilterChange(
         orders,
         { 
           ...filters,
           defeito: defeitos
             .map(defeito => defeito.idDefeito)
-            .filter(id => !excludedDefects.includes(id))
+            .filter(id => !excludedDefectsOSAlarme.includes(id))
         },
         tecnicos
       );
@@ -189,7 +187,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Retorno") {
+  } else if (info.field ==="Retorno") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -203,7 +201,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Falha de Comunicação") {
+  } else if (info.field ==="Falha de Comunicação") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -217,7 +215,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Arrombamento") {
+  } else if (info.field ==="Arrombamento") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -231,7 +229,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Solic. Imagem") {
+  } else if (info.field ==="Solic. Imagem") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -245,7 +243,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Sem Acesso Imagem") {
+  } else if (info.field ==="Sem Acesso Imagem") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -259,7 +257,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Instalação") {
+  } else if (info.field ==="Instalação") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -273,7 +271,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Pausadas") {
+  } else if (info.field ==="Pausadas") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -287,7 +285,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Agendadas") {
+  } else if (info.field ==="Agendadas") {
     if (selected == ''){
       onFilterChange(
         orders,
@@ -301,7 +299,7 @@ const handleItemInfoClick = (info, filters, defeitos, orders, onFilterChange, te
         tecnicos
       );
     }
-  } else if (info.label ==="Agendadas para Hoje") {
+  } else if (info.field ==="Agendadas para Hoje") {
     if (selected == ''){
       onFilterChange(
         orders,

@@ -69,17 +69,17 @@ const fetchInfosData = async () => {
     if (responseInfos.ok && responseInfos.data) {
       return (
         [
-          { label: "OS Cliente", value: responseInfos.data.qtdOsCliente },
-          { label: "Agendadas", value: responseInfos.data.qtdAgendada },
-          { label: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
-          { label: "Pausadas", value: responseInfos.data.qtdPausada },
-          { label: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
-          { label: "Retorno", value: responseInfos.data.qtdRetorno },
-          { label: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
-          { label: "Arrombamento", value: responseInfos.data.qtdArrombamento },
-          { label: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
-          { label: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
-          { label: "Instalação", value: responseInfos.data.qtdInstalacao },
+          { label: "OS Cliente", field: "OS Cliente", value: responseInfos.data.qtdOsCliente },
+          { label: "Agendadas", field: "Agendadas", value: responseInfos.data.qtdAgendada },
+          { label: "Agendadas para Hoje", field: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
+          { label: "Pausadas", field: "Pausadas", value: responseInfos.data.qtdPausada },
+          { label: "OS Alarme", field: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
+          { label: "Retorno", field: "Retorno", value: responseInfos.data.qtdRetorno },
+          { label: "Falha de Comunicação", field: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
+          { label: "Arrombamento", field: "Arrombamento", value: responseInfos.data.qtdArrombamento },
+          { label: "Solic. Imagem", field: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
+          { label: "Sem Acesso Imagem", field: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
+          { label: "Instalação", field: "Instalação", value: responseInfos.data.qtdInstalacao },
         ]
       );
     } else {

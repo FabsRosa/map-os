@@ -11,31 +11,22 @@ const fetchOrdersData = async () => {
     let count = 0;
 
     if (responseOS.ok && responseOS.data) {
+      let templateCoord = { lat: -15.591627, lng: -56.143837 };
       const ordersData = responseOS.data.map(order => {
-        if (lastClientID === order.idCliente) {
-          count++;
-          const angle = count * 30; // 30 degrees for each subsequent marker
-          const radians = (angle * Math.PI) / 180; // Convert angle to radians
-          const radiusIncrement = 0.0003;; // Fixed distance for each step
-          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1); // Increase radius slightly with each step
+        // In case there's many pins in the same client (thus, same position)
+        [count, lastClientID] = adjustRepeatedOrders(order, count, lastClientID);
 
-          // Adjust lat and lng slightly to create the linear spiral effect without overlap
-          order.lat = parseFloat(order.lat) + radius * Math.sin(radians);
-          order.lng = parseFloat(order.lng) + radius * Math.cos(radians);
-        } else {
-          lastClientID = order.idCliente;
-          count = 0;
-        }
-
-        let randomCoord;
+        // For clients without position. A default position in the river is assigned, going downward for each
         if (!order.lat && !order.lng) {
-          randomCoord = getRandomPosition(order.idOS);
+          order.lat = templateCoord.lat;
+          order.lng = templateCoord.lng;
+          templateCoord.lat -= 0.0006;
         }
 
         return {
           id: order.idOS.toString(),
-          lat: order.lat ? parseFloat(order.lat) : randomCoord.lat,
-          lng: order.lng ? parseFloat(order.lng) : randomCoord.lng,
+          lat: parseFloat(order.lat),
+          lng: parseFloat(order.lng),
           clientID: order.idCliente,
           clientName: order.nomeCliente,
           clientRazao: order.razaoCliente,
@@ -99,29 +90,27 @@ const fetchAlarmsData = async () => {
     let count = 0;
 
     if (responseOS.ok && responseOS.data) {
+      let templateCoord = { lat: -15.591627, lng: -56.143837 };
       const alarmsData = responseOS.data.map(alarm => {
-        if (lastClientID === alarm.idCliente) {
-          count++;
-          const angle = count * 30; // 30 degrees for each subsequent marker
-          const radians = (angle * Math.PI) / 180; // Convert angle to radians
-          const radiusIncrement = 0.0003; // Fixed distance for each step
-          const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1); // Increase radius slightly with each step
+        // In case there's many pins in the same client (thus, same position)
+        [count, lastClientID] = adjustRepeatedOrders(alarm, count, lastClientID);
 
-          // Adjust lat and lng slightly to create the linear spiral effect without overlap
-          alarm.lat = parseFloat(alarm.lat) + radius * Math.sin(radians);
-          alarm.lng = parseFloat(alarm.lng) + radius * Math.cos(radians);
-        } else {
-          lastClientID = alarm.idCliente;
-          count = 0;
+        // For clients without position. A default position in the river is assigned, going downward for each
+        if (!alarm.lat && !alarm.lng) {
+          alarm.lat = templateCoord.lat;
+          alarm.lng = templateCoord.lng;
+          templateCoord.lat -= 0.0006;
         }
+
+        // Time difference of each timestamps, in minutes and seconds
+        // The last timestamp (may vary) always compares itself with current time
         const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))) : null);
         const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
         const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
         
         return {
-          // If there is no location, the pin will be in a randon position in river
-          lat: alarm.lat ? parseFloat(alarm.lat) : (-15.5946388337158 + getRandomNumber()),
-          lng: alarm.lng ? parseFloat(alarm.lng) : (-56.1441360169476 + getRandomNumber()),
+          lat: parseFloat(alarm.lat),
+          lng: parseFloat(alarm.lng),
           clientID: alarm.idCliente,
           clientName: alarm.nomeCliente,
           clientRazao: alarm.razaoCliente,
@@ -237,38 +226,27 @@ const fetchTechnicians = async () => {
   return [];
 };
 
-const getRandomNumber = () => {
-  const min = -0.00050000000000;
-  const max = 0;
-  const randomNumber = Math.random() * (max - min) + min;
-  return parseFloat(randomNumber.toFixed(13));
-}
-
-function getRandomPosition(idOS) {
-  const hash = simpleHash(idOS.toString());
-
-  const minLat = -15.5910388337158; // Min latitude
-  const maxLat = -15.5982388337158; // Max latitude
-  const minLng = -56.1405360169476; // Min longitude
-  const maxLng = -56.1478360169476; // Max longitude
-  
-  // Normalize the hash to a number between 0 and 1
-  const normalizedLat = (hash % 10000) / 10000;
-  const normalizedLng = ((hash / 10000) % 10000) / 10000;
-
-  const latitude = minLat + normalizedLat * (maxLat - minLat);
-  const longitude = minLng + normalizedLng * (maxLng - minLng);
-  
-  return { lat: latitude, lng: longitude };
-}
-
-function simpleHash(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash = hash & hash; // Convert to 32bit integer
+const adjustRepeatedOrders = (order, count, lastClientID) => {
+  if (!order.lat || !order.lng) {
+    return [count, lastClientID];
   }
-  return Math.abs(hash);
+
+  if (lastClientID === order.idCliente) {
+    count++;
+    const angle = count * 30; // 30 degrees for each subsequent marker
+    const radians = (angle * Math.PI) / 180; // Convert angle to radians
+    const radiusIncrement = 0.0003;; // Fixed distance for each step
+    const radius = radiusIncrement * (Math.trunc((count + 1) / 12) + 1); // Increase radius slightly with each step
+
+    // Adjust lat and lng slightly to create the linear spiral effect without overlap
+    order.lat = parseFloat(order.lat) + radius * Math.sin(radians);
+    order.lng = parseFloat(order.lng) + radius * Math.cos(radians);
+  } else {
+    lastClientID = order.idCliente;
+    count = 0;
+  }
+
+  return [count, lastClientID];
 }
 
 export {

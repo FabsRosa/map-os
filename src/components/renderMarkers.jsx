@@ -75,7 +75,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapC
           onClick={handleMarkerClickMoto(moto)}
           onMouseOut={handleMouseOutMoto}
           onMouseOver={handleMouseOverMoto(moto)}
-          zIndex={type === 'OS' ? google.maps.Marker.MAX_ZINDEX : null}
+          zIndex={google.maps.Marker.MAX_ZINDEX}
         />
       )
     })

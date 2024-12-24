@@ -46,7 +46,6 @@ const Map = ({ mapType }) => {
 
   const [isSidebarInfoOpen, setIsSidebarInfoOpen] = useState(false);
   const [infos, setInfos] = useState([]);
-  const [selectedInfos, setSelectedInfos] = useState(null);
 
   // Controladores de filtro
   const [isSidebarFilterOpen, setIsSidebarFilterOpen] = useState(false);

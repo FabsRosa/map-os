@@ -255,7 +255,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           className='schedulingBackButton'
           onClick={() => setSchedulingOrder(null)}
         >
-          Volta
+          Voltar
         </button>
       </div>
     )

@@ -90,6 +90,7 @@
 }
 
 .schedulingBackButton {
+  font-size: 0.75rem;
   position: absolute;
   left: 15px;
   padding: 4px 1.3px;

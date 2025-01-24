@@ -11,7 +11,7 @@ import { formatTime, formatDate, toISOStringWithLocalTimezone } from '../utils/h
 
 const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
-const iconSizeMoto = 32;
+const iconSizeMoto = 29;
 const iconSizeCar = 27;
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
@@ -493,25 +493,26 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 };
 
 // Design da dialog de informações de Moto
-const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter}) => {
+const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter }) => {
   const motoColor = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter);
 
   return (
-  <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-    <p className='p-big'>
-      <b>{getMotoStatus(motoColor)}</b>
-    </p>
-    <p className='p-big'>
-      • Placa: <b>{moto.id}</b>
-    </p>
-    <p className='p-medium'>
-      • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))} dias`}</b>
-    </p>
-    {moto.nomeTatico ? (
-      <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
-    ) : null}
-  </div>
-)};
+    <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+      <p className='p-big'>
+        <b>{getMotoStatus(motoColor)}</b>
+      </p>
+      <p className='p-big'>
+        • Placa: <b>{moto.id}</b>
+      </p>
+      <p className='p-medium'>
+        • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))} dias`}</b>
+      </p>
+      {moto.nomeTatico ? (
+        <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
+      ) : null}
+    </div>
+  )
+};
 
 const getMotoStatus = (motoColor) => {
   let status = '';
@@ -677,14 +678,14 @@ const showCloseButton = () => {
 
 const removeBLEnd = (string) => {
   if (typeof string !== 'string') {
-      return '';
+    return '';
   }
   while (string.endsWith("&nbsp;") || string.endsWith("<br>")) {
     if (string.endsWith("&nbsp;")) {
       string = string.slice(0, -6); // Remove the last 6 characters
     } else if (string.endsWith("<br>")) {
       string = string.slice(0, -4); // Remove the last 4 characters
-      
+
     }
   }
   return string;

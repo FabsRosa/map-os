@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import apiClient from './utils/apiClient';
 import { filterMarker } from './utils/filterMarker';
+import { filterAlarm } from './utils/filterAlarm';
 import { fetchOrdersData, fetchInfosData, fetchAlarmsData, fetchMotosData, fetchDefects, fetchTechnicians } from './utils/fetchData';
 import { renderMarkerPin, renderMarkerMoto, renderHighlightedDialog, renderSelectedDialog } from './components/renderMarkers';
 import renderSidebarFilter from './components/SidebarFilter';
@@ -62,6 +63,11 @@ const Map = ({ mapType }) => {
       dataFimAg: null
     }
   );
+  const [filtersAlarm, setFiltersAlarm] = useState(
+    {
+      cliente: '',
+    }
+  );
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -98,8 +104,10 @@ const Map = ({ mapType }) => {
       setUnfOrders(ordersData);
       const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
       setOrders(ordersFiltered);
+
       const alarmsData = await fetchAlarmsData();
-      setAlarms(alarmsData);
+      const alarmsFiltered = filterAlarm(alarmsData, filtersAlarm);
+      setAlarms(alarmsFiltered);
 
       const motosData = await fetchMotosData();
       setMotos(motosData);
@@ -110,7 +118,7 @@ const Map = ({ mapType }) => {
 
     const intervalId = setInterval(fetchMapData, intervalUpdateMap);
     return () => clearInterval(intervalId);
-  }, [filters, type, tecnicos, schedulingOrder]);
+  }, [filters, filtersAlarm, type, tecnicos, schedulingOrder]);
 
   // Reseta todos os seletores ao clicar em espaço vazio
   const handleMapClick = useCallback(() => {
@@ -211,6 +219,13 @@ const Map = ({ mapType }) => {
     setOrders(ordersFiltered);
   };
 
+  // Atualiza variáveis de OS e filtro ao alterar os filtros
+  const onFilterChangeAlarm = async (alarms, newFilter) => {
+    setFiltersAlarm(newFilter);
+    const alarmsFiltered = filterAlarm(alarms, newFilter);
+    setAlarms(alarmsFiltered);
+  };
+
   const mapStyles = [
     { featureType: 'poi', stylers: [{ visibility: 'off' }] },
     { featureType: 'transit', stylers: [{ visibility: 'off' }] },
@@ -230,7 +245,7 @@ const Map = ({ mapType }) => {
   // Processamento do mapa
   return isLoaded ? (
     <div>
-      {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange)}
+      {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange)}
       {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters, defeitos, onFilterChange, tecnicos)}
 
       <GoogleMap

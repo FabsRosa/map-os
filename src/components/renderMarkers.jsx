@@ -443,6 +443,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+      <div className='p-big'><b>{retTypeAlarmText(alarm.codEvento)}</b></div>
       <span className='p-big alarm'>
         • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
         <img
@@ -491,6 +492,24 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
     </div>
   );
 };
+
+const retTypeAlarmText = (codEvento) => {
+  let typeAlarm = '';
+
+  if (codEvento == 'E130') { // Alarme, verde
+    typeAlarm = 'Alarme';
+  } else if (codEvento == 'E120' || codEvento == 'E121') { // Pânico, roxo
+    typeAlarm = 'Pânico';
+  } else if (codEvento == 'E130' // Falha, vermelho
+    || codEvento == 'E131'
+    || codEvento == 'E133'
+    || codEvento == 'E250'
+    || codEvento == 'E301'
+    || codEvento == 'E333') {
+    typeAlarm = 'Falha de comunicação';
+  }
+  return typeAlarm;
+}
 
 // Design da dialog de informações de Moto
 const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter }) => {
@@ -573,16 +592,17 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
   // const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
-  if ((!alarm.tempoRecebido || alarm.tempoRecebido < 10) && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
-    iconPath += 'yellow';
-  } else if (alarm.tempoRecebido > 59 && alarm.dtDeslocamento === null && alarm.dtLocal === null) {
-    iconPath += 'pink';
-  } else if (alarm.dtDeslocamento === null && alarm.dtLocal === null) {
-    iconPath += 'red';
-  } else if (alarm.dtLocal === null) {
-    iconPath += 'blue';
-  } else {
+  if (alarm.codEvento == 'E130') { // Alarme
     iconPath += 'green';
+  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121') { // Pânico
+    iconPath += 'purple';
+  } else if (alarm.codEvento == 'E130' // Falha
+    || alarm.codEvento == 'E131'
+    || alarm.codEvento == 'E133'
+    || alarm.codEvento == 'E250'
+    || alarm.codEvento == 'E301'
+    || alarm.codEvento == 'E333') {
+    iconPath += 'red';
   }
 
   if (isHighlighted) {

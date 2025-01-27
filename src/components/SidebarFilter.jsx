@@ -5,16 +5,19 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/SidebarFilter.css";
 
-const renderSidebarFilter = (isSidebarFilterOpen, toggleSidebarFilter, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange) => {
+const renderSidebarFilter = (isSidebarFilterOpen, toggleSidebarFilter, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange) => {
   return (
     <SidebarFilter
       isOpen={isSidebarFilterOpen}
       onClose={toggleSidebarFilter}
       orders={orders}
+      alarms={alarms}
       filters={filters}
+      filtersAlarm={filtersAlarm}
       tecnicos={tecnicos}
       defeitos={defeitos}
       onFilterChange={onFilterChange}
+      onFilterChangeAlarm={onFilterChangeAlarm}
       type={type}
       onTypeChange={onTypeChange}
     />
@@ -22,7 +25,7 @@ const renderSidebarFilter = (isSidebarFilterOpen, toggleSidebarFilter, orders, f
 }
 
 // Design da sidebar de filtro
-const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, onFilterChange, type, onTypeChange }) => {
+const SidebarFilter = ({ isOpen, onClose, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange }) => {
   return (
     <div className={`sidebarFilter ${isOpen ? 'open' : ''}`}>
       <div className="filter-icon" onClick={onClose}>
@@ -200,6 +203,23 @@ const SidebarFilter = ({ isOpen, onClose, orders, filters, tecnicos, defeitos, o
                   dateFormat="dd/MM/yyyy"
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {type === 'Alarm' && (
+          <div>
+            <div className="filter-option n9">
+              <label className="filter-label-alarm n1" htmlFor="clienteFilter">Cliente</label>
+              <br />
+              <input
+                id="clienteFilter"
+                type="text"
+                className='custom-textbox filter'
+                value={filtersAlarm.cliente || ''}
+                onChange={(e) => onFilterChangeAlarm(alarms, { ...filtersAlarm, cliente: e.target.value })}
+                placeholder="Digite o nome ou código"
+              />
             </div>
           </div>
         )}

@@ -398,6 +398,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
   if (distances.length === 0) {
     return (
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
+        <div className='p-big'><b>{retTypeAlarmText(alarm)}</b></div>
         <span className='p-big alarm'>
           • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
           <img
@@ -412,7 +413,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         <div className='p-medium'>
           {alarm.dtRecebido !== null ? (
             <span>
-              • Recebido:
+              Recebido:
               &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
               , <b>{formatTime(alarm.dtRecebido)}</b>
             </span>
@@ -421,7 +422,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         <div className='p-medium'>
           {alarm.dtDeslocamento !== null ? (
             <span>
-              • Deslocamento:
+              Deslocamento:
               &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
               , <b>{formatTime(alarm.dtDeslocamento)}</b>
             </span>
@@ -430,7 +431,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
         <div className='p-medium'>
           {alarm.dtLocal !== null ? (
             <span>
-              • No Local:
+              No Local:
               &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
               , <b>{formatTime(alarm.dtLocal)}</b>
             </span>
@@ -443,7 +444,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-      <div className='p-big'><b>{retTypeAlarmText(alarm.codEvento)}</b></div>
+      <div className='p-big'><b>{retTypeAlarmText(alarm)}</b></div>
       <span className='p-big alarm'>
         • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
         <img
@@ -458,7 +459,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
           <span>
-            • Recebido:
+            Recebido:
             &nbsp;{alarm.tempoRecebido}m {alarm.segRecebido !== null ? alarm.segRecebido : null}s
             , <b>{formatTime(alarm.dtRecebido)}</b>
           </span>
@@ -467,7 +468,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtDeslocamento !== null ? (
           <span>
-            • Deslocamento:
+            Deslocamento:
             &nbsp;{alarm.tempoDeslocamento}m {alarm.segDeslocamento !== null ? alarm.segDeslocamento : null}s
             , <b>{formatTime(alarm.dtDeslocamento)}</b>
           </span>
@@ -476,7 +477,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div className='p-medium'>
         {alarm.dtLocal !== null ? (
           <span>
-            • No Local:
+            No Local:
             &nbsp;{alarm.tempoLocal}m {alarm.segLocal !== null ? alarm.segLocal : null}s
             , <b>{formatTime(alarm.dtLocal)}</b>
           </span>
@@ -493,19 +494,21 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
   );
 };
 
-const retTypeAlarmText = (codEvento) => {
+const retTypeAlarmText = (alarm) => {
   let typeAlarm = '';
 
-  if (codEvento == 'E130') { // Alarme, verde
+  if (alarm.codEvento == 'E130') { // Alarme, verde
     typeAlarm = 'Alarme';
-  } else if (codEvento == 'E120' || codEvento == 'E121') { // Pânico, roxo
+    if (alarm.dtObservacao != null) {
+      typeAlarm += ' · Em observação';
+    }
+  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121') { // Pânico, roxo
     typeAlarm = 'Pânico';
-  } else if (codEvento == 'E130' // Falha, vermelho
-    || codEvento == 'E131'
-    || codEvento == 'E133'
-    || codEvento == 'E250'
-    || codEvento == 'E301'
-    || codEvento == 'E333') {
+  } else if (alarm.codEvento == 'E131'
+    || alarm.codEvento == 'E133'
+    || alarm.codEvento == 'E250'
+    || alarm.codEvento == 'E301'
+    || alarm.codEvento == 'E333') {
     typeAlarm = 'Falha de comunicação';
   }
   return typeAlarm;

@@ -107,7 +107,7 @@ const fetchAlarmsData = async () => {
         const recebido = (alarm.dtRecebido ? (getMinutesDifference(toDate(alarm.dtRecebido), (alarm.dtDeslocamento ? toDate(alarm.dtDeslocamento) : new Date()))) : null);
         const deslocamento = (alarm.dtDeslocamento ? (getMinutesDifference(toDate(alarm.dtDeslocamento), (alarm.dtLocal ? toDate(alarm.dtLocal) : new Date()))) : null);
         const local = (alarm.dtLocal ? (getMinutesDifference(toDate(alarm.dtLocal), new Date())) : null);
-        
+
         return {
           lat: parseFloat(alarm.lat),
           lng: parseFloat(alarm.lng),
@@ -116,6 +116,7 @@ const fetchAlarmsData = async () => {
           clientRazao: alarm.razaoCliente,
           codEvento: alarm.codEvento,
           tipoEvento: alarm.tipoEvento,
+          dtObservacao: alarm.dtObservacao,
           dtRecebido: alarm.dtRecebido,
           tempoRecebido: recebido !== null ? (recebido.minutes !== null ? recebido.minutes : null) : null,
           segRecebido: recebido !== null ? (recebido.seconds !== null ? recebido.seconds : null) : null,

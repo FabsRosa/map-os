@@ -499,10 +499,7 @@ const retTypeAlarmText = (alarm) => {
 
   if (alarm.codEvento == 'E130') { // Alarme, verde
     typeAlarm = 'Alarme';
-    if (alarm.dtObservacao != null) {
-      typeAlarm += ' · Em observação';
-    }
-  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121') { // Pânico, roxo
+  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121' || alarm.codEvento == 'E122') { // Pânico, roxo
     typeAlarm = 'Pânico';
   } else if (alarm.codEvento == 'E131'
     || alarm.codEvento == 'E133'
@@ -511,6 +508,11 @@ const retTypeAlarmText = (alarm) => {
     || alarm.codEvento == 'E333') {
     typeAlarm = 'Falha de comunicação';
   }
+
+  if (alarm.dtObservacao != null) {
+    typeAlarm += ' · Em observação';
+  }
+
   return typeAlarm;
 }
 
@@ -595,7 +597,9 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
   // const pinColors = ['red', 'blue', 'green', 'lightblue', 'pink', 'purple', 'orange', 'yellow'];
   let iconPath = `/pin/`;
 
-  if (alarm.codEvento == 'E130') { // Alarme
+  /* if (alarm.dtObservacao != null) {
+    iconPath += 'yellow';
+  } else */ if (alarm.codEvento == 'E130') { // Alarme
     iconPath += 'green';
   } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121') { // Pânico
     iconPath += 'purple';

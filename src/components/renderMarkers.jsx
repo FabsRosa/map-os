@@ -601,7 +601,7 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
     iconPath += 'yellow';
   } else */ if (alarm.codEvento == 'E130') { // Alarme
     iconPath += 'green';
-  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121') { // Pânico
+  } else if (alarm.codEvento == 'E120' || alarm.codEvento == 'E121' || alarm.codEvento == 'E122') { // Pânico
     iconPath += 'purple';
   } else if (alarm.codEvento == 'E130' // Falha
     || alarm.codEvento == 'E131'
@@ -610,6 +610,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
     || alarm.codEvento == 'E301'
     || alarm.codEvento == 'E333') {
     iconPath += 'red';
+  } else {
+    iconPath += 'yellow';
   }
 
   if (isHighlighted) {

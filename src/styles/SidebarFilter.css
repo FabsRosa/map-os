@@ -44,6 +44,9 @@
 .filter-option.n1 {
   margin-top: 10px;
 }
+.filter-option.last {
+  margin-bottom: 15px;
+}
 
 .custom-textbox.filter {
   width: 100%; /* Make the input box fill the entire width */

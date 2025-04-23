@@ -66,6 +66,9 @@ const Map = ({ mapType }) => {
   const [filtersAlarm, setFiltersAlarm] = useState(
     {
       cliente: '',
+      tipoAlarme: '',
+      tipoMoto: '',
+      isObservacao: '',
     }
   );
 
@@ -276,7 +279,7 @@ const Map = ({ mapType }) => {
         />}
 
         {renderMarkerPin(orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm)}
-        {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
+        {renderMarkerMoto(motos, unfOrders, tecnicos, type, filters, filtersAlarm, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto)}
 
         {renderHighlightedDialog(highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter)}
         {renderSelectedDialog(selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter)}

@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import haversineDistance from '../utils/haversineDistance';
 import { filterMotos } from '../utils/filterMarker';
+import { filterMotosAlarm } from '../utils/filterAlarm';
 import { formatTime, formatDate, toISOStringWithLocalTimezone } from '../utils/handleTime';
 
 const iconSizePinOrder = 31;
@@ -55,29 +56,33 @@ const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highl
   }
 }
 
-const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto) => {
+const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, filtersAlarm, initialMapCenter, handleMarkerClickMoto, handleMouseOutMoto, handleMouseOverMoto) => {
   if (!motos || motos.length === 0) return null;
 
-  if (filterMotos(filters)) {
+  if (filterMotos((filters)) || type != 'OS') {
     return motos.map(moto => {
-      const iconSize = moto.type == 1 ? iconSizeCar : iconSizeMoto;
-      return (
-        <Marker
-          key={moto.id}
-          position={{
-            lat: moto.lat,
-            lng: moto.lng
-          }}
-          icon={{
-            url: getMarkerIconMoto(moto, unfOrders, tecnicos, initialMapCenter),
-            scaledSize: new window.google.maps.Size(iconSize, iconSize)
-          }}
-          onClick={handleMarkerClickMoto(moto)}
-          onMouseOut={handleMouseOutMoto}
-          onMouseOver={handleMouseOverMoto(moto)}
-          zIndex={google.maps.Marker.MAX_ZINDEX}
-        />
-      )
+      if (filterMotosAlarm(filtersAlarm, moto)) {
+        const iconSize = moto.type == 1 ? iconSizeCar : iconSizeMoto;
+        return (
+          <Marker
+            key={moto.id}
+            position={{
+              lat: moto.lat,
+              lng: moto.lng
+            }}
+            icon={{
+              url: getMarkerIconMoto(moto, unfOrders, tecnicos, initialMapCenter),
+              scaledSize: new window.google.maps.Size(iconSize, iconSize)
+            }}
+            onClick={handleMarkerClickMoto(moto)}
+            onMouseOut={handleMouseOutMoto}
+            onMouseOver={handleMouseOverMoto(moto)}
+            zIndex={google.maps.Marker.MAX_ZINDEX}
+          />
+        )
+      } else {
+        return null;
+      }
     })
   } else {
     return null;

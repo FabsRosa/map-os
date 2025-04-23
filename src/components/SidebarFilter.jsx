@@ -210,6 +210,61 @@ const SidebarFilter = ({ isOpen, onClose, orders, alarms, filters, filtersAlarm,
         {type === 'Alarm' && (
           <div>
             <div className="filter-option n9">
+              <label className="filter-label-alarm n2">Tipo de Alarme</label>
+              <br />
+              <Select
+                id="tipoAlarme"
+                isMulti
+                options={[
+                  { value: "Alarme", label: "Alarme" },
+                  { value: "Falha", label: "Falha de Comunicação" },
+                  { value: "Panico", label: "Pânico" },
+                ]}
+                value={filtersAlarm.tipoAlarme ? filtersAlarm.tipoAlarme.map(tipoAlarme => ({ value: tipoAlarme, label: tipoAlarme })) : null}
+                onChange={(selectedOptions) => {
+                  const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                  onFilterChangeAlarm(alarms, { ...filtersAlarm, tipoAlarme: selectedValues });
+                }}
+                placeholder="Selecione Alarme"
+              />
+            </div>
+            <div className="filter-option n10">
+              <label className="filter-label-alarm n3">Em observação</label>
+              <br />
+              <Select
+                id="isObservacao"
+                isMulti
+                options={[
+                  { value: "Observacao", label: "Observação" },
+                  { value: "Nao Atendido", label: "Não Atendido" },
+                ]}
+                value={filtersAlarm.isObservacao ? filtersAlarm.isObservacao.map(isObservacao => ({ value: isObservacao, label: isObservacao })) : null}
+                onChange={(selectedOptions) => {
+                  const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                  onFilterChangeAlarm(alarms, { ...filtersAlarm, isObservacao: selectedValues });
+                }}
+                placeholder="Selecione"
+              />
+            </div>
+            <div className="filter-option n11">
+              <label className="filter-label-alarm n4">Tipo de Moto</label>
+              <br />
+              <Select
+                id="tipoMoto"
+                isMulti
+                options={[
+                  { value: "Tatico", label: "Tático" },
+                  { value: "Tecnico", label: "Técnico" },
+                ]}
+                value={filtersAlarm.tipoMoto ? filtersAlarm.tipoMoto.map(tipoMoto => ({ value: tipoMoto, label: tipoMoto })) : null}
+                onChange={(selectedOptions) => {
+                  const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                  onFilterChangeAlarm(alarms, { ...filtersAlarm, tipoMoto: selectedValues });
+                }}
+                placeholder="Selecione Moto"
+              />
+            </div>
+            <div className="filter-option last">
               <label className="filter-label-alarm n1" htmlFor="clienteFilter">Cliente</label>
               <br />
               <input

@@ -523,7 +523,15 @@ const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter }) 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
       <p className='p-big'>
-        <b>{getMotoStatus(motoColor)}</b>
+        <span className='p-big'>
+          <b>{getMotoStatus(motoColor)}&nbsp;</b>
+          <img
+            src='/icon/link.png'
+            alt='Edit'
+            style={{ marginLeft: '5px', width: '16px', height: '16px', cursor: 'pointer' }}
+            onClick={() => window.open(`https://www.google.com/maps?q=${moto.lat},${moto.lng}&z=13&t=m`, '_blank')}
+          />
+        </span>
       </p>
       <p className='p-big'>
         • Placa: <b>{moto.id}</b>

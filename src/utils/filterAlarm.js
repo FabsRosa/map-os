@@ -8,12 +8,12 @@ const filterAlarm = (alarms, filter) => {
     let filterCli = true;
 
     if (filter.tipoAlarme && filter.tipoAlarme.length > 0) {
-      let isAlarm = true;
+      let isAlarm = false;
       if (filter.tipoAlarme.includes('Alarme')) {
         isAlarm = alarm.codEvento == 'E130';
       }
 
-      let isFalha = true;
+      let isFalha = false;
       if (filter.tipoAlarme.includes('Falha')) {
         isFalha = alarm.codEvento == 'E131'
           || alarm.codEvento == 'E133'
@@ -22,26 +22,26 @@ const filterAlarm = (alarms, filter) => {
           || alarm.codEvento == 'E333';
       }
 
-      let isPanico = true;
+      let isPanico = false;
       if (filter.tipoAlarme.includes('Panico')) {
         isPanico = alarm.codEvento == 'E120' || alarm.codEvento == 'E121' || alarm.codEvento == 'E122';
       }
 
-      filterAlarm = isAlarm && isFalha && isPanico
+      filterAlarm = isAlarm || isFalha || isPanico
     }
 
     if (filter.isObservacao && filter.isObservacao.length > 0) {
-      let isObs = true;
+      let isObs = false;
       if (filter.isObservacao.includes('Observacao')) {
         isObs = alarm.dtObservacao != null;
       }
 
-      let isNaoAtendido = true;
+      let isNaoAtendido = false;
       if (filter.isObservacao.includes('Nao Atendido')) {
         isNaoAtendido = alarm.dtObservacao == null;
       }
 
-      filterObs = isObs && isNaoAtendido
+      filterObs = isObs || isNaoAtendido
     }
 
     if (filter.cliente) {
@@ -62,17 +62,17 @@ const filterMotosAlarm = (filter, moto) => {
   let filterOc = true;
 
   if (filter.tipoMoto && filter.tipoMoto.length > 0) {
-    let isObs = true;
+    let isObs = false;
     if (filter.tipoMoto.includes('Tatico')) {
       isObs = moto.nomeTatico != null;
     }
 
-    let isNaoAtendido = true;
+    let isNaoAtendido = false;
     if (filter.tipoMoto.includes('Tecnico')) {
       isNaoAtendido = moto.nomeTatico == null;
     }
 
-    filterOc = isObs && isNaoAtendido
+    filterOc = isObs || isNaoAtendido
   }
   return filterOc;
 };

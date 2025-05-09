@@ -71,7 +71,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, filtersAlar
               lng: moto.lng
             }}
             icon={{
-              url: getMarkerIconMoto(moto, unfOrders, tecnicos, initialMapCenter),
+              url: getMarkerIconMoto(moto, unfOrders, tecnicos, initialMapCenter, type),
               scaledSize: new window.google.maps.Size(iconSize, iconSize)
             }}
             onClick={handleMarkerClickMoto(moto)}
@@ -638,8 +638,8 @@ const getMarkerIconAlarm = (isHighlighted, alarm) => {
 };
 
 // Retorna endereço do ícone
-const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter) => {
-  const color = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter);
+const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter, type) => {
+  const color = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter, type);
 
   let iconPath;
   if (moto && moto.type) {
@@ -662,7 +662,7 @@ const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter) => {
   return iconPath;
 };
 
-const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter) => {
+const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) => {
   const idleLimit = 5 * 60 * 1000;
   const parkLimit = 240 * 60 * 1000;
   const distanceLimitInMeters = 100;
@@ -670,6 +670,9 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter) => {
   if (moto.nomeTatico) {
     return 'yellow';
   }
+  /*   if (type !== 'OS') {
+      return 'green';
+    } */
   if ((!unfOrders) || (!tecnicos || tecnicos.length === 0)) {
     return 'green';
   }

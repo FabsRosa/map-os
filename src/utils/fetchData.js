@@ -53,26 +53,41 @@ const fetchOrdersData = async () => {
 };
 
 // Retorna informações da barra lateral SidebarInfo
-const fetchInfosData = async () => {
+const fetchInfosData = async (type) => {
   try {
-    const responseInfos = await apiClient.get('/maps/BI');
+    const responseInfos = await apiClient.get('/maps/BI_' + type);
 
     if (responseInfos.ok && responseInfos.data) {
-      return (
-        [
-          { label: "OS Cliente", field: "OS Cliente", value: responseInfos.data.qtdOsCliente },
-          { label: "Agendadas", field: "Agendadas", value: responseInfos.data.qtdAgendada },
-          { label: "Agendadas para Hoje", field: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
-          { label: "Pausadas", field: "Pausadas", value: responseInfos.data.qtdPausada },
-          { label: "OS Alarme", field: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
-          { label: "Retorno", field: "Retorno", value: responseInfos.data.qtdRetorno },
-          { label: "Falha de Comunicação", field: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
-          { label: "Arrombamento", field: "Arrombamento", value: responseInfos.data.qtdArrombamento },
-          { label: "Solic. Imagem", field: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
-          { label: "Sem Acesso Imagem", field: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
-          { label: "Instalação", field: "Instalação", value: responseInfos.data.qtdInstalacao },
-        ]
-      );
+      if (type == 'OS') {
+        return (
+          [
+            { label: "OS Cliente", field: "OS Cliente", value: responseInfos.data.qtdOsCliente },
+            { label: "Agendadas", field: "Agendadas", value: responseInfos.data.qtdAgendada },
+            { label: "Agendadas para Hoje", field: "Agendadas para Hoje", value: responseInfos.data.qtdAgendadaHoje },
+            { label: "Pausadas", field: "Pausadas", value: responseInfos.data.qtdPausada },
+            { label: "OS Alarme", field: "OS Alarme", value: responseInfos.data.qtdOsAlarme },
+            { label: "Retorno", field: "Retorno", value: responseInfos.data.qtdRetorno },
+            { label: "Falha de Comunicação", field: "Falha de Comunicação", value: responseInfos.data.qtdFalhaComunicacao },
+            { label: "Arrombamento", field: "Arrombamento", value: responseInfos.data.qtdArrombamento },
+            { label: "Solic. Imagem", field: "Solic. Imagem", value: responseInfos.data.qtdSolicImagem },
+            { label: "Sem Acesso Imagem", field: "Sem Acesso Imagem", value: responseInfos.data.qtdSemAcess },
+            { label: "Instalação", field: "Instalação", value: responseInfos.data.qtdInstalacao },
+          ]
+        );
+      } else if (type == 'Alarm') {
+        if (responseInfos.ok && responseInfos.data) {
+          return (
+            [
+              { label: "Táticos", field: "Táticos", value: responseInfos.data.qtdTaticos },
+              { label: "Alarme", field: "Alarme", value: responseInfos.data.qtdAlarme },
+              { label: "Falha de Comunicação", field: "Falha de Comunicação", value: responseInfos.data.qtdFalha },
+              { label: "Pânico", field: "Pânico", value: responseInfos.data.qtdPanico },
+              { label: "Em observação", field: "Em observação", value: responseInfos.data.qtdObservacao },
+              { label: "Não Atendido", field: "Não Atendido", value: responseInfos.data.qtdNaoAtendido },
+            ]
+          );
+        }
+      }
     } else {
       console.error('Error fetching infos:', responseInfos.problem);
     }

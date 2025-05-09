@@ -5,46 +5,30 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import "../styles/SidebarFilter.css";
 
-const renderSidebarFilter = (isSidebarFilterOpen, toggleSidebarFilter, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange) => {
-  return (
-    <SidebarFilter
-      isOpen={isSidebarFilterOpen}
-      onClose={toggleSidebarFilter}
-      orders={orders}
-      alarms={alarms}
-      filters={filters}
-      filtersAlarm={filtersAlarm}
-      tecnicos={tecnicos}
-      defeitos={defeitos}
-      onFilterChange={onFilterChange}
-      onFilterChangeAlarm={onFilterChangeAlarm}
-      type={type}
-      onTypeChange={onTypeChange}
-    />
-  )
-}
-
 // Design da sidebar de filtro
-const SidebarFilter = ({ isOpen, onClose, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange }) => {
+const renderSidebarFilter = (isOpen, onClose, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange, hasMultipleTypes) => {
   return (
     <div className={`sidebarFilter ${isOpen ? 'open' : ''}`}>
       <div className="filter-icon" onClick={onClose}>
         <img src={!isOpen ? "/icon/filter.svg" : "/icon/filter-clear.svg"} alt="Filter" />
       </div>
       <div className="sidebarFilter-items">
-        <div className="filter-option n1">
-          <label className="filter-label n1" htmlFor="mapType">Tipo de Mapa</label>
-          <br />
-          <select
-            id="mapType"
-            className='custom-select filter'
-            value={type}
-            onChange={(e) => onTypeChange(e.target.value)}
-          >
-            <option value="OS">Ordem de Serviço</option>
-            <option value="Alarm">Alarme</option>
-          </select>
-        </div>
+        <div className="margin-top"> </div>
+        {hasMultipleTypes && (
+          <div className="filter-option n1">
+            <label className="filter-label n1" htmlFor="mapType">Tipo de Mapa</label>
+            <br />
+            <select
+              id="mapType"
+              className='custom-select filter'
+              value={type}
+              onChange={(e) => onTypeChange(e.target.value)}
+            >
+              <option value="OS">Ordem de Serviço</option>
+              <option value="Alarm">Alarme</option>
+            </select>
+          </div>
+        )}
         {type === 'OS' && (
           <div>
             <div className="filter-option n2">

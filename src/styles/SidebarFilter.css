@@ -41,9 +41,10 @@
   display: block;
 }
 
-.filter-option.n1 {
+.margin-top {
   margin-top: 10px;
 }
+
 .filter-option.last {
   margin-bottom: 15px;
 }

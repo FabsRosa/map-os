@@ -25,6 +25,15 @@ const intervalUpdateIndex = 300000;
 const Map = ({ mapType }) => {
   // Controlador de tipo de mapa
   const [type, setType] = useState(mapType);
+  const [hasOS, setHasOS] = useState(import.meta.env.VITE_OS === 'true');
+  const [hasAlarm, setHasAlarm] = useState(import.meta.env.VITE_ALARM == 'true');
+  const [hasMultipleTypes, setHasMultipleTypes] = useState(hasOS && hasAlarm);
+
+  if (!hasOS && hasAlarm && type !== 'Alarm') {
+    setType('Alarm');
+  } else if (hasOS && !hasAlarm && type !== 'OS') {
+    setType('OS');
+  }
 
   // Dados de OS e posição
   const [orders, setOrders] = useState([]);
@@ -86,36 +95,42 @@ const Map = ({ mapType }) => {
   };
 
   // Atualiza lista de técnicos não-terceirizados e defeitos
-  useEffect(() => {
-    const fetchFilterIndex = async () => {
-      const tecData = await fetchTechnicians();
-      setTecnicos(tecData);
+  if (hasOS) {
+    useEffect(() => {
+      const fetchFilterIndex = async () => {
+        const tecData = await fetchTechnicians();
+        setTecnicos(tecData);
 
-      const defData = await fetchDefects();
-      setDefeitos(defData);
-    };
-    fetchFilterIndex();
+        const defData = await fetchDefects();
+        setDefeitos(defData);
+      };
+      fetchFilterIndex();
 
-    const intervalId = setInterval(fetchFilterIndex, intervalUpdateIndex);
-    return () => clearInterval(intervalId);
-  }, []);
+      const intervalId = setInterval(fetchFilterIndex, intervalUpdateIndex);
+      return () => clearInterval(intervalId);
+    }, []);
+  }
 
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
-      const ordersData = await fetchOrdersData();
-      setUnfOrders(ordersData);
-      const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
-      setOrders(ordersFiltered);
+      if (hasOS) {
+        const ordersData = await fetchOrdersData();
+        setUnfOrders(ordersData);
+        const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
+        setOrders(ordersFiltered);
+      }
 
-      const alarmsData = await fetchAlarmsData();
-      const alarmsFiltered = filterAlarm(alarmsData, filtersAlarm);
-      setAlarms(alarmsFiltered);
+      if (hasAlarm) {
+        const alarmsData = await fetchAlarmsData();
+        const alarmsFiltered = filterAlarm(alarmsData, filtersAlarm);
+        setAlarms(alarmsFiltered);
+      }
 
+      const infosData = await fetchInfosData(type);
+      setInfos(infosData);
       const motosData = await fetchMotosData();
       setMotos(motosData);
-      const infosData = await fetchInfosData();
-      setInfos(infosData);
     };
     fetchMapData();
 
@@ -248,8 +263,8 @@ const Map = ({ mapType }) => {
   // Processamento do mapa
   return isLoaded ? (
     <div>
-      {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange)}
-      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, setFilters, defeitos, onFilterChange, tecnicos)}
+      {renderSidebarFilter(isSidebarFilterOpen, toggleSidebarFilter, orders, alarms, filters, filtersAlarm, tecnicos, defeitos, onFilterChange, onFilterChangeAlarm, type, onTypeChange, hasMultipleTypes)}
+      {renderSidebarInfo(isSidebarInfoOpen, toggleSidebarInfo, infos, type, orders, alarms, motos, filters, filtersAlarm, defeitos, onFilterChange, onFilterChangeAlarm, tecnicos)}
 
       <GoogleMap
         mapContainerStyle={mapContainerStyle}

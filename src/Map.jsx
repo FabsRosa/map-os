@@ -114,14 +114,14 @@ const Map = ({ mapType }) => {
   // Atualiza dados de OS e motos
   useEffect(() => {
     const fetchMapData = async () => {
-      if (hasOS) {
+      if (hasOS && type == 'OS') {
         const ordersData = await fetchOrdersData();
         setUnfOrders(ordersData);
         const ordersFiltered = filterMarker(ordersData, filters, tecnicos);
         setOrders(ordersFiltered);
       }
 
-      if (hasAlarm) {
+      if (hasAlarm && type == 'Alarm') {
         const alarmsData = await fetchAlarmsData();
         const alarmsFiltered = filterAlarm(alarmsData, filtersAlarm);
         setAlarms(alarmsFiltered);

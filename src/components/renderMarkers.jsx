@@ -670,10 +670,8 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
   if (moto.nomeTatico) {
     return 'yellow';
   }
-  /*   if (type !== 'OS') {
-      return 'green';
-    } */
-  if ((!unfOrders) || (!tecnicos || tecnicos.length === 0)) {
+
+  if (type !== 'OS' || (!unfOrders || unfOrders.length === 0) || (!tecnicos || tecnicos.length === 0)) {
     return 'green';
   }
 

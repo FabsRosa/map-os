@@ -61,11 +61,12 @@
 }
 
 .sidebarInfo-value.selected {
-  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
+  color: rgb(206, 229, 255);
 }
 
 .sidebarInfo-item.selectedTipoOS {
-  background-color: #3e4f9a;
+  background-color: #2e66a5;
+  /* background-color: #3e4f9a; */
   color: #fff;
 }
 
@@ -74,7 +75,8 @@
 }
 
 .sidebarInfo-value.selectedTipoOS {
-  color: rgb(206, 214, 255); /* Use Material Color for emphasis */
+  color: rgb(206, 229, 255);
+  /* color: rgb(206, 214, 255); */
 }
 
 .sidebarInfo-item.selectedDef {
@@ -87,7 +89,7 @@
 }
 
 .sidebarInfo-value.selectedDef {
-  color: rgb(206, 229, 255); /* Use Material Color for emphasis */
+  color: rgb(206, 229, 255);
 }
 
 .sidebarInfo-item.included {

@@ -89,7 +89,7 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, filtersAlar
   }
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter) => {
+const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter, type) => {
   hideCloseButton();
 
   if (highlightedOrder) {
@@ -148,12 +148,13 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
           unfOrders={unfOrders}
           tecnicos={tecnicos}
           initialMapCenter={initialMapCenter}
+          type={type}
         />
       </InfoWindow>
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter, type) => {
   hideCloseButton();
 
   if (selectedOrder) {
@@ -224,6 +225,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           unfOrders={unfOrders}
           tecnicos={tecnicos}
           initialMapCenter={initialMapCenter}
+          type={type}
         />
       </InfoWindow>
     )
@@ -522,8 +524,8 @@ const retTypeAlarmText = (alarm) => {
 }
 
 // Design da dialog de informações de Moto
-const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter }) => {
-  const motoColor = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter);
+const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter, type }) => {
+  const motoColor = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter, type);
 
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>

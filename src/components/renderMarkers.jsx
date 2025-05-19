@@ -664,21 +664,21 @@ const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
 
 const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) => {
   const idleLimit = 5 * 60 * 1000;
-  const parkLimit = 240 * 60 * 1000;
+  const parkLimit = 300 * 60 * 1000;
   const distanceLimitInMeters = 100;
 
   if (moto.nomeTatico) {
     return 'yellow';
   }
 
-  if (type !== 'OS') {
-    return 'green';
+  if (moto.idleTime > parkLimit) {
+    return 'gray';
   }
 
   if (moto.idleTime > idleLimit) {
     if (haversineDistance(moto.lat, moto.lng, initialMapCenter.lat, initialMapCenter.lng) < distanceLimitInMeters) {
       return 'gray';
-    } else {
+    } else if (type === 'OS') {
       for (let index = 0; index < unfOrders.length; index++) {
         const order = unfOrders[index];
         if (order.idTec !== tecnicos[0].id && tecnicos.some(tecnico => tecnico.id === order.idTec)) {
@@ -687,13 +687,6 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
           }
         }
       }
-    }
-
-    if (moto.idleTime > parkLimit) {
-      return 'gray';
-    } else if ((!unfOrders || unfOrders.length === 0) || (!tecnicos || tecnicos.length === 0)) {
-      return 'green';
-    } else {
       return 'red';
     }
   }

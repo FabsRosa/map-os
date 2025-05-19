@@ -671,7 +671,7 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
     return 'yellow';
   }
 
-  if (type !== 'OS' || (!unfOrders || unfOrders.length === 0) || (!tecnicos || tecnicos.length === 0)) {
+  if (type !== 'OS') {
     return 'green';
   }
 
@@ -691,6 +691,8 @@ const checkMotosTracker = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
 
     if (moto.idleTime > parkLimit) {
       return 'gray';
+    } else if ((!unfOrders || unfOrders.length === 0) || (!tecnicos || tecnicos.length === 0)) {
+      return 'green';
     } else {
       return 'red';
     }

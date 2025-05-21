@@ -14,6 +14,8 @@ const iconSizePinOrder = 31;
 const iconSizePinAlarm = 32;
 const iconSizeMoto = 29;
 const iconSizeCar = 27;
+const iconSizePickup = 35;
+const iconSizeTruck = 33;
 
 const renderMarkerPin = (orders, alarms, tecnicos, type, highlightedOrder, highlightedAlarm, handleMarkerClickOrder, handleMouseOutOrder, handleMouseOverOrder, handleMarkerClickAlarm, handleMouseOutAlarm, handleMouseOverAlarm) => {
   if (type === 'OS') {
@@ -62,7 +64,23 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, filtersAlar
   if (filterMotos((filters)) || type != 'OS') {
     return motos.map(moto => {
       if (filterMotosAlarm(filtersAlarm, moto)) {
-        const iconSize = moto.type == 1 ? iconSizeCar : iconSizeMoto;
+        let iconSize;
+        switch (moto.type) {
+          case 1:
+            iconSize = iconSizeMoto;
+            break;
+          case 2:
+            iconSize = iconSizeCar;
+            break;
+          case 3:
+            iconSize = iconSizeTruck;
+            break;
+          case 4:
+            iconSize = iconSizePickup;
+            break;
+          default:
+            iconSize = iconSizeMoto;
+        }
         return (
           <Marker
             key={moto.id}
@@ -527,6 +545,22 @@ const retTypeAlarmText = (alarm) => {
 const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter, type }) => {
   const motoColor = checkMotosTracker(moto, unfOrders, tecnicos, initialMapCenter, type);
 
+  // Map moto type to human-readable string
+  const getTypeName = (type) => {
+    switch (type) {
+      case 1:
+        return 'Moto';
+      case 2:
+        return 'Carro';
+      case 3:
+        return 'Caminhão';
+      case 4:
+        return 'Caminhonete';
+      default:
+        return type;
+    }
+  };
+
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
       <p className='p-big'>
@@ -539,6 +573,9 @@ const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter, ty
             onClick={() => window.open(`https://www.google.com/maps?q=${moto.lat},${moto.lng}&z=13&t=m`, '_blank')}
           />
         </span>
+      </p>
+      <p className='p-medium'>
+        &nbsp;&nbsp;{getTypeName(moto.type)}
       </p>
       <p className='p-big'>
         • Placa: <b>{moto.id}</b>
@@ -646,7 +683,13 @@ const getMarkerIconMoto = (moto, unfOrders, tecnicos, initialMapCenter, type) =>
   let iconPath;
   if (moto && moto.type) {
     if (moto.type == 1) {
+      iconPath = `/icon/moto`;
+    } else if (moto.type == 2) {
       iconPath = `/icon/car`;
+    } else if (moto.type == 3) {
+      iconPath = `/icon/truck`;
+    } else if (moto.type == 4) {
+      iconPath = `/icon/pickup`;
     } else {
       iconPath = `/icon/moto`;
     }

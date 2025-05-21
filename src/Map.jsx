@@ -15,8 +15,8 @@ const mapContainerStyle = {
 };
 
 const initialMapCenter = {
-  lat: -15.59163,
-  lng: -56.08009,
+  lat: parseFloat(import.meta.env.VITE_INITIAL_LAT),
+  lng: parseFloat(import.meta.env.VITE_INITIAL_LNG),
 };
 
 const intervalUpdateMap = 15000;
@@ -283,8 +283,8 @@ const Map = ({ mapType }) => {
         {<Marker
           key={1}
           position={{
-            lat: -15.59154,
-            lng: -56.08001,
+            lat: parseFloat(import.meta.env.VITE_INITIAL_LAT),
+            lng: parseFloat(import.meta.env.VITE_INITIAL_LNG),
           }}
           icon={{
             url: `/icon/Inviolavel.png`,

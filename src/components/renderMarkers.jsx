@@ -421,6 +421,9 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
 
   // Wait for the distances to be calculated before rendering
   if (distances.length === 0) {
+
+    const hasTactician = motos.some(moto => moto.nomeTatico != null);
+
     return (
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
         <div className='p-big'><b>{retTypeAlarmText(alarm)}</b></div>
@@ -462,7 +465,9 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
             </span>
           ) : null}
         </div>
-        <div className='p-medium'>Calculando distâncias...</div>
+        {hasTactician ? (
+          <div className='p-medium'>Calculando distâncias...</div>
+        ) : null}
       </div>
     );
   }

@@ -238,7 +238,7 @@ const renderSidebarFilter = (isOpen, onClose, orders, alarms, filters, filtersAl
                 isMulti
                 options={[
                   { value: "Tatico", label: "Tático" },
-                  { value: "Tecnico", label: "Técnico" },
+                  { value: "Outros", label: "Outros" },
                 ]}
                 value={filtersAlarm.tipoMoto ? filtersAlarm.tipoMoto.map(tipoMoto => ({ value: tipoMoto, label: tipoMoto })) : null}
                 onChange={(selectedOptions) => {

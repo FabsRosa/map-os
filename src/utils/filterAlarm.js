@@ -68,7 +68,7 @@ const filterMotosAlarm = (filter, moto) => {
     }
 
     let isNaoAtendido = false;
-    if (filter.tipoMoto.includes('Tecnico')) {
+    if (filter.tipoMoto.includes('Outros')) {
       isNaoAtendido = moto.nomeTatico == null;
     }
 

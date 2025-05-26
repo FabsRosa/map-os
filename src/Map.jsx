@@ -19,7 +19,7 @@ const initialMapCenter = {
   lng: parseFloat(import.meta.env.VITE_INITIAL_LNG),
 };
 
-const intervalUpdateMap = 15000;
+const intervalUpdateMap = 10000;
 const intervalUpdateIndex = 300000;
 
 const Map = ({ mapType }) => {

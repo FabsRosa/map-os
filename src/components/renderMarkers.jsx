@@ -120,7 +120,8 @@ const renderHighlightedDialog = (highlightedOrder, editingOrder, setEditingOrder
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
+          minWidth: 320
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -151,7 +152,8 @@ const renderHighlightedDialog = (highlightedOrder, editingOrder, setEditingOrder
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
+          minWidth: 320
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -170,7 +172,8 @@ const renderHighlightedDialog = (highlightedOrder, editingOrder, setEditingOrder
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
+          minWidth: 260
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -198,6 +201,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setH
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
           disableAutoPan: true,
+          minWidth: 320
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -228,7 +232,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setH
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
+          minWidth: 320
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -247,7 +252,8 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setH
         }}
         options={{
           pixelOffset: new window.google.maps.Size(0, -40),
-          disableAutoPan: true
+          disableAutoPan: true,
+          minWidth: 250
         }}
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
@@ -341,13 +347,13 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
             <select className='custom-select' value={order.idDef} onChange={(e) => onDefChange(e.target.value)}>
               {defeitos.map(def => (
                 <option key={def.idDefeito} value={def.idDefeito}>
-                  {def.descDefeito}
+                  {capitalizeWords(def.descDefeito)}
                 </option>
               ))}
             </select>
           ) : (
             <span>
-              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.def}</b>
+              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{capitalizeWords(order.def)}</b>
               <img
                 src='/icon/down-arrow.png'
                 alt='Edit'
@@ -593,7 +599,7 @@ const InfoWindowContentMoto = ({ moto, unfOrders, tecnicos, initialMapCenter, ty
         • Tempo parado: <b>{moto.idleTime < 86400000 ? formatTime(moto.idleTime) : `+${Math.floor(moto.idleTime / (24 * 60 * 60 * 1000))} dias`}</b>
       </p>
       {moto.nomeTatico ? (
-        <p className='p-medium'>• Tático: <b>{moto.nomeTatico}</b></p>
+        <p className='p-medium'>• Tático: <b>{formatName(moto.nomeTatico)}</b></p>
       ) : null}
     </div>
   )
@@ -785,11 +791,11 @@ const removeBLEnd = (string) => {
 
 const formatName = (fullName) => {
   if (!fullName) return '';
-  if (fullName == 'INVIOLAVEL') return fullName;
+  if (fullName == 'INVIOLAVEL') return 'Inviolável';
   const parts = fullName.trim().split(/\s+/);
   if (parts.length === 0) return '';
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  const lowerCaseWords = ['do', 'da', 'dos', 'das'];
+  const lowerCaseWords = ['do', 'da', 'dos', 'das', 'de'];
   if (parts.length === 1) {
     return capitalize(parts[0]);
   }
@@ -798,6 +804,28 @@ const formatName = (fullName) => {
   }
   // Default: first and second name, both capitalized
   return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
+};
+
+const capitalizeWords = (str) => {
+  if (!str) return '';
+  const exceptions = ['do', 'dos', 'da', 'das', 'de', 'no', 'nos', 'nas', 'na', 'e'];
+  const tiVariants = ['ti', 't.i', 't.i.'];
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word, idx) => {
+      if (word.replace(/\./g, '') === 'cftv') {
+        return 'CFTV';
+      }
+      if (tiVariants.includes(word.replace(/\./g, ''))) {
+        return word.replace(/t\.?i\.?/i, word => word.toUpperCase());
+      }
+      if (exceptions.includes(word) && idx !== 0) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
 };
 
 export {

@@ -74,11 +74,11 @@ const renderSidebarFilter = (isOpen, onClose, orders, alarms, filters, filtersAl
                 isMulti
                 options={defeitos.map(def => ({
                   value: def.idDefeito,
-                  label: def.descDefeito
+                  label: capitalizeWords(def.descDefeito)
                 }))}
                 value={defeitos.map(def => ({
                   value: def.idDefeito,
-                  label: def.descDefeito
+                  label: capitalizeWords(def.descDefeito)
                 })).filter(option => filters.defeito.includes(option.value))}
                 onChange={(selectedOptions) => {
                   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
@@ -98,13 +98,13 @@ const renderSidebarFilter = (isOpen, onClose, orders, alarms, filters, filtersAl
                   { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' },
                   ...tecnicos.map(tec => ({
                     value: tec.id,
-                    label: tec.nome
+                    label: formatName(tec.nome)
                   }))
                 ]}
                 value={[
                   ...tecnicos.map(tec => ({
                     value: tec.id,
-                    label: tec.nome
+                    label: formatName(tec.nome)
                   })).filter(option => filters.tecnico.includes(option.value)),
                   filters.tecnico.includes('TERCEIRIZADO') ? { value: 'TERCEIRIZADO', label: 'TERCEIRIZADO' } : null
                 ].filter(Boolean)}
@@ -265,6 +265,45 @@ const renderSidebarFilter = (isOpen, onClose, orders, alarms, filters, filtersAl
       </div>
     </div>
   );
+};
+
+const formatName = (fullName) => {
+  if (!fullName) return '';
+  if (fullName == 'INVIOLAVEL') return 'Inviolável';
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length === 0) return '';
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const lowerCaseWords = ['do', 'da', 'dos', 'das', 'de'];
+  if (parts.length === 1) {
+    return capitalize(parts[0]);
+  }
+  if (parts.length >= 3 && lowerCaseWords.includes(parts[1].toLowerCase())) {
+    return `${capitalize(parts[0])} ${parts[1].toLowerCase()} ${capitalize(parts[2])}`;
+  }
+  // Default: first and second name, both capitalized
+  return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
+};
+
+const capitalizeWords = (str) => {
+  if (!str) return '';
+  const exceptions = ['do', 'dos', 'da', 'das', 'de', 'no', 'nos', 'nas', 'na', 'e'];
+  const tiVariants = ['ti', 't.i', 't.i.'];
+  return str
+    .toLowerCase()
+    .split(' ')
+    .map((word, idx) => {
+      if (word.replace(/\./g, '') === 'cftv') {
+        return 'CFTV';
+      }
+      if (tiVariants.includes(word.replace(/\./g, ''))) {
+        return word.replace(/t\.?i\.?/i, word => word.toUpperCase());
+      }
+      if (exceptions.includes(word) && idx !== 0) {
+        return word;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
 };
 
 export default renderSidebarFilter;

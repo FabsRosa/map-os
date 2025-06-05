@@ -292,16 +292,37 @@ const capitalizeWords = (str) => {
     .toLowerCase()
     .split(' ')
     .map((word, idx) => {
+      // Handle CFTV
       if (word.replace(/\./g, '') === 'cftv') {
         return 'CFTV';
       }
+      // Handle TI
       if (tiVariants.includes(word.replace(/\./g, ''))) {
-        return word.replace(/t\.?i\.?/i, word => word.toUpperCase());
+        return word.replace(/t\.?i\.?/i, w => w.toUpperCase());
       }
+      // Capitalize after / or .
+      let result = '';
+      let capitalizeNext = true;
+      for (let i = 0; i < word.length; i++) {
+        if (capitalizeNext && /[a-zA-Z]/.test(word[i])) {
+          result += word[i].toUpperCase();
+          capitalizeNext = false;
+        } else {
+          result += word[i];
+        }
+        if (word[i] === '/' || word[i] === '.') {
+          capitalizeNext = true;
+        }
+      }
+      // Handle exceptions (but not after / or .)
       if (exceptions.includes(word) && idx !== 0) {
-        return word;
+        // Only lowercase if not after / or .
+        const prevChar = idx > 0 ? str[str.indexOf(word) - 1] : '';
+        if (prevChar !== '/' && prevChar !== '.') {
+          return word;
+        }
       }
-      return word.charAt(0).toUpperCase() + word.slice(1);
+      return result;
     })
     .join(' ');
 };

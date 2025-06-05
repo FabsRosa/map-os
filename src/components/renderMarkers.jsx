@@ -107,7 +107,8 @@ const renderMarkerMoto = (motos, unfOrders, tecnicos, type, filters, filtersAlar
   }
 }
 
-const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlightedMoto, motos, filters, handleMapClick, unfOrders, tecnicos, initialMapCenter, type) => {
+const renderHighlightedDialog = (highlightedOrder, editingOrder, setEditingOrder, setHighlightedOrder, highlightedAlarm, highlightedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter, type
+) => {
   hideCloseButton();
 
   if (highlightedOrder) {
@@ -124,7 +125,19 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
         onCloseClick={() => { hideCloseButton(); handleMapClick(); }}
       >
         <InfoWindowContentOrder
+          key={highlightedOrder.id + highlightedOrder.nomeTec + highlightedOrder.dataAg} // Unique key to force re-render
           order={highlightedOrder}
+          isEditing={editingOrder === highlightedOrder.id}
+          onEditClick={() => { setEditingOrder(highlightedOrder.id); setHighlightedOrder(null); }}
+          onTecChange={onTecChange}
+          onDefChange={onDefChange}
+          onScheduleChange={onScheduleChange}
+          schedulingOrder={schedulingOrder}
+          setSchedulingOrder={setSchedulingOrder}
+          schedulingDate={schedulingDate}
+          setSchedulingDate={setSchedulingDate}
+          tecnicos={tecnicos}
+          defeitos={defeitos}
           filters={filters}
         />
       </InfoWindow>
@@ -172,7 +185,7 @@ const renderHighlightedDialog = (highlightedOrder, highlightedAlarm, highlighted
     )
   }
 }
-const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter, type) => {
+const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setHighlightedOrder, selectedAlarm, selectedMoto, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, motos, filters, handleMapClick, unfOrders, initialMapCenter, type) => {
   hideCloseButton();
 
   if (selectedOrder) {
@@ -192,7 +205,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, sele
           key={selectedOrder.id + selectedOrder.nomeTec + selectedOrder.dataAg} // Unique key to force re-render
           order={selectedOrder}
           isEditing={editingOrder === selectedOrder.id}
-          onEditClick={() => setEditingOrder(selectedOrder.id)}
+          onEditClick={() => { setEditingOrder(selectedOrder.id); setHighlightedOrder(null); }}
           onTecChange={onTecChange}
           onDefChange={onDefChange}
           onScheduleChange={onScheduleChange}
@@ -315,13 +328,13 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
               <option value='' disabled>TERCEIRIZADO</option>
               {tecnicos.map(tec => (
                 <option key={tec.id} value={tec.id}>
-                  {tec.nome}
+                  {formatName(tec.nome)}
                 </option>
               ))}
             </select>
           ) : (
             <span>
-              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{order.nomeTec}</b>
+              <b onClick={onEditClick} style={{ cursor: 'pointer' }}>{formatName(order.nomeTec)}</b>
               <img
                 src='/icon/down-arrow.png'
                 alt='Edit'
@@ -778,6 +791,23 @@ const removeBLEnd = (string) => {
   }
   return string;
 }
+
+const formatName = (fullName) => {
+  if (!fullName) return '';
+  if (fullName == 'INVIOLAVEL') return fullName;
+  const parts = fullName.trim().split(/\s+/);
+  if (parts.length === 0) return '';
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const lowerCaseWords = ['do', 'da', 'dos', 'das'];
+  if (parts.length === 1) {
+    return capitalize(parts[0]);
+  }
+  if (parts.length >= 3 && lowerCaseWords.includes(parts[1].toLowerCase())) {
+    return `${capitalize(parts[0])} ${parts[1].toLowerCase()} ${capitalize(parts[2])}`;
+  }
+  // Default: first and second name, both capitalized
+  return `${capitalize(parts[0])} ${capitalize(parts[1])}`;
+};
 
 export {
   renderMarkerPin,

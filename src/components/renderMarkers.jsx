@@ -300,16 +300,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
   } else {
     return (
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
-        <span
-          className='p-big'
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
+        <span className='p-big' >
           • Cliente: {order.clientID} ·&nbsp;<b>{order.clientName}&nbsp;</b>
           <img
             src='/icon/link.png'

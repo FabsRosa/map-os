@@ -155,6 +155,8 @@ const Map = ({ mapType }) => {
   const handleMarkerClickOrder = useCallback((order) => (e) => {
     e.domEvent.stopPropagation();
     setSelectedOrder(order);
+    setHighlightedOrder(null);
+    setSchedulingOrder(null);
   }, []);
 
   // Mantém dialog de informações ao clicar em um marker

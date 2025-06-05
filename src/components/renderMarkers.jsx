@@ -133,9 +133,9 @@ const renderHighlightedDialog = (highlightedOrder, editingOrder, setEditingOrder
           onTecChange={onTecChange}
           onDefChange={onDefChange}
           onScheduleChange={onScheduleChange}
-          schedulingOrder={schedulingOrder}
+          schedulingOrder={null}
           setSchedulingOrder={setSchedulingOrder}
-          schedulingDate={schedulingDate}
+          schedulingDate={null}
           setSchedulingDate={setSchedulingDate}
           tecnicos={tecnicos}
           defeitos={defeitos}
@@ -217,6 +217,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setH
           setSchedulingOrder={setSchedulingOrder}
           schedulingDate={schedulingDate}
           setSchedulingDate={setSchedulingDate}
+          setHighlightedOrder={setHighlightedOrder}
           tecnicos={tecnicos}
           defeitos={defeitos}
           filters={filters}
@@ -270,7 +271,7 @@ const renderSelectedDialog = (selectedOrder, editingOrder, setEditingOrder, setH
 }
 
 // Design da dialog de informações de OS
-const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, tecnicos, defeitos, filters }) => {
+const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, onDefChange, onScheduleChange, schedulingOrder, setSchedulingOrder, schedulingDate, setSchedulingDate, setHighlightedOrder, tecnicos, defeitos, filters }) => {
   const isTecInList = tecnicos ? tecnicos.some(tec => tec.id == order.idTec) : false;
 
   if (schedulingOrder) {
@@ -297,7 +298,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
         </button>
         <button
           className='schedulingBackButton'
-          onClick={() => setSchedulingOrder(null)}
+          onClick={() => { setSchedulingOrder(null); setHighlightedOrder(null); }}
         >
           Voltar
         </button>
@@ -372,7 +373,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
                   src='/icon/clock.png'
                   alt='Edit'
                   style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }}
-                  onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); }}
+                  onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); setHighlightedOrder(null); }}
                 />
               )}
             </p>
@@ -386,7 +387,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
                 src='/icon/clock.png'
                 alt='Edit'
                 style={{ marginLeft: '5px', width: '18px', height: '18px', cursor: 'pointer' }}
-                onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); }}
+                onClick={() => { setSchedulingOrder(order.id); setSchedulingDate(order.dataAg); setHighlightedOrder(null); }}
               />
             </p>
           </div>

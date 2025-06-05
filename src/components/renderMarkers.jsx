@@ -526,6 +526,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
+            <div className='p-medium'>• Distâncias: </div>
             {formatName(distance.nomeTatico)}: {`${distance.distance < 1000 ? `${distance.distance.toFixed(2)}m` : `${(distance.distance / 1000).toFixed(2)}km`}.`}
           </div>
         )

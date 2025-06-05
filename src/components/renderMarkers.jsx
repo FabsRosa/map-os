@@ -316,7 +316,7 @@ const InfoWindowContentOrder = ({ order, isEditing, onEditClick, onTecChange, on
           />
         </span>
         {(filters && filters.cliente) ? (
-          <p className='p-medium'>• Razão Social: {order.clientRazao}</p>
+          <p className='p-medium'>• Razão Social: {capitalizeWords(order.clientRazao)}</p>
         ) : null}
         <p className='p-medium'>
           • Técnico:&nbsp;
@@ -438,7 +438,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
         <div className='p-big'><b>{retTypeAlarmText(alarm)}</b></div>
         <span className='p-big alarm'>
-          • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+          • Cliente: {alarm.clientID} · <b>{capitalizeWords(alarm.clientName)}&nbsp;</b>
           <img
             src='/icon/link.png'
             alt='Edit'
@@ -446,7 +446,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
             onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
           />
         </span>
-        <div className='p-medium'>• Razão Social: {alarm.clientRazao}</div>
+        <div className='p-medium'>• Razão Social: {capitalizeWords(alarm.clientRazao)}</div>
         <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
         <div className='p-medium'>
           {alarm.dtRecebido !== null ? (
@@ -486,7 +486,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
     <div style={{ backgroundColor: '#fff', color: '#000', padding: '5px', borderRadius: '5px' }}>
       <div className='p-big'><b>{retTypeAlarmText(alarm)}</b></div>
       <span className='p-big alarm'>
-        • Cliente: {alarm.clientID} · <b>{alarm.clientName}&nbsp;</b>
+        • Cliente: {alarm.clientID} · <b>{capitalizeWords(alarm.clientName)}&nbsp;</b>
         <img
           src='/icon/link.png'
           alt='Edit'
@@ -494,7 +494,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
           onClick={() => window.open(`https://www.google.com/maps?q=${alarm.lat},${alarm.lng}&z=13&t=m`, '_blank')}
         />
       </span>
-      <div className='p-medium'>• Razão Social: {alarm.clientRazao}</div>
+      <div className='p-medium'>• Razão Social: {capitalizeWords(alarm.clientRazao)}</div>
       <div className='p-medium'>• Evento: <b>{alarm.codEvento}</b> · {alarm.tipoEvento}</div>
       <div className='p-medium'>
         {alarm.dtRecebido !== null ? (
@@ -526,7 +526,7 @@ const InfoWindowContentAlarm = ({ alarm, motos }) => {
       {distances.map((distance, index) => (
         distance && (
           <div className='p-medium alarm' key={index}>
-            {distance.nomeTatico}: {`${distance.distance < 1000 ? `${distance.distance.toFixed(2)}m` : `${(distance.distance / 1000).toFixed(2)}km`}.`}
+            {formatName(distance.nomeTatico)}: {`${distance.distance < 1000 ? `${distance.distance.toFixed(2)}m` : `${(distance.distance / 1000).toFixed(2)}km`}.`}
           </div>
         )
       ))}
@@ -809,17 +809,19 @@ const formatName = (fullName) => {
 const capitalizeWords = (str) => {
   if (!str) return '';
   const exceptions = ['do', 'dos', 'da', 'das', 'de', 'no', 'nos', 'nas', 'na', 'e'];
+  const upperCased = ['cftv', 'ltda'];
   const tiVariants = ['ti', 't.i', 't.i.'];
   return str
     .toLowerCase()
     .split(' ')
     .map((word, idx) => {
       // Handle CFTV
-      if (word.replace(/\./g, '') === 'cftv') {
-        return 'CFTV';
+      const normalized = word.replace(/\./g, '');
+      if (upperCased.includes(normalized)) {
+        return normalized.toUpperCase();
       }
       // Handle TI
-      if (tiVariants.includes(word.replace(/\./g, ''))) {
+      if (tiVariants.includes(normalized)) {
         return word.replace(/t\.?i\.?/i, w => w.toUpperCase());
       }
       // Capitalize after / or .

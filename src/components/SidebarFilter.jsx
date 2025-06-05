@@ -287,17 +287,19 @@ const formatName = (fullName) => {
 const capitalizeWords = (str) => {
   if (!str) return '';
   const exceptions = ['do', 'dos', 'da', 'das', 'de', 'no', 'nos', 'nas', 'na', 'e'];
+  const upperCased = ['cftv', 'ltda'];
   const tiVariants = ['ti', 't.i', 't.i.'];
   return str
     .toLowerCase()
     .split(' ')
     .map((word, idx) => {
       // Handle CFTV
-      if (word.replace(/\./g, '') === 'cftv') {
-        return 'CFTV';
+      const normalized = word.replace(/\./g, '');
+      if (upperCased.includes(normalized)) {
+        return normalized.toUpperCase();
       }
       // Handle TI
-      if (tiVariants.includes(word.replace(/\./g, ''))) {
+      if (tiVariants.includes(normalized)) {
         return word.replace(/t\.?i\.?/i, w => w.toUpperCase());
       }
       // Capitalize after / or .

@@ -6,7 +6,7 @@ module.exports = {
     env: {
       NODE_ENV: "production",
       PM2_SERVE_PATH: 'dist',
-      PM2_SERVE_PORT: 8280,
+      PM2_SERVE_PORT: 8080,
       PM2_SERVE_SPA: 'true'
     },
     watch: false,

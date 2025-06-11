@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0', // Allows connections from any IP address
-    port: 8280,
+    port: 8080,
   },
   build: {
     sourcemap: true,
